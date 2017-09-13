@@ -33,13 +33,6 @@ module.exports = {
     rules: [{
       test: /\.js$/,
       use: [{
-        loader: 'string-replace-loader',
-        query: {
-          search: '\'use strict\';',
-          replace: '',
-          strict: true
-        }
-      }, {
         loader: 'babel-loader'
       }]
       .concat(debug ? [] : [{

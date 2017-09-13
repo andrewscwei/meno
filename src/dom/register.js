@@ -68,7 +68,9 @@ function register(tagOrClass, options) {
   if (tag.indexOf('-') < 0) tag += '-element';
   tag = tag.toLowerCase();
 
-  if (!getElementRegistry()[tag]) getElementRegistry()[tag] = document.registerElement(tag, o);
+  if (!getElementRegistry()[tag]) {
+    getElementRegistry()[tag] = document.registerElement(tag, o);
+  }
 
   return getElementRegistry()[tag];
 }

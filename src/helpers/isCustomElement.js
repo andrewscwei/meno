@@ -20,8 +20,8 @@ import Directive from '../enums/Directive';
 function isCustomElement(element) {
   assertType(element, Node, false, 'Invalid element specified');
 
-  let is = getAttribute(element, Directive.IS);
-  let tag = element.tagName.toLowerCase();
+  const is = getAttribute(element, Directive.IS);
+  const tag = element.tagName.toLowerCase();
 
   if (is && (getElementRegistry(is) !== undefined)) return true;
   if (tag && (getElementRegistry(tag) !== undefined)) return true;

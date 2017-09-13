@@ -2,7 +2,14 @@
 
 @import '~minuet/lib/minuet.bundle'
 
-+element('playground-element') 
-  +display('box>', top center)
++element('foo-element') 
+  +display('grid>16@100%/40px|4px')
   +padding(50px)
   +size(100%)
+
++element('bar-element')
+  +transition(background, .2s, ease-out)
+  background: #ccc
+  
+  +state('hover')
+    background: #111

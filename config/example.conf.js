@@ -49,8 +49,7 @@ module.exports = {
     extensions: ['.js', '.sass', '.pug'],
     modules: [
       path.join(sourceDir),
-      path.join(baseDir, 'src'),
-      path.join(baseDir, 'dist'),
+      process.env.NODE_ENV === 'production' ? path.join(baseDir, 'dist') : path.join(baseDir, 'src'),
       path.join(baseDir, 'node_modules')
     ]
   },

@@ -14,7 +14,6 @@ import getStyle from '../dom/getStyle';
 import setStyle from '../dom/setStyle';
 import hasStyle from '../dom/hasStyle';
 import removeChild from '../dom/removeChild';
-import getDataRegistry from '../dom/getDataRegistry';
 import getChildRegistry from '../dom/getChildRegistry';
 import removeFromChildRegistry from '../dom/removeFromChildRegistry';
 import createElement from '../dom/createElement';
@@ -33,8 +32,22 @@ import hasOwnValue from '../helpers/hasOwnValue';
 /**
  * @class
  *
- * Abstract class of Node/classes that inherited from Node. Note that this class
- * is an abstract class and must be 'mixed' into an real class.
+ * Returns a Node constructor that by default inherits HTMLElement. Specify the
+ * `base` constructor and HTML `tag` to extend from in the params.
+ * 
+ * @param {string|Function} [base=HTMLElement] - Base Node constructor for the
+ *                                               returned constructor to inherit
+ *                                               from. If this param is a 
+ *                                               string, it will be used as the
+ *                                               `tag` param instead, hence
+ *                                               leaving the base constructor as
+ *                                               HTMLElement.
+ * @param {string} [tag] - The name of the HTML tag for the returned Node
+ *                         constructor. This follows the W3C custom element 
+ *                         specs.
+ * 
+ * @return {Node} - Constructor for a Node that inherits the specified base
+ *                  constructor and consisting of all Meno features.
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes}
  *
@@ -81,49 +94,13 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @alias module:meno~ui.Element#name
    */
   get name() {
-    let s = this.getAttribute('name');
+    let s = this.getAttribute(Directive.NAME);
     if (!s || s === '') return null;
     return s;
   }
   set name(val) {
     // Once set, name cannot change.
-    if (!this.name) super.setAttribute('name', val);
-  }
-
-  /**
-   * State of this Element instance (depicted by Directive.State).
-   *
-   * @type {string}
-   * 
-   * @event 'state' - Dispatched when the value is changed.
-   * @alias module:meno~ui.Element#state
-   */
-  get state() {
-    let s = this.getAttribute(Directive.STATE);
-    if (!s || s === '') return null;
-    return s;
-  }
-  set state(val) {
-    if (this.state === val) return;
-
-    let oldValue = this.state;
-
-    if (val === null || val === undefined)
-      this.removeAttribute(Directive.STATE);
-    else
-      this.setAttribute(Directive.STATE, val);
-
-    this.updateDelegate.setDirty(DirtyType.STATE);
-
-    let event = new CustomEvent('state', {
-      detail: {
-        property: 'state',
-        oldValue: oldValue,
-        newValue: val
-      }
-    });
-
-    this.dispatchEvent(event);
+    if (!this.name) super.setAttribute(Directive.NAME, val);
   }
 
   /**
@@ -137,15 +114,17 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   set opacity(val) { this.setStyle('opacity', val); }
 
   /** 
+   * Lifecycle callback invoked whenever an instance of this element is created.
+   * This does not mean the element is inserted into the DOM.
+   * 
    * @inheritdoc 
    * @ignore
    */
   createdCallback() {
+    console.log(`[${this.constructor.name}] createdCallback()`);
+
     // Define instance properties.
     this.__defineProperties__();
-
-    // Check if this Element needs seed data from the data registry.
-    this.setData(getDataRegistry(this.getAttribute(Directive.REF)));
 
     // Scan for internal DOM element attributes prefixed with Directive.DATA
     // and generate data properties from them.
@@ -168,24 +147,42 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   }
 
   /** 
+   * Lifecycle callback invoked whenever this element is inserted into the DOM.
+   * 
    * @inheritdoc 
    * @ignore
    */
   attachedCallback() {
-    this.render();
-    this.__setNodeState__(NodeState.INITIALIZED);
-    this.updateDelegate.init();
+    console.log(`[${this.constructor.name}] attachedCallback()`);
+
+    // Once attached, render immediately.
+    this.__render__();
   }
 
   /** 
+   * Lifecycle callback invoked whenever this element is removed from the DOM.
+   * 
    * @inheritdoc 
    * @ignore
    */
   detachedCallback() {
+    console.log(`[${this.constructor.name}] detachedCallback()`);
+
     this.destroy();
     this.removeAllEventListeners();
     this.updateDelegate.destroy();
     this.__setNodeState__(NodeState.DESTROYED);
+  }
+
+  /**
+   * Lifecycle callback invoked whenever an attribute is added, removed or
+   * updated.
+   * 
+   * @inheritdoc
+   * @ignore
+   */
+  attributeChangedCallback(attrName, oldVal, newVal) {
+    console.log(`[${this.constructor.name}] attributeChangedCallback(${attrName}, ${oldVal}, ${newVal})`);
   }
 
   /**
@@ -194,7 +191,13 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @alias module:meno~ui.Element#init
    */
   init() {
-    // Needs to be overridden.
+    console.log(`[${this.constructor.name}] init()`);
+
+    // Update the node state to `initialized`.
+    this.__setNodeState__(NodeState.INITIALIZED);
+
+    // Invoke update delegate.
+    this.updateDelegate.init();
   }
 
   /**
@@ -203,6 +206,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @alias module:meno~ui.Element#destroy
    */
   destroy() {
+    console.log(`[${this.constructor.name}] destroy()`);
     if (this.__private__.eventQueue) this.__private__.eventQueue.kill();
   }
 
@@ -214,81 +218,14 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   update() {
     if (this.nodeState > NodeState.UPDATED) return;
 
-    if (this.isDirty(DirtyType.RENDER) && this.nodeState === NodeState.UPDATED) this.render();
+    console.log(`[${this.constructor.name}] update()`);
+
+    if (this.isDirty(DirtyType.RENDER) && this.nodeState === NodeState.UPDATED) this.__render__();
 
     if (this.nodeState < NodeState.UPDATED) {
       this.__setNodeState__(NodeState.UPDATED);
       this.invisible = (this.invisible === undefined) ? false : this.invisible;
     }
-  }
-
-  /**
-   * Renders the template of this element instance.
-   * 
-   * @alias module:meno~ui.Element#render
-   */
-  render() {
-    if (this.nodeState === NodeState.UPDATED) this.destroy();
-
-    let d = {
-      data: this.data,
-      state: this.state,
-      name: this.name
-    };
-
-    let t = this.template(d);
-    if (typeof t === 'string') t = createElement(t);
-
-    assert(!t || (t instanceof Node), `Element generated from template() must be a Node instance`);
-
-    if (t) {
-      if (t instanceof HTMLTemplateElement) {
-        t = document.importNode(t.content, true);
-
-        // TODO: Add support for shadow DOM in the future when it's easier to style.
-        if (false) {
-          try {
-            if (!this.shadowRoot) this.createShadowRoot();
-            while (this.shadowRoot.lastChild) this.shadowRoot.removeChild(this.shadowRoot.lastChild);
-            this.shadowRoot.appendChild(t);
-          }
-          catch (err) {}
-        }
-        else {
-          while (this.lastChild) this.removeChild(this.lastChild);
-          this.appendChild(t);
-        }
-      }
-      else {
-        let n = t.childNodes.length;
-
-        while (this.lastChild) this.removeChild(this.lastChild);
-
-        for (let i = 0; i < n; i++) {
-          let node = document.importNode(t.childNodes[i], true);
-          this.appendChild(node);
-        }
-      }
-    }
-
-    sightread(this);
-
-    let customChildren = getDirectCustomChildren(this, true);
-
-    if (this.__private__.eventQueue) {
-      this.__private__.eventQueue.removeAllEventListeners();
-      this.__private__.eventQueue.kill();
-    }
-
-    this.__private__.eventQueue = new EventQueue();
-
-    customChildren.forEach((child) => {
-      if ((child.nodeState === undefined) || (child.nodeState < NodeState.INITIALIZED))
-        this.__private__.eventQueue.enqueue(child, 'nodeinitialize');
-    });
-
-    this.__private__.eventQueue.addEventListener('complete', this.init.bind(this));
-    this.__private__.eventQueue.start();
   }
 
   /** 
@@ -676,12 +613,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   get(propertyName, defaultInitializer) {
     assertType(propertyName, 'string', false);
     if (!this.__private__) this.__private__ = {};
-    if (this.__private__[propertyName] === undefined) {
-      if (typeof defaultInitializer === 'function')
-        this.__private__[propertyName] = defaultInitializer();
-      else
-        this.__private__[propertyName] = defaultInitializer;
-    }
+    if (this.__private__[propertyName] === undefined) this.__private__[propertyName] = (typeof defaultInitializer === 'function') ? defaultInitializer() : defaultInitializer;
     return this.__private__[propertyName];
   }
 
@@ -697,6 +629,95 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     assertType(propertyName, 'string', false);
     if (!this.__private__) this.__private__ = {};
     this.__private__[propertyName] = value;
+  }
+
+  /**
+   * Renders the template of this element instance.
+   * 
+   * @private
+   */
+  __render__() {
+    console.log(`[${this.constructor.name}] __render__()`);
+    
+    const template = this.template({
+      data: this.data,
+      state: this.state,
+      name: this.name
+    });
+
+    let t = (typeof template === 'string') ? createElement(template) : template;
+
+    assert(!t || (t instanceof Node), `Element generated from template() must be a Node instance`);
+
+    if (t) {
+      if (t instanceof HTMLTemplateElement) {
+        t = document.importNode(t.content, true);
+
+        // TODO: Add support for shadow DOM in the future when it's easier to style.
+        if (false) {
+          try {
+            if (!this.shadowRoot) this.createShadowRoot();
+            while (this.shadowRoot.lastChild) this.shadowRoot.removeChild(this.shadowRoot.lastChild);
+            this.shadowRoot.appendChild(t);
+          }
+          catch (err) {}
+        }
+        else {
+          while (this.lastChild) this.removeChild(this.lastChild);
+          this.appendChild(t);
+        }
+      }
+      else {
+        let n = t.childNodes.length;
+
+        while (this.lastChild) this.removeChild(this.lastChild);
+
+        for (let i = 0; i < n; i++) {
+          let node = document.importNode(t.childNodes[i], true);
+          this.appendChild(node);
+        }
+      }
+    }
+
+    sightread(this);
+
+    this.__awaitInit__();
+  }
+
+  /**
+   * Waits for all custom children to be initialized before initializing this
+   * element.
+   * 
+   * @private
+   */
+  __awaitInit__() {
+    if (this.nodeState === NodeState.INITIALIZED || this.nodeState === NodeState.UPDATED) return;
+
+    const customChildren = getDirectCustomChildren(this, true);
+    const n = customChildren.length;
+
+    // Reset internal event queue.
+    if (this.__private__.eventQueue) {
+      this.__private__.eventQueue.removeAllEventListeners();
+      this.__private__.eventQueue.kill();
+    }
+
+    if (n > 0) {
+      this.__private__.eventQueue = new EventQueue();
+
+      for (let i = 0; i < n; i++) {
+        const child = customChildren[i];
+        if ((child.nodeState === undefined) || (child.nodeState < NodeState.INITIALIZED)) {
+          this.__private__.eventQueue.enqueue(child, 'nodeinitialize');
+        }
+      }
+      
+      this.__private__.eventQueue.addEventListener('complete', this.init.bind(this));
+      this.__private__.eventQueue.start();
+    }
+    else {
+      this.init();
+    }
   }
 
   /**

@@ -2,7 +2,6 @@
 
 'use strict';
 
-import getClassIndex from './getClassIndex';
 import assert from '../helpers/assert';
 
 /**
@@ -23,7 +22,8 @@ function hasClass(element, className) {
 
   for (let i = 0; i < n; i++) {
     let e = elements[i];
-    if (getClassIndex(e, className) < 0) return false;
+    let check = new RegExp(`(^|\\s)${className}(\\s|$)`).test(e.className);
+    if (!check) return false;
   }
 
   return true;

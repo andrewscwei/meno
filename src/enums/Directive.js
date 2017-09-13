@@ -10,18 +10,16 @@
  * @alias module:meno~enums.Directive
  */
 const Directive = {
+  /**
+   * Custom element tag.
+   */
   IS: 'is',
+
+  /**
+   * Instance name.
+   */
+  NAME: 'name',
   
-  /**
-   * Use this directive for managing DOM element states.
-   */
-  STATE: 'state',
-
-  /**
-   * Use this directive for referencing global shared data.
-   */
-  REF: 'data-ref',
-
   /**
    * Use this directive to map any property from the DOM to the controller.
    */

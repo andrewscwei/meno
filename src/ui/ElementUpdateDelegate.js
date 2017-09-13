@@ -261,7 +261,7 @@ class ElementUpdateDelegate {
     /**
      * Checks dirty status of a given dirty type.
      *
-     * @param {number} dirtyType [description]
+     * @param {number} dirtyType - Dirty type.
      *
      * @return {boolean}
      */

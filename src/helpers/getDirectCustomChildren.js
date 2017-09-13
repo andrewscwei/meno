@@ -29,10 +29,12 @@ function getDirectCustomChildren(element, inclusive) {
     let child = [].concat(childRegistry[name]);
 
     child.forEach((c) => {
-      if (isCustomElement(c))
+      if (isCustomElement(c)) {
         children.push(c);
-      else
+      }
+      else {
         children = children.concat(getDirectCustomChildren(c));
+      }
     });
   }
 

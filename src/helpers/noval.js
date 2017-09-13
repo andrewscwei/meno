@@ -30,19 +30,16 @@ function noval(value, recursive) {
     return (value === '');
   }
   else if (recursive && (value instanceof Array)) {
-    let n = value.length;
-
+    const n = value.length;
     for (let i = 0; i < n; i++) {
       if (!noval(value[i], true)) return false;
     }
-
     return true;
   }
   else if (recursive && (typeof value === 'object') && (value.constructor === Object)) {
     for (let p in value) {
       if (!noval(value[p], true)) return false;
     }
-
     return true;
   }
   else {

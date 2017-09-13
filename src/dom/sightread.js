@@ -32,7 +32,7 @@ function sightread(element, childRegistry) {
   element = (element === window) ? document.body : (element.shadowRoot ? element.shadowRoot : element);
 
   assert(element, 'Element is invalid. Too early to sightread?');
-  const n = element.childNodes.length;
+  let n = element.childNodes.length;
 
   for (let i = 0; i < n; i++) {
     let e = element.childNodes[i];

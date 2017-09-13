@@ -3,6 +3,7 @@
 'use strict';
 
 import getAttribute from '../dom/getAttribute';
+import Directive from '../enums/Directive';
 
 /**
  * Gets the instance name from a DOM element.
@@ -14,12 +15,8 @@ import getAttribute from '../dom/getAttribute';
  * @alias module:meno~helpers.getInstanceNameFromElement
  */
 function getInstanceNameFromElement(element) {
-  let nameFromName = getAttribute(element, 'name');
-
-  if (nameFromName !== null && nameFromName !== undefined && nameFromName !== '')
-    return nameFromName;
-  else
-    return null;
+  let nameFromName = getAttribute(element, Directive.NAME);
+  return (nameFromName !== null && nameFromName !== undefined && nameFromName !== '') ? nameFromName : null;
 }
 
 export default getInstanceNameFromElement;
