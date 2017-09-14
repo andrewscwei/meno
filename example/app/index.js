@@ -2,7 +2,6 @@
 
 'use strict';
 
-import 'webcomponents.js/CustomElements';
 import 'stylesheets/main';
 import m from 'meno';
 

@@ -157,6 +157,9 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
 
     // Once attached, render immediately.
     this.__render__();
+
+    // Wait for children to initialize before initializing this element.
+    this.__awaitInit__();
   }
 
   /** 
@@ -306,7 +309,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    */
   setAttribute(name, value) {
     switch (name) {
-      case 'name':
+      case Directive.NAME:
         this.name = value;
         break;
       default:
@@ -680,8 +683,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     }
 
     sightread(this);
-
-    this.__awaitInit__();
   }
 
   /**

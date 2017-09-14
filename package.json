@@ -32,6 +32,7 @@
     "chalk": "^2.1.0",
     "compression-webpack-plugin": "^1.0.0",
     "css-loader": "^0.28.7",
+    "document-register-element": "^1.7.0",
     "html-webpack-harddisk-plugin": "^0.1.0",
     "html-webpack-plugin": "^2.30.1",
     "minuet": "^0.23.0",
@@ -44,8 +45,6 @@
     "sass-loader": "^6.0.6",
     "strip-loader": "^0.1.2",
     "style-loader": "^0.18.2",
-    "virtual-dom": "^2.1.1",
-    "webcomponents.js": "^0.7.24",
     "webpack": "^3.5.6",
     "webpack-bundle-analyzer": "^2.9.0",
     "webpack-dev-server": "^2.7.1"

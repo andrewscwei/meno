@@ -6,6 +6,7 @@ import setAttribute from './setAttribute';
 import assert from '../helpers/assert';
 import assertType from '../helpers/assertType';
 import getInstanceNameFromElement from '../helpers/getInstanceNameFromElement';
+import Directive from '../enums/Directive';
 
 /**
  * Adds a child or an array of children with the same name to the specified
@@ -30,7 +31,7 @@ function addToChildRegistry(childRegistry, child, name) {
 
   if (!inferredName) {
     if ((typeof name !== 'string') || (name === '')) return false;
-    setAttribute(child, 'name', name);
+    setAttribute(child, Directive.NAME, name);
   }
   else {
     name = inferredName;

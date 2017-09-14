@@ -23,7 +23,7 @@ const Directive = {
   /**
    * Use this directive to map any property from the DOM to the controller.
    */
-  DATA: 'data-'
+  DATA: ':'
 };
 
 export default Directive;

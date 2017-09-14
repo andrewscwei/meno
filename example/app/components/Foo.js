@@ -23,7 +23,6 @@ class Foo extends Element('foo') {
   template(data) {
     const template = require('templates/components/foo.pug');
     const d = { n: Math.floor(Math.random() * (200 - 10)) + 10 };
-    console.log(template(d))
     return template(d);
   }
 }

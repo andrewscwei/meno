@@ -25,7 +25,7 @@ import NodeState from './enums/NodeState';
 import Element from './ui/Element';
 import EventQueue from './events/EventQueue';
 
-// import 'webcomponents.js/CustomElements.js';
+// import 'document-register-element';
 
 assert(window && document, 'Meno is a front-end web framework where \'window\' and \'document\' must be defined');
 
