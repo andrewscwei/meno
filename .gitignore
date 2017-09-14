@@ -54,6 +54,7 @@ dump.rdb
 public
 uploads
 docs
+dist
 lib
 .publish
 
