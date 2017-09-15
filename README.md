@@ -2,7 +2,7 @@
 
 ## Caveats
 
-2017.09.14 - Avoid using custom tags directly. Use the `is` attribute instead. Currently the registered custom element constructor is not used when an element is added using `innerHTML`.
+2017.09.14 - Avoid using custom tags directly. Use the `is` attribute instead. Currently the registered custom element constructor is not used when an element is added via `innerHTML`.
 
 ```html
 <!-- Don't do this -->
