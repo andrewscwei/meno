@@ -1,7 +1,3 @@
-// © Andrew Wei
-
-'use strict';
-
 import { Element, DirtyType } from 'meno';
 import template from 'templates/components/todo-app';
 

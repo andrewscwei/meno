@@ -1,9 +1,5 @@
-// © Andrew Wei
-
-'use strict';
-
 import 'stylesheets/main';
-import m from 'meno';
+import m from 'meno.min';
 
 // Order matters. Since TodoList contains TodoItem, TodoItem needs to be 
 // registered first so that when TodoList renders its shadow DOM, TodoItem is 
