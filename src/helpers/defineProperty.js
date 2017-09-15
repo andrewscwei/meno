@@ -26,10 +26,9 @@ import hasOwnValue from '../helpers/hasOwnValue';
  *                                             whenever a new value is set.
  * @param {String} [descriptor.eventType] - Specifies the event type to dispatch 
  *                                          whenever a new value is set.
- * @param {boolean} [descriptor.attributed] - Specifies whether the a
- *                                            corresponding DOM attribute will
- *                                            update whenever a new value is
- *                                            set.
+ * @param {boolean} [descriptor.attributed] - Specifies whether a corresponding 
+ *                                            DOM attribute will update whenever 
+ *                                            a new value is set.
  * @param {Function} [descriptor.onChange] - Method invoked when the property
  *                                           changes.
  * @param {Function|boolean} [descriptor.get] - Method invoked when the accessor
@@ -53,7 +52,6 @@ import hasOwnValue from '../helpers/hasOwnValue';
 function defineProperty(element, propertyName, descriptor, scope) {
   assert(element, 'Parameter \'element\' must be defined');
   assertType(descriptor, 'object', false, 'Parameter \'descriptor\' must be an object literal');
-  assertType(descriptor.configurable, 'boolean', true, 'Optional configurable key in descriptor must be a boolean');
   assertType(descriptor.enumerable, 'boolean', true, 'Optional enumerable key in descriptor must be a boolean');
   assertType(descriptor.writable, 'boolean', true, 'Optional writable key in descriptor must be a boolean');
   assertType(descriptor.unique, 'boolean', true, 'Optional unique key in descriptor must be a boolean');
@@ -89,7 +87,6 @@ function defineProperty(element, propertyName, descriptor, scope) {
 
   let newDescriptor = {};
 
-  if (descriptor.configurable !== undefined) newDescriptor.configurable = descriptor.configurable;
   if (descriptor.enumerable !== undefined) newDescriptor.enumerable = descriptor.enumerable;
   if (descriptor.value !== undefined) newDescriptor.value = descriptor.value;
   if (descriptor.writable !== undefined) newDescriptor.writable = descriptor.writable;
@@ -139,7 +136,11 @@ function defineProperty(element, propertyName, descriptor, scope) {
     setAttribute(element, attributeName, defaultValue);
   }
 
-  if (defaultValue !== undefined && dirtyType !== undefined && element.nodeState >= NodeState.UPDATED && element.setDirty) {
+  if (descriptor.onChange !== undefined && defaultValue !== undefined) {
+    descriptor.onChange(undefined, defaultValue);
+  }
+
+  if (defaultValue !== undefined && dirtyType !== undefined && element.nodeState === NodeState.INITIALIZED && element.setDirty) {
     element.setDirty(dirtyType);
   }
 }

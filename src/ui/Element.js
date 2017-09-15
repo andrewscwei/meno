@@ -29,6 +29,19 @@ import defineProperty from '../helpers/defineProperty';
 import getDirectCustomChildren from '../helpers/getDirectCustomChildren';
 import hasOwnValue from '../helpers/hasOwnValue';
 
+// import h from 'virtual-dom/h';
+// import diff from 'virtual-dom/diff';
+// import patch from 'virtual-dom/patch';
+// import createElement from 'virtual-dom/create-element';
+
+// const convertHTML = require('html-to-vdom')({
+//   VNode: require('virtual-dom/vnode/vnode'),
+//   VText: require('virtual-dom/vnode/vtext')
+// });
+
+const USE_VIRTUAL_DOM = false;
+const USE_SHADOW_DOM = false;
+
 /**
  * @class
  *
@@ -75,7 +88,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * 
    * @alias module:meno~ui.Element.extends
    */
-  static get extends() { return null; }
+  static get extends() { return this.tag && 'div' || null; }
 
   /**
    * Creates a new DOM element from this Element class.
@@ -139,7 +152,35 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
 
       // Generate camel case property name from the attribute.
       let propertyName = attribute.name.replace(regex, '').replace(/-([a-z])/g, (g) => (g[1].toUpperCase()));
-      this.setData(propertyName, this.getAttribute(attribute.name), true);
+      this.setData(propertyName, this.getAttribute(attribute.name), { attributed: true });
+    }
+
+    // Check if this Element has default data.
+    const defaults = this.defaults();
+
+    if (defaults) {
+      // Go through each key/value pair and add it to this element's data.
+      for (let key in defaults) {
+        let descriptor = defaults[key];
+        let value = undefined;
+        let options = {};
+
+        // Default data can be expressed in object literals. This allows for
+        // additional config options.
+        if (typeof descriptor === 'object' && descriptor.hasOwnProperty('value')) {
+           value = descriptor.value;
+           options = descriptor;
+           delete options.value;
+        }
+        else {
+          value = descriptor;
+        }
+
+        // All default data should affect rendering by default unless otherwise specified.
+        if (typeof options.renderOnChange !== 'boolean') options.renderOnChange = true;
+
+        this.setData(key, value, options);
+      }
     }
 
     // Make element invisible until its first update.
@@ -155,9 +196,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   attachedCallback() {
     console.log(`[${this.constructor.name}] attachedCallback()`);
 
-    // Once attached, render immediately.
-    this.__render__();
-
     // Wait for children to initialize before initializing this element.
     this.__awaitInit__();
   }
@@ -171,7 +209,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   detachedCallback() {
     console.log(`[${this.constructor.name}] detachedCallback()`);
 
-    this.destroy();
+    this.__destroy__();
     this.removeAllEventListeners();
     this.updateDelegate.destroy();
     this.__setNodeState__(NodeState.DESTROYED);
@@ -189,47 +227,51 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   }
 
   /**
-   * Method invoked every time after this element is rendered.
+   * Default data.
+   * 
+   * @return {Object} Seed data.
+   */
+  defaults() {
+    return null;
+  }
+
+  /**
+   * Lifecycle hook: This method is invoked after this element is
+   * added to the DOM, AFTER the initial render is complete, and RIGHT BEFORE 
+   * the node state changes to NodeState.INITIALIZED. This is a good place to 
+   * perform initial set up for this element. Note that if you want to set up 
+   * the children of this element, there is a better hook for that. See 
+   * Element#render.
    * 
    * @alias module:meno~ui.Element#init
    */
-  init() {
-    console.log(`[${this.constructor.name}] init()`);
-
-    // Update the node state to `initialized`.
-    this.__setNodeState__(NodeState.INITIALIZED);
-
-    // Invoke update delegate.
-    this.updateDelegate.init();
-  }
+  init() {}
 
   /**
-   * Method invoked every time before this element is rerendered.
+   * Lifecycle hook: This method is invoked right after this element is removed
+   * from the DOM. This is a good place to clean things up.
    * 
    * @alias module:meno~ui.Element#destroy
    */
-  destroy() {
-    console.log(`[${this.constructor.name}] destroy()`);
-    if (this.__private__.eventQueue) this.__private__.eventQueue.kill();
-  }
+  destroy() {}
 
   /**
-   * Handler invoked whenever a visual update is required.
+   * Lifecycle hook: This method is invoked right after every render. On the
+   * initial render, this hook is fired before Element#init. This is a good 
+   * place to set up new children on every render.
+   * 
+   * @alias module:meno~ui.Element#render
+   */
+  render() {}
+
+  /**
+   * Lifecycle hook: This method is invoked whenever a dirty update occurs. When
+   * this element is first added to the DOM, this hook is invoked BEFORE
+   * Element#init, AFTER Element#render.
    * 
    * @alias module:meno~ui.Element#update
    */
-  update() {
-    if (this.nodeState > NodeState.UPDATED) return;
-
-    console.log(`[${this.constructor.name}] update()`);
-
-    if (this.isDirty(DirtyType.RENDER) && this.nodeState === NodeState.UPDATED) this.__render__();
-
-    if (this.nodeState < NodeState.UPDATED) {
-      this.__setNodeState__(NodeState.UPDATED);
-      this.invisible = (this.invisible === undefined) ? false : this.invisible;
-    }
-  }
+  update() {}
 
   /** 
    * @see module:meno~ui.ElementUpdateDelegate#initResponsiveness 
@@ -256,6 +298,31 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
       return removeChild(this, child);
     }
   }
+
+  /**
+   * Removes all children from this element.
+   * 
+   * @alias module:meno~ui.Element#removeAllChildren
+   * @todo Support shadow DOM.
+   */
+  removeAllChildren() {
+    if (USE_SHADOW_DOM && this.shadowRoot) {
+      try {
+        while (this.shadowRoot.lastChild) this.shadowRoot.removeChild(this.shadowRoot.lastChild);
+      }
+      catch (err) {}
+    }
+    else {
+      while (this.lastChild) {
+        this.removeChild(this.lastChild);
+      }
+    }
+  }
+
+  /**
+   * Shorthand for Element#getChild.
+   */
+  $() { return this.getChild.apply(this, arguments); }
 
   /** 
    * @see module:meno~dom.getChild 
@@ -538,43 +605,54 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * specified name with the specified value. If the data property does not
    * exist, it will be newly defined.
    *
-   * @param {string|object} - Name of the data property if defining only one, or
+   * @param {string} key - Name of the data property if defining only one, or
    *                          an object literal containing key/value pairs to be
    *                          merged into this Element instance's data
    *                          properties.
-   * @param {*} - Value of the data property (if defining only one).
-   * @param {boolean} - If defining only one data property, specifies whether
-   *                    the data property should also be a data attribute of the
-   *                    element.
+   * @param {*} value - Value of the data property (if defining only one).
+   * @param {Object} [options] - If defining only one data property, specifies 
+   *                             the options for 
+   *                             module:meno~helpers.defineProperty.
+   * @param {boolean} [options.unique=true] - Specifies that the modifier method 
+   *                                          will only invoke if the new value 
+   *                                          is different from the old value.
+   * @param {DirtyType} [options.renderOnChange] - Specifies whether the element
+   *                                               should render whenever a new 
+   *                                               value is set.
+   * @param {String} [options.eventType] - Specifies the event type to dispatch 
+   *                                       whenever a new value is set.
+   * @param {boolean} [options.attributed] - Specifies whether a corresponding 
+   *                                         DOM attribute will update whenever 
+   *                                         a new value is set.
+   * @param {Function} [options.onChange] - Method invoked when the value
+   *                                        changes.
    * 
    * @alias module:meno~ui.Element#setData
    */
-  setData() {
-    let descriptor = arguments[0];
+  setData(key, value, options) {
+    if (typeof key !== 'string') return;
 
-    if (typeof descriptor === 'string') {
-      let value = arguments[1];
-      let attributed = arguments[2] || false;
-
-      if (this.hasData(descriptor)) {
-        this.data[descriptor] = value;
-      }
-      else {
-        defineProperty(this, descriptor, {
-          defaultValue: value,
-          dirtyType: DirtyType.DATA,
-          get: true,
-          set: true,
-          attributed: attributed
-        }, 'data');
-      }
+    if (this.hasData(key)) {
+      this.data[key] = value;
     }
     else {
-      assertType(descriptor, 'object', false);
-      if (!descriptor) return;
-      for (let key in descriptor) {
-        this.setData(key, descriptor[key]);
-      }
+      if (!options) options = {};
+
+      let opts = {
+        defaultValue: value,
+        dirtyType: DirtyType.DATA,
+        get: true,
+        set: true
+      };
+
+      if (typeof value === 'function') opts.set = false;
+      if (typeof options.unique === 'boolean') opts.unique = options.unique;
+      if (typeof options.renderOnChange === 'boolean') opts.dirtyType |= DirtyType.RENDER;
+      if (typeof options.eventType === 'string') opts.eventType = options.eventType;
+      if (typeof options.attributed === 'boolean') opts.attributed = options.attributed;
+      if (typeof options.onChange === 'function') opts.onChange = options.onChange;
+
+      defineProperty(this, key, opts, 'data');
     }
   }
 
@@ -635,54 +713,97 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   }
 
   /**
+   * Method invoked when this element is added to the DOM.
+   * 
+   * @private 
+   */
+  __init__() {
+    console.log(`[${this.constructor.name}] __init__()`);
+    
+    // Invoke update delegate.
+    this.updateDelegate.init();
+    
+    // Now that the initial update is complete, unhide the element.
+    this.setStyle('visibility', this.invisible ? 'hidden' : 'visible');
+
+    if (this.init) this.init();
+
+    // Update the node state to `initialized`.
+    this.__setNodeState__(NodeState.INITIALIZED);
+  }
+
+  /**
+   * Method invoked every time this element is removed from the DOM.
+   * 
+   * @private
+   */
+  __destroy__() {
+    console.log(`[${this.constructor.name}] __destroy__()`);
+    if (this.__private__.eventQueue) this.__private__.eventQueue.kill();
+    if (this.destroy) this.destroy();
+  }
+
+  /**
    * Renders the template of this element instance.
    * 
    * @private
    */
   __render__() {
+    const template = this.template(this.data);
+
+    // If this element doesn't use a template, skip it.
+    if (!template) return sightread(this);
+
+    // Otherwise continue processing template.
     console.log(`[${this.constructor.name}] __render__()`);
-    
-    const template = this.template({
-      data: this.data,
-      state: this.state,
-      name: this.name
-    });
 
-    let t = (typeof template === 'string') ? createElement(template) : template;
+    // Use VDOM?
+    if (USE_VIRTUAL_DOM) {
+      // const vtree = h('div', { innerHTML: template });
+      const vtree = convertHTML(template);
 
-    assert(!t || (t instanceof Node), `Element generated from template() must be a Node instance`);
-
-    if (t) {
-      if (t instanceof HTMLTemplateElement) {
-        t = document.importNode(t.content, true);
-
-        // TODO: Add support for shadow DOM in the future when it's easier to style.
-        if (false) {
-          try {
-            if (!this.shadowRoot) this.createShadowRoot();
-            while (this.shadowRoot.lastChild) this.shadowRoot.removeChild(this.shadowRoot.lastChild);
-            this.shadowRoot.appendChild(t);
-          }
-          catch (err) {}
-        }
-        else {
-          while (this.lastChild) this.removeChild(this.lastChild);
-          this.appendChild(t);
-        }
+      if (this.__private__.rootNode === undefined && this.__private__.vtree === undefined) {
+        this.__private__.rootNode = createElement(vtree);
+        this.removeAllChildren();
+        this.appendChild(this.__private__.rootNode);
       }
       else {
-        let n = t.childNodes.length;
-
-        while (this.lastChild) this.removeChild(this.lastChild);
-
-        for (let i = 0; i < n; i++) {
-          let node = document.importNode(t.childNodes[i], true);
-          this.appendChild(node);
+        const patches = diff(this.__private__.vtree, vtree);
+        this.__private__.rootNode = patch(this.__private__.rootNode, patches);
+      }
+  
+      this.__private__.vtree = vtree;
+    }
+    else {
+      let t = createElement(template);
+  
+      if (t) {
+        if (t instanceof HTMLTemplateElement) {
+          t = document.importNode(t.content, true);
+          this.removeAllChildren();
+          
+          if (USE_SHADOW_DOM) {
+            if (!this.shadowRoot) this.createShadowRoot();
+            this.shadowRoot.appendChild(t);
+          }
+          else {
+            this.appendChild(t);
+          }
+        }
+        else {
+          this.removeAllChildren();
+          const n = t.childNodes.length;
+          for (let i = 0; i < n; i++) {
+            let node = document.importNode(t.childNodes[i], true);
+            this.appendChild(node);
+          }
         }
       }
     }
 
     sightread(this);
+
+    if (this.render) this.render();
   }
 
   /**
@@ -692,7 +813,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @private
    */
   __awaitInit__() {
-    if (this.nodeState === NodeState.INITIALIZED || this.nodeState === NodeState.UPDATED) return;
+    if (this.nodeState === NodeState.INITIALIZED) return;
 
     const customChildren = getDirectCustomChildren(this, true);
     const n = customChildren.length;
@@ -713,11 +834,11 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
         }
       }
       
-      this.__private__.eventQueue.addEventListener('complete', this.init.bind(this));
+      this.__private__.eventQueue.addEventListener('complete', this.__init__.bind(this));
       this.__private__.eventQueue.start();
     }
     else {
-      this.init();
+      this.__init__();
     }
   }
 
@@ -730,6 +851,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     this.__private__ = {};
     this.__private__.childRegistry = {};
     this.__private__.listenerRegistry = {};
+    this.data = {};
 
     /**
      * Current node state of this Element instance.
@@ -737,14 +859,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
      * @type {NodeState}
      */
     defineProperty(this, 'nodeState', { defaultValue: NodeState.IDLE, get: true });
-
-    /**
-     * Data properties.
-     *
-     * @type {Object}
-     * @see module:meno~enums.Directive.DATA
-     */
-    defineProperty(this, 'data', { defaultValue: {}, get: true });
 
     /**
      * ElementUpdateDelegate instance.
@@ -764,7 +878,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
       set: (value) => {
         assertType(value, 'boolean', false);
 
-        if (this.nodeState === NodeState.UPDATED) {
+        if (this.nodeState === NodeState.INITIALIZED) {
           if (value) {
             this.setStyle('visibility', 'hidden');
           }
@@ -811,12 +925,12 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     let oldVal = this.__private__.nodeState;
     this.__private__.nodeState = nodeState;
 
-    if (nodeState === NodeState.INITIALIZED)
+    if (nodeState === NodeState.INITIALIZED) {
       this.dispatchEvent(new CustomEvent('nodeinitialize'));
-    else if (nodeState === NodeState.UPDATED)
-      this.dispatchEvent(new CustomEvent('nodeupdate'));
-    else if (nodeState === NodeState.DESTROYED)
+    }
+    else if (nodeState === NodeState.DESTROYED) {
       this.dispatchEvent(new CustomEvent('nodedestroy'));
+    }
 
     this.dispatchEvent(new CustomEvent('nodestate', {
       detail: {

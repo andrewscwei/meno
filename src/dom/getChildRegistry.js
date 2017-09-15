@@ -6,7 +6,7 @@ import assert from '../helpers/assert';
 import assertType from '../helpers/assertType';
 
 /**
- * Gets the global child registry.
+ * Gets the current or closest child registry of the target element.
  *
  * @param {Node} [element] - Target element.
  * @param {Node} [findClosest] - Specifies whether to keep seeking for a child

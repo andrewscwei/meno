@@ -8,26 +8,28 @@ import assertType from '../helpers/assertType';
 /**
  * Creates a DOM element from the provided string.
  *
- * @param {string} value - String describing the DOM element.
+ * @param {string} htmlString - String describing the DOM element.
  *
  * @return {Node} DOM element.
  *
  * @alias module:meno~dom.createElement
  */
-function createElement(value) {
+function createElement(htmlString) {
   if (!document) return null;
 
-  assertType(value, 'string', true, 'Value must be a string');
+  assertType(htmlString, 'string', true, 'Argument must be a string');
 
-  if (value.match(/^([a-z0-9]+-)+[a-z0-9]+$/)) {
-    return new (getElementRegistry(value))();
-  }
-  else {
-    let div = document.createElement('div');
-    if (value.indexOf('<') !== 0 && value.indexOf('>') !== (value.length - 1)) value = `<${value}>`;
-    div.innerHTML = value;
-    return div.firstChild;
-  }
+  const CustomElement = getElementRegistry(htmlString);
+
+  // Check if custom element. Custom element needs to be created from the 
+  // element registry.
+  if (CustomElement) return new CustomElement();
+
+  // Otherwise create the element from document.
+  let div = document.createElement('div');
+  if (htmlString.indexOf('<') !== 0 && htmlString.indexOf('>') !== (htmlString.length - 1)) htmlString = `<${htmlString}>`;
+  div.innerHTML = htmlString;
+  return div.firstChild;
 }
 
 export default createElement;

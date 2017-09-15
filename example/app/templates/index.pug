@@ -2,7 +2,8 @@ doctype html
 
 html
   head
-    title= 'Meno Playground'
+    title= 'Todo List'
     link(rel='shortcut icon' href='')
+    link(href='https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i' rel='stylesheet')
   body
-    div(id='foo' is='foo-element' name='foo' :meow='meow')
+    div(is='todo-app' :ref='app')

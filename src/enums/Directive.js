@@ -18,7 +18,7 @@ const Directive = {
   /**
    * Instance name.
    */
-  NAME: 'name',
+  NAME: ':ref',
   
   /**
    * Use this directive to map any property from the DOM to the controller.

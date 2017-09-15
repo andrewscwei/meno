@@ -56,10 +56,12 @@ function register(tagOrClass, options) {
       o = options
     }
     else {
-      if (options['class'])
+      if (options['class']) {
         o['prototype'] = options['class'].prototype;
-      else if (options['prototype'])
+      }
+      else if (options['prototype']) {
         o['prototype'] = options['prototype'];
+      }
 
       if (options['extends']) o['extends'] = options['extends'];
     }

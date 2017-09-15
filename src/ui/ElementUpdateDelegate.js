@@ -3,6 +3,7 @@
 'use strict';
 
 import DirtyType from '../enums/DirtyType';
+import NodeState from '../enums/NodeState';
 import assert from '../helpers/assert';
 import debounce from '../helpers/debounce';
 
@@ -250,12 +251,15 @@ class ElementUpdateDelegate {
 
       if (mDirtyTable === DirtyType.NONE) return;
 
-      if (validateNow)
+      if (validateNow) {
         this.update();
-      else if (!this._pendingAnimationFrame)
+      }
+      else if (!this._pendingAnimationFrame) {
         this._pendingAnimationFrame = _requestAnimationFrame(this.update.bind(this));
-      else if (this._pendingAnimationFrame)
+      }
+      else if (this._pendingAnimationFrame) {
         window.setTimeout(() => this.setDirty(dirtyType, validateNow), 0.0);
+      }
     };
 
     /**
@@ -279,7 +283,7 @@ class ElementUpdateDelegate {
      * Initializes this ElementUpdateDelegate instance. Must manually invoke.
      */
     this.init = () => {
-      this.setDirty(DirtyType.ALL);
+      this.setDirty(DirtyType.ALL, true);
     };
 
     /**
@@ -340,8 +344,10 @@ class ElementUpdateDelegate {
     this.update = () => {
       _cancelAnimationFrame(this._pendingAnimationFrame);
 
-      if (this.delegate && this.delegate.update)
+      if (this.delegate && this.delegate.update && this.delegate.nodeState <= NodeState.INITIALIZED) {
+        if (this.isDirty(DirtyType.RENDER)) this.delegate.__render__();
         this.delegate.update.call(this.delegate);
+      }
 
       // Reset the dirty status of all types.
       this.setDirty(DirtyType.NONE);

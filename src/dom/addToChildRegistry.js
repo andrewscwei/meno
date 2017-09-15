@@ -37,10 +37,12 @@ function addToChildRegistry(childRegistry, child, name) {
     name = inferredName;
   }
 
-  if (childRegistry[name])
+  if (childRegistry[name]) {
     childRegistry[name] = [].concat(childRegistry[name], child);
-  else
+  }
+  else {
     childRegistry[name] = child;
+  }
 
   return true;
 }
