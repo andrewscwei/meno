@@ -645,7 +645,11 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
         set: true
       };
 
-      if (typeof value === 'function') opts.set = false;
+      if (typeof value === 'function') {
+        opts.get = value;
+        opts.defaultValue = undefined;
+        opts.set = false;
+      }
       if (typeof options.unique === 'boolean') opts.unique = options.unique;
       if (typeof options.renderOnChange === 'boolean') opts.dirtyType |= DirtyType.RENDER;
       if (typeof options.eventType === 'string') opts.eventType = options.eventType;
@@ -724,7 +728,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     this.updateDelegate.init();
     
     // Now that the initial update is complete, unhide the element.
-    this.setStyle('visibility', this.invisible ? 'hidden' : 'visible');
+    this.setStyle('visibility', this.invisible ? 'hidden' : null);
 
     if (this.init) this.init();
 

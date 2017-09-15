@@ -2,27 +2,14 @@
 
 'use strict';
 
-import { Element, NodeState, DirtyType, dom } from 'meno';
+import { Element, DirtyType } from 'meno';
 import template from 'templates/components/todo-app';
-import TodoEntry from './TodoEntry'
-
-const getElementRegistry = require('dom/getElementRegistry').default;
 
 class TodoApp extends Element('todo-app') {
   defaults() {
     return {
       items: [],
       filter: 'all',
-      filteredItems: () => {
-        switch (this.data.filter) {
-        case 'active':
-          return this.data.items.filter(item => (item.completed === false));
-        case 'completed':
-          return this.data.items.filter(item => (item.completed !== false));
-        default:
-          return this.data.items;
-        }
-      },
       total: () => (this.data.items.length),
       totalActive: () => (this.data.items.reduce((total, item) => (total + (item.completed ? 0 : 1)), 0)),
       totalCompleted: () => (this.data.items.reduce((total, item) => (total + (item.completed ? 1 : 0)), 0)),

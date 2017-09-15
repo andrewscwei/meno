@@ -15,14 +15,14 @@ body
   +padding(200px 50px 100px)
 
   .categories
-    +margin(20px auto)
+    +margin(80px auto 20px)
     +display('box>', center)
 
     button
       +space-between(10px, '>')
       +size(auto 40px)
       +padding(0 20px)
-      +transition(background, .2s, ease-out)
+      +transition(background color, .2s, ease-out)
       background: #222
       color: #fff
       text-transform: uppercase
@@ -30,12 +30,13 @@ body
       font-size: .6em
 
       &:hover, &.active
-        background: #464965
+        background: #fff
+        color: #111
 
       &.active
         pointer-events: none
 
-+element('todo-entry')
++element('todo-input')
   +size(100% 100px)
 
   input
@@ -54,14 +55,18 @@ body
   
 .list
   +size(80% auto)
-  +display('boxv')
+  +display('box^')
+  +padding(_ _ 100px _)
 
 +element('todo-item')
+  +margin(_ _ 10px _)
   +size(100% 50px)
   +display('box>', top left)
-  +space-between(10px, 'v')
   align-items: stretch
   background: #161616
+
+  &[hidden]
+    display: none
 
   &.completed
     [type='label']
@@ -89,7 +94,7 @@ body
   button
     +size(100px auto)
     +transition(background color, .2s, ease-out)
-    background: #464965
+    background: #222
     color: #fff
     font-weight: 400
     font-size: .6em

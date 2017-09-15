@@ -2,7 +2,7 @@
 
 'use strict';
 
-import { Element, NodeState, DirtyType } from 'meno';
+import { Element, DirtyType } from 'meno';
 import template from 'templates/components/todo-item';
 
 class TodoItem extends Element('todo-item') {
