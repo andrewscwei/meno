@@ -2,8 +2,6 @@
 
 'use strict';
 
-import assertType from 'helpers/assertType';
-
 /**
  * Checks if an object literal has the specified value in one of its keys.
  *
@@ -15,8 +13,6 @@ import assertType from 'helpers/assertType';
  * @alias module:meno~helpers.hasOwnValue
  */
 function hasOwnValue(object, value) {
-  assertType(object, 'object', false, 'Invalid object specified');
-
   for (let k in object) {
     if (object.hasOwnProperty(k) && (object[k] === value)) return true;
   }

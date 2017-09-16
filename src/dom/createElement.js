@@ -3,7 +3,10 @@
 'use strict';
 
 import getElementRegistry from 'dom/getElementRegistry';
-import assertType from 'helpers/assertType';
+
+if (process.env.NODE_ENV === 'development') {
+  var assertType = require('debug/assertType');
+}
 
 /**
  * Creates a DOM element from the provided string.
@@ -17,7 +20,9 @@ import assertType from 'helpers/assertType';
 function createElement(htmlString) {
   if (!document) return null;
 
-  assertType(htmlString, 'string', true, 'Argument must be a string');
+  if (process.env.NODE_ENV === 'development') {
+    assertType(htmlString, 'string', true, 'Argument must be a string');
+  }
 
   const CustomElement = getElementRegistry(htmlString);
 

@@ -2,7 +2,9 @@
 
 'use strict';
 
-import assertType from 'helpers/assertType';
+if (process.env.NODE_ENV === 'development') {
+  var assertType = require('debug/assertType');
+}
 
 /**
  * Generates a nested namespace in the specified scope, as described by the dot-
@@ -21,8 +23,10 @@ import assertType from 'helpers/assertType';
  * @alias module:meno~dom.namespace
  */
 function namespace(path, scope) {
-  assertType(path, 'string', true, 'Invalid parameter: path');
-  assertType(scope, 'object', true, 'Invalid optional parameter: scope');
+  if (process.env.NODE_ENV === 'development') {
+    assertType(path, 'string', true, 'Invalid parameter: path');
+    assertType(scope, 'object', true, 'Invalid optional parameter: scope');
+  }
 
   if (!scope) scope = (window) ? window : {};
   if (path === undefined || path === '') return scope;

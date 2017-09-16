@@ -3,9 +3,12 @@
 'use strict';
 
 import getChild from 'dom/getChild';
-import assert from 'assert';
-import assertType from 'helpers/assertType';
 import noval from 'helpers/noval';
+
+if (process.env.NODE_ENV === 'development') {
+  var assert = require('assert');
+  var assertType = require('debug/assertType');
+}
 
 /**
  * Determines if an element contains the specified child.
@@ -20,8 +23,10 @@ import noval from 'helpers/noval';
  * @alias module:meno~dom.hasChild
  */
 function hasChild(child, element) {
-  assert(child !== undefined, 'Child is undefined');
-  assertType(element, Node, true, 'Parameter \'element\', if specified, must be a Node');
+  if (process.env.NODE_ENV === 'development') {
+    assert(child !== undefined, 'Child is undefined');
+    assertType(element, Node, true, 'Parameter \'element\', if specified, must be a Node');
+  }
 
   if (typeof child === 'string') {
     return !noval(getChild(element, child, true));

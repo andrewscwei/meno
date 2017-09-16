@@ -2,7 +2,9 @@
 
 'use strict';
 
-import assertType from 'helpers/assertType';
+if (process.env.NODE_ENV === 'development') {
+  var assertType = require('debug/assertType');
+}
 
 /**
  * Gets an attribute of an element by its name.
@@ -15,7 +17,9 @@ import assertType from 'helpers/assertType';
  * @alias module:meno~dom.getAttribute
  */
 function getAttribute(element, name) {
-  assertType(element, Node, false, 'Invalid element specified');
+  if (process.env.NODE_ENV === 'development') {
+    assertType(element, Node, false, 'Invalid element specified');
+  }
 
   if (!element.getAttribute) return null;
 

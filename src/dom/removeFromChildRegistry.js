@@ -3,7 +3,10 @@
 'use strict';
 
 import getChildRegistry from 'dom/getChildRegistry';
-import assertType from 'helpers/assertType';
+
+if (process.env.NODE_ENV === 'development') {
+  var assertType = require('debug/assertType');
+}
 
 /**
  * Removes a child or an array of children with the same name from the specified
@@ -17,8 +20,10 @@ import assertType from 'helpers/assertType';
  * @alias module:meno~dom.removeFromChildRegistry
  */
 function removeFromChildRegistry(childRegistry, child) {
-  assertType(childRegistry, 'object', false, 'Invalid child registry specified');
-  assertType(child, [Node, Array, 'string'], false, 'Invalid child(ren) or name specified');
+  if (process.env.NODE_ENV === 'development') {
+    assertType(childRegistry, 'object', false, 'Invalid child registry specified');
+    assertType(child, [Node, Array, 'string'], false, 'Invalid child(ren) or name specified');
+  }
 
   if (typeof child === 'string') {
     let targets = child.split('.');

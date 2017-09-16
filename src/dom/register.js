@@ -3,8 +3,11 @@
 'use strict';
 
 import getElementRegistry from 'dom/getElementRegistry';
-import assert from 'assert';
-import assertType from 'helpers/assertType';
+
+if (process.env.NODE_ENV === 'development') {
+  var assert = require('assert');
+  var assertType = require('debug/assertType');
+}
 
 /**
  * Wraps the native Document.registerElement() and registers a custom element
@@ -29,7 +32,9 @@ import assertType from 'helpers/assertType';
  * @alias module:meno~dom.register
  */
 function register(tagOrClass, options) {
-  assertType(tagOrClass, ['string', Function], false, 'Invalid tag or class specified');
+  if (process.env.NODE_ENV === 'development') {
+    assertType(tagOrClass, ['string', Function], false, 'Invalid tag or class specified');
+  }
 
   let tag;
   let o = {};
@@ -42,14 +47,18 @@ function register(tagOrClass, options) {
     };
   }
   else {
-    assertType(options, ['object', 'function'], false, `Second param must be a class or an object literal containing at least the 'prototype' key`);
+    if (process.env.NODE_ENV === 'development') {
+      assertType(options, ['object', 'function'], false, `Second param must be a class or an object literal containing at least the 'prototype' key`);
+    }
 
     tag = tagOrClass;
 
     if (typeof options === 'object') {
-      assertType(options['prototype'], 'function', true, 'Invalid prototype class provided: ' + options['prototype']);
-      assertType(options['class'], 'function', true, 'Invalid class provided: ' + options['class']);
-      assert(!options['extends'] || typeof options['extends'] ===  'string', true, 'Invalid value specified for options.extends: ' + options['extends']);
+      if (process.env.NODE_ENV === 'development') {
+        assertType(options['prototype'], 'function', true, 'Invalid prototype class provided: ' + options['prototype']);
+        assertType(options['class'], 'function', true, 'Invalid class provided: ' + options['class']);
+        assert(!options['extends'] || typeof options['extends'] ===  'string', true, 'Invalid value specified for options.extends: ' + options['extends']);
+      }
     }
 
     if (typeof options === 'function') {

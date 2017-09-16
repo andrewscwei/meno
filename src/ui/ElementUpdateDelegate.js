@@ -4,8 +4,11 @@
 
 import DirtyType from 'enums/DirtyType';
 import NodeState from 'enums/NodeState';
-import assert from 'assert';
 import debounce from 'helpers/debounce';
+
+if (process.env.NODE_ENV === 'development') {
+  var assert = require('assert');
+}
 
 /**
  * Default refresh (debounce) rate in milliseconds.
@@ -386,13 +389,17 @@ class ElementUpdateDelegate {
     this.initResponsiveness = function() {
       let args = Array.prototype.slice.call(arguments);
 
-      assert(args.length > 0, 'Insufficient arguments provided');
+      if (process.env.NODE_ENV === 'development') {
+        assert(args.length > 0, 'Insufficient arguments provided');
+      }
 
       let conductor = ((typeof args[0] !== 'number') && (typeof args[0] !== 'string')) ? args.shift() : window;
       let delay = (typeof args[0] === 'number') ? args.shift() : DEFAULT_REFRESH_RATE;
       let universal = (args.length === 0);
 
-      assert(conductor && conductor.addEventListener, 'Invalid conductor specified');
+      if (process.env.NODE_ENV === 'development') {
+        assert(conductor && conductor.addEventListener, 'Invalid conductor specified');
+      }
 
       if (universal || args.indexOf('resize') > -1 || args.indexOf('orientationchange') > -1) {
         if (mResizeHandler) {

@@ -3,8 +3,11 @@
 'use strict';
 
 import getChildRegistry from 'dom/getChildRegistry';
-import assertType from 'helpers/assertType';
 import noval from 'helpers/noval';
+
+if (process.env.NODE_ENV === 'development') {
+  var assertType = require('debug/assertType');
+}
 
 /**
  * Gets the a child from the global display tree consisting of all sightread
@@ -46,8 +49,10 @@ function getChild() {
     recursive = arg3;
   }
 
-  assertType(name, 'string', true, 'Child name must be string')
-  assertType(recursive, 'boolean', true, 'Parameter \'recursive\', if specified, must be a boolean');
+  if (process.env.NODE_ENV === 'development') {
+    assertType(name, 'string', true, 'Child name must be string')
+    assertType(recursive, 'boolean', true, 'Parameter \'recursive\', if specified, must be a boolean');
+  }
 
   let childRegistry = getChildRegistry(element);
   if (!childRegistry) return (typeof (element || document).querySelector === 'function') ? (element || document).querySelector(name) : null

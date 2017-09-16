@@ -3,7 +3,10 @@
 'use strict';
 
 import EventDispatcher from 'events/EventDispatcher';
-import assert from 'assert';
+
+if (process.env.NODE_ENV === 'development') {
+  var assert = require('assert');
+}
 
 /**
  * @class
@@ -45,12 +48,19 @@ class EventQueue extends EventDispatcher {
    * @param  {string} eventType - Name of the event to register.
    */
   enqueue(eventDispatcher, eventType) {
-    assert((typeof eventDispatcher.dispatchEvent === 'function') && (typeof eventDispatcher.addEventListener === 'function'), `Not a valid event dispatcher instance`);
-    assert(!this.isWaiting, 'Cannot enqueue when EventQueue instance is already waiting for events');
+    if (process.env.NODE_ENV === 'development') {
+      assert((typeof eventDispatcher.dispatchEvent === 'function') && (typeof eventDispatcher.addEventListener === 'function'), `Not a valid event dispatcher instance`);
+      assert(!this.isWaiting, 'Cannot enqueue when EventQueue instance is already waiting for events');
+    }
     if (this.eventPool[eventType] === undefined) this.eventPool[eventType] = [];
 
     let pool = this.eventPool[eventType];
-    pool.forEach((event) => assert(event.dispatcher !== eventDispatcher, `The event '${eventType}' of ${eventDispatcher} is already in the queue`));
+    let n = pool.length;
+
+    for (let i = 0; i < n; i++) {
+      if (event.dispatcher === eventDispatcher) return;
+    }
+
     pool.push({ dispatcher: eventDispatcher });
   }
 
@@ -64,7 +74,10 @@ class EventQueue extends EventDispatcher {
    *                              registered with.
    */
   dequeue(eventDispatcher, eventType) {
-    assert(!this.isWaiting, 'Cannot dequeue when EventQueue instance is already waiting for events');
+    if (process.env.NODE_ENV === 'development') {
+      assert(!this.isWaiting, 'Cannot dequeue when EventQueue instance is already waiting for events');
+    }
+
     let pool = this.eventPool[eventType];
     if (!pool) return;
     let n = pool.length;
@@ -88,7 +101,10 @@ class EventQueue extends EventDispatcher {
     for (let eventType in this.eventPool) {
       let pool = this.eventPool[eventType];
       pool.forEach((eventPair) => {
-        assert(eventPair.handler === undefined, `Handler not supposed to be defined at this point`);
+        if (process.env.NODE_ENV === 'development') {
+          assert(eventPair.handler === undefined, `Handler not supposed to be defined at this point`);
+        }
+
         eventPair.handler = () => {
           eventPair.dispatcher.removeEventListener(eventType, eventPair.handler);
           delete eventPair.handler;

@@ -2,8 +2,8 @@
 
 'use strict';
 
-import isCustomElement from 'helpers/isCustomElement';
 import getChildRegistry from 'dom/getChildRegistry';
+import isCustomElement from 'dom/isCustomElement';
 
 /**
  * Gets all the direct custom children of an element, flattened to a single

@@ -2,8 +2,11 @@
 
 'use strict';
 
-import assertType from 'helpers/assertType';
 import noval from 'helpers/noval';
+
+if (process.env.NODE_ENV === 'development') {
+  var assertType = require('debug/assertType');
+}
 
 /**
  * Checks to see if an element has the attribute of the specified name.
@@ -16,7 +19,10 @@ import noval from 'helpers/noval';
  * @alias module:meno~dom.hasAttribute
  */
 function hasAttribute(element, name) {
-  assertType(element, Node, false, 'Invalid element specified');
+  if (process.env.NODE_ENV === 'development') {
+    assertType(element, Node, false, 'Invalid element specified');
+  }
+  
   let value = element.getAttribute(name);
   if (value === '') return true;
   return !noval(value);

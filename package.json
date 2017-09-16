@@ -1,6 +1,6 @@
 {
   "name": "meno",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "An experimental JavaScript UI library",
   "main": "dist/meno.js",
   "unpkg": "dist/meno.min.js",
@@ -41,9 +41,7 @@
     "mocha": "^3.5.3",
     "ncp": "^2.0.0",
     "rimraf": "^2.6.2",
-    "strip-loader": "^0.1.2",
     "webpack": "^3.6.0",
-    "webpack-bundle-analyzer": "^2.9.0",
-    "webpack-unassert-loader": "^1.2.0"
+    "webpack-bundle-analyzer": "^2.9.0"
   }
 }

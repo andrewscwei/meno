@@ -30,9 +30,7 @@ module.exports = {
   module: {
     rules: [{
       test: /\.js$/,
-      use: [{
-        loader: 'babel-loader'
-      }]
+      loader: 'babel-loader'
     }]
   },
   resolve: {
@@ -44,7 +42,10 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      VERSION: JSON.stringify(version)
+      'process.env': {
+        BUNDLE_VERSION: JSON.stringify(version),
+        NODE_ENV: JSON.stringify(debug ? 'development' : 'production')
+      }
     })
   ]
   .concat(debug ? [] : [

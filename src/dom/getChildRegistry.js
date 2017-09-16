@@ -2,8 +2,10 @@
 
 'use strict';
 
-import assert from 'assert';
-import assertType from 'helpers/assertType';
+if (process.env.NODE_ENV === 'development') {
+  var assert = require('assert');
+  var assertType = require('debug/assertType');
+}
 
 /**
  * Gets the current or closest child registry of the target element.
@@ -18,8 +20,10 @@ import assertType from 'helpers/assertType';
  * @alias module:meno~dom.getChildRegistry
  */
 function getChildRegistry(element, findClosest) {
-  assert((element === window) || (element instanceof Node) || !element, 'Invalid element specified');
-  assertType(findClosest, 'boolean', true, `The parameter 'findClosest', if specified, must be a boolean value`);
+  if (process.env.NODE_ENV === 'development') {
+    assert((element === window) || (element instanceof Node) || !element, 'Invalid element specified');
+    assertType(findClosest, 'boolean', true, `The parameter 'findClosest', if specified, must be a boolean value`);
+  }
 
   if (!element || element === document || element === document.body) element = window;
 

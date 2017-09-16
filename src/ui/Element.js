@@ -2,10 +2,6 @@
 
 'use strict';
 
-import assert from 'assert';
-import assertType from 'helpers/assertType';
-import debug from 'helpers/debug';
-
 import ElementUpdateDelegate from 'ui/ElementUpdateDelegate';
 import addChild from 'dom/addChild';
 import getChild from 'dom/getChild';
@@ -27,8 +23,14 @@ import Directive from 'enums/Directive';
 import DirtyType from 'enums/DirtyType';
 import NodeState from 'enums/NodeState';
 import EventQueue from 'events/EventQueue';
-import getDirectCustomChildren from 'helpers/getDirectCustomChildren';
+import getDirectCustomChildren from 'dom/getDirectCustomChildren';
 import hasOwnValue from 'helpers/hasOwnValue';
+
+if (process.env.NODE_ENV === 'development') {
+  var assert = require('assert');
+  var assertType = require('debug/assertType');
+  var debug = require('debug')('meno');
+}
 
 // import h from 'virtual-dom/h';
 // import diff from 'virtual-dom/diff';
@@ -186,7 +188,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @ignore
    */
   createdCallback() {
-    debug(`<${this.constructor.name}> createdCallback()`);
+    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> createdCallback()`);
 
     this.__private__ = {};
     this.__private__.childRegistry = {};
@@ -249,7 +251,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @ignore
    */
   attachedCallback() {
-    debug(`<${this.constructor.name}> attachedCallback()`);
+    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> attachedCallback()`);
 
     // Wait for children to initialize before initializing this element.
     this.__awaitInit__();
@@ -262,7 +264,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @ignore
    */
   detachedCallback() {
-    debug(`<${this.constructor.name}> detachedCallback()`);
+    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> detachedCallback()`);
 
     this.__destroy__();
     this.removeAllEventListeners();
@@ -278,7 +280,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @ignore
    */
   attributeChangedCallback(attrName, oldVal, newVal) {
-    debug(`<${this.constructor.name}> attributeChangedCallback(${attrName}, ${oldVal}, ${newVal})`);
+    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> attributeChangedCallback(${attrName}, ${oldVal}, ${newVal})`);
   }
 
   /**
@@ -699,12 +701,14 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
 
     if (!options) options = {};
 
-    assertType(options.unique, 'boolean', true, 'Optional unique key in options must be a boolean');
-    assertType(options.dirtyType, 'number', true, 'Optional dirty type must be of DirtyType enum (number)');
-    assertType(options.eventType, 'string', true, 'Optional event type must be a string');
-    assertType(options.renderOnChange, 'boolean', true, 'Optional renderOnChange must be a boolean');
-    assertType(options.attributed, 'boolean', true, 'Optional attributed must be a boolean');
-    assertType(options.onChange, 'function', true, 'Optional change handler must be a function');
+    if (process.env.NODE_ENV === 'development') {
+      assertType(options.unique, 'boolean', true, 'Optional unique key in options must be a boolean');
+      assertType(options.dirtyType, 'number', true, 'Optional dirty type must be of DirtyType enum (number)');
+      assertType(options.eventType, 'string', true, 'Optional event type must be a string');
+      assertType(options.renderOnChange, 'boolean', true, 'Optional renderOnChange must be a boolean');
+      assertType(options.attributed, 'boolean', true, 'Optional attributed must be a boolean');
+      assertType(options.onChange, 'function', true, 'Optional change handler must be a function');
+    }
   
     const dirtyType = options.dirtyType === undefined ? DirtyType.DATA : options.dirtyType;
     const renderOnChange = typeof options.renderOnChange === 'boolean' ? options.renderOnChange : true;
@@ -713,7 +717,9 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     const eventType = options.eventType;
     const unique = (typeof unique === 'boolean') ? options.unique : true;
   
-    assert(!attributeName || !hasOwnValue(Directive, attributeName), 'Attribute \'' + attributeName + '\' is reserved');
+    if (process.env.NODE_ENV === 'development') {
+      assert(!attributeName || !hasOwnValue(Directive, attributeName), 'Attribute \'' + attributeName + '\' is reserved');
+    }
   
     // Set the default value if its is not a computed value.
     if (value !== undefined && typeof value !== 'function') {
@@ -814,7 +820,9 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @alias module:meno~ui.Element#get
    */
   get(propertyName, defaultInitializer) {
-    assertType(propertyName, 'string', false);
+    if (process.env.NODE_ENV === 'development') {
+      assertType(propertyName, 'string', false);
+    }
     if (!this.__private__) this.__private__ = {};
     if (this.__private__[propertyName] === undefined) this.__private__[propertyName] = (typeof defaultInitializer === 'function') ? defaultInitializer() : defaultInitializer;
     return this.__private__[propertyName];
@@ -829,7 +837,9 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @alias module:meno~ui.Element#set
    */
   set(propertyName, value) {
-    assertType(propertyName, 'string', false);
+    if (process.env.NODE_ENV === 'development') {
+      assertType(propertyName, 'string', false);
+    }
     if (!this.__private__) this.__private__ = {};
     this.__private__[propertyName] = value;
   }
@@ -840,7 +850,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @private 
    */
   __init__() {
-    debug(`<${this.constructor.name}> __init__()`);
+    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> __init__()`);
 
     // Initial render.
     this.__render__();
@@ -863,7 +873,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @private
    */
   __destroy__() {
-    debug(`<${this.constructor.name}> __destroy__()`);
+    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> __destroy__()`);
     if (this.__private__.eventQueue) this.__private__.eventQueue.kill();
     if (this.destroy) this.destroy();
   }
@@ -878,7 +888,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     if (!this.constructor.template) return sightread(this);
 
     // Otherwise continue processing template.
-    debug(`<${this.constructor.name}> __render__()`);
+    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> __render__()`);
 
     const template = this.constructor.template(this.data);
 

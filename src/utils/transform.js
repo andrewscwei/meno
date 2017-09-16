@@ -3,7 +3,6 @@
 'use strict';
 
 import getRect from 'utils/getRect';
-import assert from 'assert';
 
 /**
  * Transforms a DOM element.
@@ -33,9 +32,9 @@ function transform(element, properties, constraints) {
   let n = elements.length;
 
   if (properties) {
-    assert((properties.width === undefined) || !isNaN(properties.width), 'Width property must be a number.');
-    assert((properties.height === undefined) || !isNaN(properties.height), 'Height property must be a number.');
-    assert((properties.aspectRatio === undefined) || !isNaN(properties.aspectRatio), 'Aspect ratio property must be a number.');
+    if (!((properties.width === undefined) || !isNaN(properties.width))) throw new Error('Width property must be a number.');
+    if (!((properties.height === undefined) || !isNaN(properties.height))) throw new Error('Height property must be a number.');
+    if (!((properties.aspectRatio === undefined) || !isNaN(properties.aspectRatio))) throw new Error('Aspect ratio property must be a number.');
 
     let rect = getRect(element);
     let units = properties.units || 'px';
@@ -47,8 +46,8 @@ function transform(element, properties, constraints) {
     let type = properties.type || 'default';
 
     if (constraints && type !== 'default') {
-      assert((constraints.width === undefined) || !isNaN(constraints.width), 'Width constraint must be a number.');
-      assert((constraints.height === undefined) || !isNaN(constraints.height), 'Height constraint must be a number.');
+      if (!((constraints.width === undefined) || !isNaN(constraints.width))) throw new Error('Width constraint must be a number.');
+      if (!((constraints.height === undefined) || !isNaN(constraints.height))) throw new Error('Height constraint must be a number.');
 
       if (type && type === 'cover') {
         if (constraints.width !== undefined) minW = Math.min(constraints.width, minW);

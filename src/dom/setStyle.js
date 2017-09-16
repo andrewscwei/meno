@@ -2,7 +2,9 @@
 
 'use strict';
 
-import assertType from 'helpers/assertType';
+if (process.env.NODE_ENV === 'development') {
+  var assertType = require('debug/assertType');
+}
 
 /**
  * Sets an inline CSS rule of a Node.
@@ -17,7 +19,10 @@ import assertType from 'helpers/assertType';
  * @alias module:meno~dom.setStyle
  */
 function setStyle(element, key, value) {
-  assertType(element, Node, false, 'Invalid element specified');
+  if (process.env.NODE_ENV === 'development') {
+    assertType(element, Node, false, 'Invalid element specified');
+  }
+  
   if (typeof value === 'number') value = String(value);
   if (value === null || value === undefined) value = '';
 

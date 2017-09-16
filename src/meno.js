@@ -2,7 +2,6 @@
 
 'use strict';
 
-import assert from 'assert';
 import getChild from 'dom/getChild';
 import addChild from 'dom/addChild';
 import hasChild from 'dom/hasChild';
@@ -27,7 +26,10 @@ import EventQueue from 'events/EventQueue';
 
 // import 'document-register-element';
 
-assert(window && document, 'Meno is a front-end web framework where \'window\' and \'document\' must be defined');
+if (process.env.NODE_ENV === 'development') {
+  var assert = require('assert');
+  assert(window && document, 'Meno is a front-end web framework where \'window\' and \'document\' must be defined');
+}
 
 /**
  * @module meno
@@ -36,7 +38,7 @@ function meno() {
   return (arguments.length > 0) ? register.apply(null, arguments) : sightread.apply(null, arguments);
 }
 
-meno.version = VERSION;
+meno.version = process.env.BUNDLE_VERSION;
 
 meno.Element = Element;
 meno.EventQueue = EventQueue;

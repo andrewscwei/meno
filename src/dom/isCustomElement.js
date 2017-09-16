@@ -2,10 +2,13 @@
 
 'use strict';
 
-import assertType from 'helpers/assertType';
 import getAttribute from 'dom/getAttribute';
 import getElementRegistry from 'dom/getElementRegistry';
 import Directive from 'enums/Directive';
+
+if (process.env.NODE_ENV === 'development') {
+  var assertType = require('debug/assertType');
+}
 
 /**
  * Verifies that the specified element is a custom Meno element.
@@ -18,7 +21,9 @@ import Directive from 'enums/Directive';
  * @alias module:meno~helpers.isCustomElement
  */
 function isCustomElement(element) {
-  assertType(element, Node, false, 'Invalid element specified');
+  if (process.env.NODE_ENV === 'development') {
+    assertType(element, Node, false, 'Invalid element specified');
+  }
 
   const is = getAttribute(element, Directive.IS);
   const tag = element.tagName.toLowerCase();

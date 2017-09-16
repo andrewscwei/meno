@@ -3,7 +3,6 @@
 'use strict';
 
 import getViewportRect from 'utils/getViewportRect';
-import assert from 'assert';
 
 /**
  * Gets the rect of a given element or the overall rect of an array of elements.
@@ -26,9 +25,6 @@ function getRect(element, reference) {
   if (n <= 0) return null;
 
   let refRect = getRect(reference);
-
-  assert(refRect, 'Cannot determine reference FOV.');
-
   let winRect = getRect(window);
   let rect = {};
 

@@ -2,8 +2,8 @@
 
 'use strict';
 
-import assert from 'assert';
-import checkType from 'helpers/checkType';
+var assert = require('assert');
+var checkType = require('debug/checkType');
 
 /**
  * Asserts the specified condition and throws a warning if assertion fails.
@@ -48,4 +48,4 @@ function assertType(value, type, allowUndefined, message) {
   throw new Error(message || 'AssertType failed');
 }
 
-export default assertType;
+module.exports = assertType;

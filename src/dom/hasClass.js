@@ -2,7 +2,9 @@
 
 'use strict';
 
-import assert from 'assert';
+if (process.env.NODE_ENV === 'development') {
+  var assert = require('assert');
+}
 
 /**
  * Verifies that the specified element(s) has the specified class.
@@ -15,7 +17,9 @@ import assert from 'assert';
  * @alias module:meno~dom.hasClass
  */
 function hasClass(element, className) {
-  assert(className && (typeof className === 'string'), 'Invalid class name: ' + className);
+  if (process.env.NODE_ENV === 'development') {
+    assert(className && (typeof className === 'string'), 'Invalid class name: ' + className);
+  }
 
   let elements = [].concat(element);
   let n = elements.length;

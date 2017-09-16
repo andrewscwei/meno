@@ -7,10 +7,10 @@ const path = require('path');
 const webpack = require('webpack');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 const HTMLWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
-const baseDir = path.resolve(__dirname, '../');
-const version = require(path.join(__dirname, '../', 'package.json')).version;
-const sourceDir = path.join(__dirname, 'app');
-const buildDir = path.join(__dirname, 'public');
+const baseDir = path.resolve(__dirname, '../../');
+const version = require(path.join(baseDir, 'package.json')).version;
+const sourceDir = path.join(__dirname, '../app');
+const buildDir = path.join(__dirname, '../public');
 
 module.exports = {
   devtool: 'cheap-module-eval-source-map',
@@ -51,14 +51,14 @@ module.exports = {
     modules: [
       path.join(sourceDir),
       path.join(baseDir, 'src'),
-      path.join(__dirname, 'node_modules')
+      path.join(__dirname, '../node_modules')
     ]
   },
   plugins: [
     new webpack.DefinePlugin({
-      VERSION: JSON.stringify(version),
       'process.env': {
-        'NODE_ENV': JSON.stringify(debug ? 'development' : 'production')
+        BUNDLE_VERSION: JSON.stringify(version),
+        NODE_ENV: JSON.stringify(debug ? 'development' : 'production')
       }
     }),
     new webpack.WatchIgnorePlugin([

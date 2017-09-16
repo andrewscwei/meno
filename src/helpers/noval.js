@@ -2,8 +2,6 @@
 
 'use strict';
 
-import assertType from 'helpers/assertType';
-
 /**
  * Checks if a given value is equal to null. Option to specify recursion, which
  * would further evaluate inner elements, such as when an Array or Object is
@@ -19,8 +17,6 @@ import assertType from 'helpers/assertType';
  * @alias module:meno~helpers.noval
  */
 function noval(value, recursive) {
-  assertType(recursive, 'boolean', true, 'Invalid parameter: recursive');
-
   if (recursive === undefined) recursive = false;
 
   if (value === undefined || value === null) {

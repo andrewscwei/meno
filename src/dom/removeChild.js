@@ -5,9 +5,12 @@
 import getChild from 'dom/getChild';
 import getChildRegistry from 'dom/getChildRegistry';
 import removeFromChildRegistry from 'dom/removeFromChildRegistry';
-import assert from 'assert';
-import assertType from 'helpers/assertType';
 import noval from 'helpers/noval';
+
+if (process.env.NODE_ENV === 'development') {
+  var assert = require('assert');
+  var assertType = require('debug/assertType');
+}
 
 /**
  * Removes a child element(s) from an element.
@@ -20,7 +23,9 @@ import noval from 'helpers/noval';
  * @alias module:meno~dom.removeChild
  */
 function removeChild() {
-  assert((arguments.length > 0) && (arguments.length < 3), 'removeChild() expects either 1 or 2 arguments');
+  if (process.env.NODE_ENV === 'development') {
+    assert((arguments.length > 0) && (arguments.length < 3), 'removeChild() expects either 1 or 2 arguments');
+  }
 
   let element = undefined;
   let child = undefined;
@@ -33,7 +38,9 @@ function removeChild() {
     child = arguments[1];
   }
 
-  assertType(element, Node, true, 'Parameter \'element\', if specified, must be a Node');
+  if (process.env.NODE_ENV === 'development') {
+    assertType(element, Node, true, 'Parameter \'element\', if specified, must be a Node');
+  }
 
   let childRegistry = getChildRegistry(element);
 

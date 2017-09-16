@@ -4,8 +4,11 @@
 
 import addToChildRegistry from 'dom/addToChildRegistry';
 import getChildRegistry from 'dom/getChildRegistry';
-import assert from 'assert';
-import isCustomElement from 'helpers/isCustomElement';
+import isCustomElement from 'dom/isCustomElement';
+
+if (process.env.NODE_ENV === 'development') {
+  var assert = require('assert');
+}
 
 /**
  * Crawls a DOM element, creates a child registry for the element and registers
@@ -38,7 +41,10 @@ function sightread(element, childRegistry) {
 
   // Set the target element to crawl.
   const target = (element === window) ? document.body : (element.shadowRoot ? element.shadowRoot : element);
-  assert(target, 'Element is invalid. Too early to sightread?');
+
+  if (process.env.NODE_ENV === 'development') {
+    assert(target, 'Element is invalid. Too early to sightread?');
+  }
 
   // Begin crawling each child node.
   const n = target.childNodes.length;

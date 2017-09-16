@@ -3,10 +3,13 @@
 'use strict';
 
 import setAttribute from 'dom/setAttribute';
-import assert from 'assert';
-import assertType from 'helpers/assertType';
-import getInstanceNameFromElement from 'helpers/getInstanceNameFromElement';
+import getInstanceNameFromElement from 'dom/getInstanceNameFromElement';
 import Directive from 'enums/Directive';
+
+if (process.env.NODE_ENV === 'development') {
+  var assert = require('assert');
+  var assertType = require('debug/assertType');
+}
 
 /**
  * Adds a child or an array of children with the same name to the specified
@@ -23,9 +26,11 @@ import Directive from 'enums/Directive';
  * @alias module:meno~dom.addToChildRegistry
  */
 function addToChildRegistry(childRegistry, child, name) {
-  assertType(childRegistry, 'object', false, 'Invalid child registry specified');
-  assertType(child, [Node, Array], false, 'Invalid child(ren) specified');
-  assertType(name, 'string', true, 'Invalid name specified');
+  if (process.env.NODE_ENV === 'development') {
+    assertType(childRegistry, 'object', false, 'Invalid child registry specified');
+    assertType(child, [Node, Array], false, 'Invalid child(ren) specified');
+    assertType(name, 'string', true, 'Invalid name specified');
+  }
 
   let inferredName = getInstanceNameFromElement(child);
 

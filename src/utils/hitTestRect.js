@@ -3,7 +3,6 @@
 'use strict';
 
 import getIntersectRect from 'utils/getIntersectRect';
-import assert from 'assert';
 
 /**
  * Hit tests a vector or element against other elements.
@@ -22,8 +21,6 @@ import assert from 'assert';
  * @alias module:meno~utils.hitTestRect
  */
 function hitTestRect(obj, rects) {
-  assert(arguments.length > 1, 'Insufficient arguments. Expecting at least 2.');
-
   let args = Array.prototype.slice.call(arguments);
   let isVector = (typeof args[0] === 'object') && args[0].hasOwnProperty('x') && args[0].hasOwnProperty('y');
 
@@ -35,7 +32,7 @@ function hitTestRect(obj, rects) {
     for (let i = 0; i < n; i++) {
       let rect = args[i];
 
-      assert(rect.top !== undefined && !isNaN(rect.top) && rect.right !== undefined && !isNaN(rect.right) && rect.bottom !== undefined && !isNaN(rect.bottom) && rect.left !== undefined && !isNaN(rect.left), 'Invalid rect supplied. Rect must be an object containing "top", "right", "bottom", and "left" key values.');
+      if (!(rect.top !== undefined && !isNaN(rect.top) && rect.right !== undefined && !isNaN(rect.right) && rect.bottom !== undefined && !isNaN(rect.bottom) && rect.left !== undefined && !isNaN(rect.left)) throw new Error('Invalid rect supplied. Rect must be an object containing "top", "right", "bottom", and "left" key values.');
 
       let clampedX = ((vector.x >= rect.left) && (vector.x <= rect.right));
       let clampedY = ((vector.y >= rect.top) && (vector.x <= rect.bottom));
@@ -50,7 +47,9 @@ function hitTestRect(obj, rects) {
   else {
     let intersectRect = getIntersectRect.apply(null, arguments);
 
-    assert(intersectRect, 'Invalid elements specified.');
+    if (!intersectRect) {
+      throw new Error('Invalid elements specified.');
+    }
 
     return (intersectRect.width * intersectRect.height !== 0);
   }

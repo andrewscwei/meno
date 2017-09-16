@@ -2,8 +2,6 @@
 
 'use strict';
 
-import assertType from 'helpers/assertType';
-
 /**
  * Returns a function that, as long as it continues to be invoked, will not be
  * triggered. The function will be called after it stops being called for N
@@ -21,10 +19,6 @@ import assertType from 'helpers/assertType';
  * @alias module:meno~helpers.debounce
  */
 function debounce(method, delay, leading) {
-  assertType(method, 'function', false, 'Invalid parameter: method');
-  assertType(delay, 'number', true, 'Invalid optional parameter: delay');
-  assertType(leading, 'boolean', true, 'Invalid optional parameter: leading');
-
   if (delay === undefined) delay = 0;
   if (leading === undefined) leading = false;
 
