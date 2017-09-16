@@ -2,10 +2,10 @@
 
 'use strict';
 
-import DirtyType from '../enums/DirtyType';
-import NodeState from '../enums/NodeState';
-import assert from '../helpers/assert';
-import debounce from '../helpers/debounce';
+import DirtyType from 'enums/DirtyType';
+import NodeState from 'enums/NodeState';
+import assert from 'assert';
+import debounce from 'helpers/debounce';
 
 /**
  * Default refresh (debounce) rate in milliseconds.

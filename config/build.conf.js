@@ -2,7 +2,6 @@
 
 'use strict';
 
-const chalk = require('chalk');
 const path = require('path');
 const webpack = require('webpack');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
@@ -13,7 +12,7 @@ const enableSourcemaps = (process.env.ENABLE_SOURCEMAPS === 'true');
 const baseDir = path.resolve(__dirname, '..');
 const version = require(path.join(baseDir, 'package.json')).version;
 
-console.log(`${chalk.blue('[meno]')} Building bundle, debug=${chalk.cyan(debug)} enableSourcemaps=${chalk.cyan(enableSourcemaps)}`);
+console.log(`Building bundle, debug=${debug} enableSourcemaps=${enableSourcemaps}`);
 
 module.exports = {
   context: path.join(baseDir, 'src'),
@@ -34,10 +33,14 @@ module.exports = {
       use: [{
         loader: 'babel-loader'
       }]
-      .concat(debug ? [] : [{
-        loader: 'strip-loader?strip[]=assert,strip[]=assertType,strip[]=debug'
-      }])
     }]
+  },
+  resolve: {
+    extensions: ['.js'],
+    modules: [
+      path.join(baseDir, 'src'),
+      path.join(baseDir, 'node_modules')
+    ]
   },
   plugins: [
     new webpack.DefinePlugin({
@@ -45,12 +48,8 @@ module.exports = {
     })
   ]
   .concat(debug ? [] : [
-    new webpack.DefinePlugin({
-      'process.env': { 'NODE_ENV': JSON.stringify('production') }
-    }),
-    new webpack.NormalModuleReplacementPlugin(/assert|assertType|debug/, path.join(baseDir, 'src/helpers/noop')),
     new webpack.optimize.UglifyJsPlugin({
-      sourceMap: false,
+      sourceMap: true,
       compress: { 
         warnings: false,
         drop_console: true

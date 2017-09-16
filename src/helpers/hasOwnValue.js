@@ -2,7 +2,7 @@
 
 'use strict';
 
-import assertType from './assertType';
+import assertType from 'helpers/assertType';
 
 /**
  * Checks if an object literal has the specified value in one of its keys.

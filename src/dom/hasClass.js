@@ -2,7 +2,7 @@
 
 'use strict';
 
-import assert from '../helpers/assert';
+import assert from 'assert';
 
 /**
  * Verifies that the specified element(s) has the specified class.
@@ -15,7 +15,7 @@ import assert from '../helpers/assert';
  * @alias module:meno~dom.hasClass
  */
 function hasClass(element, className) {
-  if (!assert(className && (typeof className === 'string'), 'Invalid class name: ' + className)) return false;
+  assert(className && (typeof className === 'string'), 'Invalid class name: ' + className);
 
   let elements = [].concat(element);
   let n = elements.length;

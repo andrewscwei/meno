@@ -2,7 +2,7 @@
 
 'use strict';
 
-import assertType from '../helpers/assertType';
+import assertType from 'helpers/assertType';
 
 /**
  * Gets the value of an inline CSS rule of a Node by its name.

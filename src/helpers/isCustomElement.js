@@ -2,10 +2,10 @@
 
 'use strict';
 
-import assertType from './assertType';
-import getAttribute from '../dom/getAttribute';
-import getElementRegistry from '../dom/getElementRegistry';
-import Directive from '../enums/Directive';
+import assertType from 'helpers/assertType';
+import getAttribute from 'dom/getAttribute';
+import getElementRegistry from 'dom/getElementRegistry';
+import Directive from 'enums/Directive';
 
 /**
  * Verifies that the specified element is a custom Meno element.

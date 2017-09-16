@@ -2,8 +2,8 @@
 
 'use strict';
 
-import assert from'../helpers/assert';
-import assertType from'../helpers/assertType';
+import assert from'assert';
+import assertType from 'helpers/assertType';
 
 /**
  * @class
@@ -29,8 +29,8 @@ class EventDispatcher {
    * @param {Function} listener
    */
   addEventListener(type, listener) {
-    if (!assertType(type, 'string', false, 'Invalid parameter: type')) return;
-    if (!assertType(listener, 'function', false, 'Invalid parameter: listener')) return;
+    assertType(type, 'string', false, 'Invalid parameter: type');
+    assertType(listener, 'function', false, 'Invalid parameter: listener');
 
     if (!this.__private__.listenerRegistry[type]) {
       this.__private__.listenerRegistry[type] = [];
@@ -51,10 +51,10 @@ class EventDispatcher {
    * @param {Function} listener:undefined
    */
   removeEventListener(type, listener) {
-    if (!assertType(type, 'string', false, 'Invalid parameter: type')) return;
-    if (!assertType(listener, 'function', true, 'Invalid parameter: listener')) return;
-    if (!assert(this.__private__.listenerRegistry, 'Listener map is null.')) return;
-    if (!assert(this.__private__.listenerRegistry[type], 'There are no listeners registered for event type: ' + type)) return;
+    assertType(type, 'string', false, 'Invalid parameter: type');
+    assertType(listener, 'function', true, 'Invalid parameter: listener');
+    assert(this.__private__.listenerRegistry, 'Listener map is null.');
+    assert(this.__private__.listenerRegistry[type], 'There are no listeners registered for event type: ' + type);
 
     if (listener) {
       let index = this.__private__.listenerRegistry[type].indexOf(listener);
@@ -92,10 +92,10 @@ class EventDispatcher {
    * @return {boolean}
    */
   hasEventListener(type, listener) {
-    if (!assertType(type, 'string', false, 'Invalid parameter: type')) return;
-    if (!assertType(listener, 'function', true, 'Invalid parameter: listener')) return;
-    if (!assert(this.__private__.listenerRegistry, 'Listener map is null.')) return;
-    if (!assert(this.__private__.listenerRegistry[type], 'There are no listeners registered for event type: ' + type)) return;
+    assertType(type, 'string', false, 'Invalid parameter: type');
+    assertType(listener, 'function', true, 'Invalid parameter: listener');
+    assert(this.__private__.listenerRegistry, 'Listener map is null.');
+    assert(this.__private__.listenerRegistry[type], 'There are no listeners registered for event type: ' + type);
 
     if (listener) {
       let index = this.__private__.listenerRegistry[type].indexOf(listener);
@@ -112,8 +112,8 @@ class EventDispatcher {
    * @param {Event} event
    */
   dispatchEvent(event) {
-    if (!assertType(event, Event, false, 'Event must be specified.')) return;
-    if (!assert(this.__private__.listenerRegistry, 'Listener map is null.')) return;
+    assertType(event, Event, false, 'Event must be specified.');
+    assert(this.__private__.listenerRegistry, 'Listener map is null.');
 
     if (!this.__private__.listenerRegistry[event.type]) return;
 

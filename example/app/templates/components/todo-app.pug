@@ -1,9 +1,9 @@
 template
-  div(is='todo-input' :ref='entry')
+  div(is='todo-input' name='input')
   .categories
-    button(class=filter === 'all' ? 'active' : '', :ref='button-all')= `All (${total})`
-    button(class=filter === 'active' ? 'active' : '', :ref='button-active')= `Active (${totalActive})`
-    button(class=filter === 'completed' ? 'active' : '', :ref='button-completed')= `Completed (${totalCompleted})`
+    button(class=filter === 'all' ? 'active' : '', name='button-all')= `All (${total})`
+    button(class=filter === 'active' ? 'active' : '', name='button-active')= `Active (${totalActive})`
+    button(class=filter === 'completed' ? 'active' : '', name='button-completed')= `Completed (${totalCompleted})`
   .list
     - for (var i = 0; i < items.length; i++)
-      .item(class=items[i].completed ? 'completed' : '', is='todo-item', :ref='item', :completed=items[i].completed, :text=items[i].text, hidden=!((filter === 'all') || (filter === 'active' && !items[i].completed) || (filter === 'completed' && items[i].completed)))
+      .item(class=items[i].completed ? 'completed' : '', is='todo-item', name='item', :completed=items[i].completed, :text=items[i].text, hidden=!((filter === 'all') || (filter === 'active' && !items[i].completed) || (filter === 'completed' && items[i].completed)))

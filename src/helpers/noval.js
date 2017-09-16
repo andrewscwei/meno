@@ -2,7 +2,7 @@
 
 'use strict';
 
-import assertType from './assertType';
+import assertType from 'helpers/assertType';
 
 /**
  * Checks if a given value is equal to null. Option to specify recursion, which

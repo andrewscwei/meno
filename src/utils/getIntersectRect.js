@@ -2,8 +2,8 @@
 
 'use strict';
 
-import getRect from './getRect';
-import assert from '../helpers/assert';
+import getRect from 'utils/getRect';
+import assert from 'assert';
 
 /**
  * Computes the intersecting rect of 2 given elements. If only 1 element is
@@ -18,7 +18,7 @@ import assert from '../helpers/assert';
 function getIntersectRect() {
   let n = arguments.length;
 
-  if (!assert(n > 0, 'This method requires at least 1 argument specified.')) return null;
+  assert(n > 0, 'This method requires at least 1 argument specified.');
 
   let rect = {};
   let currRect, nextRect;
@@ -26,7 +26,7 @@ function getIntersectRect() {
   for (let i = 0; i < n; i++) {
     if (!currRect) currRect = getRect(arguments[i]);
 
-    if (!assert(currRect, 'Invalid computed rect.')) return null;
+    assert(currRect, 'Invalid computed rect.');
 
     if (i === 0 && ((i + 1) === n)) {
       nextRect = getRect(window);
@@ -38,7 +38,7 @@ function getIntersectRect() {
       break;
     }
 
-    if (!assert(nextRect, 'Invalid computed rect.')) return null;
+    assert(nextRect, 'Invalid computed rect.');
 
     rect.width = Math.max(0.0, Math.min(currRect.right, nextRect.right) - Math.max(currRect.left, nextRect.left));
     rect.height = Math.max(0.0, Math.min(currRect.bottom, nextRect.bottom) - Math.max(currRect.top, nextRect.top));

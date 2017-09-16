@@ -2,28 +2,28 @@
 
 'use strict';
 
-import assert from './helpers/assert';
-import getChild from './dom/getChild';
-import addChild from './dom/addChild';
-import hasChild from './dom/hasChild';
-import removeChild from './dom/removeChild';
-import addClass from './dom/addClass';
-import hasClass from './dom/hasClass';
-import removeClass from './dom/removeClass';
-import getAttribute from './dom/getAttribute';
-import setAttribute from './dom/setAttribute';
-import hasAttribute from './dom/hasAttribute';
-import getStyle from './dom/getStyle';
-import setStyle from './dom/setStyle';
-import hasStyle from './dom/hasStyle';
-import createElement from './dom/createElement';
-import register from './dom/register';
-import sightread from './dom/sightread';
-import Directive from './enums/Directive';
-import DirtyType from './enums/DirtyType';
-import NodeState from './enums/NodeState';
-import Element from './ui/Element';
-import EventQueue from './events/EventQueue';
+import assert from 'assert';
+import getChild from 'dom/getChild';
+import addChild from 'dom/addChild';
+import hasChild from 'dom/hasChild';
+import removeChild from 'dom/removeChild';
+import addClass from 'dom/addClass';
+import hasClass from 'dom/hasClass';
+import removeClass from 'dom/removeClass';
+import getAttribute from 'dom/getAttribute';
+import setAttribute from 'dom/setAttribute';
+import hasAttribute from 'dom/hasAttribute';
+import getStyle from 'dom/getStyle';
+import setStyle from 'dom/setStyle';
+import hasStyle from 'dom/hasStyle';
+import createElement from 'dom/createElement';
+import register from 'dom/register';
+import sightread from 'dom/sightread';
+import Directive from 'enums/Directive';
+import DirtyType from 'enums/DirtyType';
+import NodeState from 'enums/NodeState';
+import Element from 'ui/Element';
+import EventQueue from 'events/EventQueue';
 
 // import 'document-register-element';
 

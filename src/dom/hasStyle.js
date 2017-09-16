@@ -2,7 +2,7 @@
 
 'use strict';
 
-import assertType from '../helpers/assertType';
+import assertType from 'helpers/assertType';
 
 /**
  * Checks to see if a Node has the specified inline CSS rule.

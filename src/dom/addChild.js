@@ -2,11 +2,11 @@
 
 'use strict';
 
-import addToChildRegistry from './addToChildRegistry';
-import getChildRegistry from './getChildRegistry';
-import sightread from './sightread';
-import assertType from '../helpers/assertType';
-import isCustomElement from '../helpers/isCustomElement';
+import addToChildRegistry from 'dom/addToChildRegistry';
+import getChildRegistry from 'dom/getChildRegistry';
+import sightread from 'dom/sightread';
+import assertType from 'helpers/assertType';
+import isCustomElement from 'helpers/isCustomElement';
 
 /**
  * Adds a child element(s) to an element. By default the added element(s) are

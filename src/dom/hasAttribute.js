@@ -2,8 +2,8 @@
 
 'use strict';
 
-import assertType from '../helpers/assertType';
-import noval from '../helpers/noval';
+import assertType from 'helpers/assertType';
+import noval from 'helpers/noval';
 
 /**
  * Checks to see if an element has the attribute of the specified name.

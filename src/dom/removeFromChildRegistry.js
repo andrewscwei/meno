@@ -2,8 +2,8 @@
 
 'use strict';
 
-import getChildRegistry from './getChildRegistry';
-import assertType from '../helpers/assertType';
+import getChildRegistry from 'dom/getChildRegistry';
+import assertType from 'helpers/assertType';
 
 /**
  * Removes a child or an array of children with the same name from the specified

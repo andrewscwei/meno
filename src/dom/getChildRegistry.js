@@ -2,8 +2,8 @@
 
 'use strict';
 
-import assert from '../helpers/assert';
-import assertType from '../helpers/assertType';
+import assert from 'assert';
+import assertType from 'helpers/assertType';
 
 /**
  * Gets the current or closest child registry of the target element.

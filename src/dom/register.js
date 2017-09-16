@@ -2,9 +2,9 @@
 
 'use strict';
 
-import getElementRegistry from './getElementRegistry';
-import assert from '../helpers/assert';
-import assertType from '../helpers/assertType';
+import getElementRegistry from 'dom/getElementRegistry';
+import assert from 'assert';
+import assertType from 'helpers/assertType';
 
 /**
  * Wraps the native Document.registerElement() and registers a custom element

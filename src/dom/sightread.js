@@ -2,10 +2,10 @@
 
 'use strict';
 
-import addToChildRegistry from './addToChildRegistry';
-import getChildRegistry from './getChildRegistry';
-import assert from '../helpers/assert';
-import isCustomElement from '../helpers/isCustomElement';
+import addToChildRegistry from 'dom/addToChildRegistry';
+import getChildRegistry from 'dom/getChildRegistry';
+import assert from 'assert';
+import isCustomElement from 'helpers/isCustomElement';
 
 /**
  * Crawls a DOM element, creates a child registry for the element and registers

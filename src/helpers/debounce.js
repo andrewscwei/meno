@@ -2,7 +2,7 @@
 
 'use strict';
 
-import assertType from './assertType';
+import assertType from 'helpers/assertType';
 
 /**
  * Returns a function that, as long as it continues to be invoked, will not be

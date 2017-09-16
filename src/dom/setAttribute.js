@@ -2,8 +2,8 @@
 
 'use strict';
 
-import DirtyType from '../enums/DirtyType';
-import assertType from '../helpers/assertType';
+import DirtyType from 'enums/DirtyType';
+import assertType from 'helpers/assertType';
 
 /**
  * Sets an attribute of an element by the attribute name.

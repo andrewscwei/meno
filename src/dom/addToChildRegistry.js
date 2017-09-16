@@ -2,11 +2,11 @@
 
 'use strict';
 
-import setAttribute from './setAttribute';
-import assert from '../helpers/assert';
-import assertType from '../helpers/assertType';
-import getInstanceNameFromElement from '../helpers/getInstanceNameFromElement';
-import Directive from '../enums/Directive';
+import setAttribute from 'dom/setAttribute';
+import assert from 'assert';
+import assertType from 'helpers/assertType';
+import getInstanceNameFromElement from 'helpers/getInstanceNameFromElement';
+import Directive from 'enums/Directive';
 
 /**
  * Adds a child or an array of children with the same name to the specified

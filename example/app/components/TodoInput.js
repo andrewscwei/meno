@@ -24,7 +24,7 @@ class TodoInput extends Element('todo-input') {
   }
 
   focus() {
-    this.getChild('input').focus();
+    this.$('input').focus();
   }
 
   handleInput() {

@@ -2,7 +2,7 @@
 
 'use strict';
 
-import assertType from '../helpers/assertType';
+import assertType from 'helpers/assertType';
 
 /**
  * Generates a nested namespace in the specified scope, as described by the dot-

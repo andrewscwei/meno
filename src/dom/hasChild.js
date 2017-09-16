@@ -2,10 +2,10 @@
 
 'use strict';
 
-import getChild from './getChild';
-import assert from '../helpers/assert';
-import assertType from '../helpers/assertType';
-import noval from '../helpers/noval';
+import getChild from 'dom/getChild';
+import assert from 'assert';
+import assertType from 'helpers/assertType';
+import noval from 'helpers/noval';
 
 /**
  * Determines if an element contains the specified child.

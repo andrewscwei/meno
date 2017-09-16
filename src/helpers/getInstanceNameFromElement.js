@@ -2,8 +2,8 @@
 
 'use strict';
 
-import getAttribute from '../dom/getAttribute';
-import Directive from '../enums/Directive';
+import getAttribute from 'dom/getAttribute';
+import Directive from 'enums/Directive';
 
 /**
  * Gets the instance name from a DOM element.

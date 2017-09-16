@@ -2,7 +2,7 @@
 
 'use strict';
 
-import assert from '../helpers/assert';
+import assert from 'assert';
 
 /**
  * Translates a DOM element.
@@ -28,16 +28,16 @@ function translate(element, properties, constraints) {
   let n = elements.length;
 
   if (properties) {
-    if (!assert(properties.x === undefined || !isNaN(properties.x), 'X property must be a number.')) return null;
-    if (!assert(properties.y === undefined || !isNaN(properties.y), 'Y property must be a number.')) return null;
-    if (!assert(properties.z === undefined || !isNaN(properties.z), 'Z property must be a number.')) return null;
+    assert(properties.x === undefined || !isNaN(properties.x), 'X property must be a number.');
+    assert(properties.y === undefined || !isNaN(properties.y), 'Y property must be a number.');
+    assert(properties.z === undefined || !isNaN(properties.z), 'Z property must be a number.');
 
     let units = properties.units || 'px';
 
     if (constraints) {
-      if (!assert(constraints.x === undefined || !isNaN(constraints.x), 'X constraint must be a number.')) return null;
-      if (!assert(constraints.y === undefined || !isNaN(constraints.y), 'Y constraint must be a number.')) return null;
-      if (!assert(constraints.z === undefined || !isNaN(constraints.z), 'Z constraint must be a number.')) return null;
+      assert(constraints.x === undefined || !isNaN(constraints.x), 'X constraint must be a number.');
+      assert(constraints.y === undefined || !isNaN(constraints.y), 'Y constraint must be a number.');
+      assert(constraints.z === undefined || !isNaN(constraints.z), 'Z constraint must be a number.');
     }
 
     let x = (constraints && (constraints.x !== undefined)) ? Math.min(properties.x, constraints.x) : properties.x;

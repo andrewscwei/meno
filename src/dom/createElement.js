@@ -2,8 +2,8 @@
 
 'use strict';
 
-import getElementRegistry from './getElementRegistry';
-import assertType from '../helpers/assertType';
+import getElementRegistry from 'dom/getElementRegistry';
+import assertType from 'helpers/assertType';
 
 /**
  * Creates a DOM element from the provided string.

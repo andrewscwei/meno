@@ -15,8 +15,8 @@ class TodoApp extends Element('todo-app') {
   }
 
   render() {
-    const entry = this.$('entry');
-    entry.on('insert', this.onInsert.bind(this));
+    const input = this.$('input');
+    input.on('insert', this.onInsert.bind(this));
 
     const items = this.$('item') ? [].concat(this.$('item')) : [];
     const nItems = items.length;
@@ -33,10 +33,10 @@ class TodoApp extends Element('todo-app') {
   }
 
   onInsert(event) {
-    const entry = event.currentTarget;
+    const input = event.currentTarget;
 
     this.data.items = this.data.items.concat([{
-      text: entry.value,
+      text: input.value,
       completed: false
     }]);
   }

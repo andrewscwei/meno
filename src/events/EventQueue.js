@@ -2,8 +2,8 @@
 
 'use strict';
 
-import EventDispatcher from './EventDispatcher';
-import assert from '../helpers/assert';
+import EventDispatcher from 'events/EventDispatcher';
+import assert from 'assert';
 
 /**
  * @class

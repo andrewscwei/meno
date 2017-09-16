@@ -2,8 +2,8 @@
 
 'use strict';
 
-import hasClass from './hasClass';
-import assert from '../helpers/assert';
+import hasClass from 'dom/hasClass';
+import assert from 'assert';
 
 /**
  * Adds class(es) to DOM element(s).
@@ -18,7 +18,7 @@ function addClass(element, className) {
   let classes = [];
   let n = elements.length;
 
-  if (!assert((typeof className === 'string') || (className instanceof Array), 'Invalid class name specified. Must be either a string or an array of strings.')) return;
+  assert((typeof className === 'string') || (className instanceof Array), 'Invalid class name specified. Must be either a string or an array of strings.');
 
   if (typeof className === 'string')
     classes.push(className);
@@ -33,7 +33,7 @@ function addClass(element, className) {
     for (let j = 0; j < nClasses; j++) {
       let c = classes[j];
 
-      if (!assert(typeof c === 'string', 'Invalid class detected: ' + c)) continue;
+      assert(typeof c === 'string', 'Invalid class detected: ' + c);
       if (hasClass(e, c)) continue;
 
       e.className = e.className + ((e.className === '') ? '' : ' ') + c;

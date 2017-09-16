@@ -2,8 +2,8 @@
 
 'use strict';
 
-import assert from './assert';
-import checkType from './checkType';
+import assert from 'assert';
+import checkType from 'helpers/checkType';
 
 /**
  * Asserts the specified condition and throws a warning if assertion fails.
@@ -20,32 +20,30 @@ import checkType from './checkType';
  *                                           undefined.
  * @param {string} [message] - Message to be displayed when assertion fails.
  *
- * @return {boolean} True if assert passed, false otherwise.
- *
  * @throws Error if assert fails.
  *
  * @alias module:meno~helpers.assertType
  */
 function assertType(value, type, allowUndefined, message) {
-  if (!assert(type !== undefined, 'Paremeter \'type\' must be a string or a class')) return;
-  if (!assert((allowUndefined === undefined) || (typeof allowUndefined === 'boolean'), 'Paremeter \'allowUndefined\', if specified, must be a boolean')) return;
-  if (!assert((message === undefined) || (typeof message === 'string'), 'Parameter \'message\', if specified, must be a string')) return;
+  assert(type !== undefined, 'Paremeter \'type\' must be a string or a class');
+  assert((allowUndefined === undefined) || (typeof allowUndefined === 'boolean'), 'Paremeter \'allowUndefined\', if specified, must be a boolean');
+  assert((message === undefined) || (typeof message === 'string'), 'Parameter \'message\', if specified, must be a string');
 
   allowUndefined = (allowUndefined === undefined) ? false : allowUndefined;
 
-  if (allowUndefined && (value === undefined)) return true;
+  if (allowUndefined && (value === undefined)) return;
 
   if (type instanceof Array) {
     let n = type.length;
 
     for (let i = 0; i < n; i++) {
-      if (checkType(value, type[i])) return true;
+      if (checkType(value, type[i])) return;
     }
 
     throw new Error(message || 'AssertType failed');
   }
 
-  if (checkType(value, type)) return true;
+  if (checkType(value, type)) return;
 
   throw new Error(message || 'AssertType failed');
 }

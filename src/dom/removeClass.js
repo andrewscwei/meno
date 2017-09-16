@@ -2,7 +2,7 @@
 
 'use strict';
 
-import assert from '../helpers/assert';
+import assert from 'assert';
 
 /**
  * Removes a class(es) from DOM element(s).
@@ -17,7 +17,7 @@ function removeClass(element, className) {
   let classes = [];
   let n = elements.length;
 
-  if (!assert((typeof className === 'string') || (className instanceof Array), 'Invalid class name specified. Must be either a string or an array of strings.')) return;
+  assert((typeof className === 'string') || (className instanceof Array), 'Invalid class name specified. Must be either a string or an array of strings.');
 
   if (typeof className === 'string') {
     classes.push(className);
@@ -34,7 +34,7 @@ function removeClass(element, className) {
     for (let j = 0; j < nClasses; j++) {
       let c = classes[j];
 
-      if (!assert(typeof c === 'string', 'Invalid class detected: ' + c)) continue;
+      assert(typeof c === 'string', 'Invalid class detected: ' + c);
 
       let regex = new RegExp('^' + c + '\\s+|\\s+' + c + '|^' + c + '$', 'g');
       e.className = e.className.replace(regex, '');

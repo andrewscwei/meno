@@ -1,6 +1,6 @@
 import 'stylesheets/main';
 
-const m = require(process.env.NODE_ENV === 'development' ? 'meno' : 'meno.min');
+import m from 'meno';
 
 // Order matters. Since TodoList contains TodoItem, TodoItem needs to be 
 // registered first so that when TodoList renders its shadow DOM, TodoItem is 

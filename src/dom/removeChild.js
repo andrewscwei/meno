@@ -2,12 +2,12 @@
 
 'use strict';
 
-import getChild from './getChild';
-import getChildRegistry from './getChildRegistry';
-import removeFromChildRegistry from './removeFromChildRegistry';
-import assert from '../helpers/assert';
-import assertType from '../helpers/assertType';
-import noval from '../helpers/noval';
+import getChild from 'dom/getChild';
+import getChildRegistry from 'dom/getChildRegistry';
+import removeFromChildRegistry from 'dom/removeFromChildRegistry';
+import assert from 'assert';
+import assertType from 'helpers/assertType';
+import noval from 'helpers/noval';
 
 /**
  * Removes a child element(s) from an element.

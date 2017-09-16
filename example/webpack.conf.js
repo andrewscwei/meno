@@ -8,9 +8,9 @@ const webpack = require('webpack');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 const HTMLWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
 const baseDir = path.resolve(__dirname, '../');
-const version = require(path.join(baseDir, 'package.json')).version;
-const sourceDir = path.join(baseDir, 'example', 'app');
-const buildDir = path.join(baseDir, 'example', 'public');
+const version = require(path.join(__dirname, '../', 'package.json')).version;
+const sourceDir = path.join(__dirname, 'app');
+const buildDir = path.join(__dirname, 'public');
 
 module.exports = {
   devtool: 'cheap-module-eval-source-map',
@@ -50,8 +50,8 @@ module.exports = {
     extensions: ['.js', '.sass', '.pug'],
     modules: [
       path.join(sourceDir),
-      debug ? path.join(baseDir, 'src') : path.join(baseDir, 'dist'),
-      path.join(baseDir, 'node_modules')
+      path.join(baseDir, 'src'),
+      path.join(__dirname, 'node_modules')
     ]
   },
   plugins: [
@@ -74,7 +74,9 @@ module.exports = {
     new HTMLWebpackHarddiskPlugin()
   ]
   .concat(debug ? [
+    new webpack.NormalModuleReplacementPlugin(/^meno$/, path.join(baseDir, 'src/meno.js'))
   ] : [
+    new webpack.NormalModuleReplacementPlugin(/^meno$/, path.join(baseDir, 'dist/meno.min.js')),
     new webpack.optimize.UglifyJsPlugin({
       compress: { warnings: false }
     })

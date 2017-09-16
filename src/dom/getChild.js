@@ -2,9 +2,9 @@
 
 'use strict';
 
-import getChildRegistry from './getChildRegistry';
-import assertType from '../helpers/assertType';
-import noval from '../helpers/noval';
+import getChildRegistry from 'dom/getChildRegistry';
+import assertType from 'helpers/assertType';
+import noval from 'helpers/noval';
 
 /**
  * Gets the a child from the global display tree consisting of all sightread
@@ -42,11 +42,12 @@ function getChild() {
     recursive = arg2;
 
   let arg3 = arguments[2];
-  if ((recursive === undefined) && (typeof arg3 === 'boolean'))
+  if ((recursive === undefined) && (typeof arg3 === 'boolean')) {
     recursive = arg3;
+  }
 
-  if (!assertType(name, 'string', true, 'Child name must be string')) return null;
-  if (!assertType(recursive, 'boolean', true, 'Parameter \'recursive\', if specified, must be a boolean')) return null;
+  assertType(name, 'string', true, 'Child name must be string')
+  assertType(recursive, 'boolean', true, 'Parameter \'recursive\', if specified, must be a boolean');
 
   let childRegistry = getChildRegistry(element);
   if (!childRegistry) return (typeof (element || document).querySelector === 'function') ? (element || document).querySelector(name) : null

@@ -2,9 +2,9 @@
 
 'use strict';
 
-import getIntersectRect from './getIntersectRect';
-import getRect from './getRect';
-import assert from '../helpers/assert';
+import getIntersectRect from 'utils/getIntersectRect';
+import getRect from 'utils/getRect';
+import assert from 'assert';
 
 /**
  * Hit tests a vector or element against other elements.
@@ -19,7 +19,7 @@ import assert from '../helpers/assert';
  * @alias module:meno~utils.hitTestElement
  */
 function hitTestElement(obj, elements) {
-  if (!assert(arguments.length > 1, 'Insufficient arguments. Expecting at least 2.')) return false;
+  assert(arguments.length > 1, 'Insufficient arguments. Expecting at least 2.');
 
   let args = Array.prototype.slice.call(arguments);
   let isVector = (typeof args[0] === 'object') && args[0].hasOwnProperty('x') && args[0].hasOwnProperty('y');
@@ -44,7 +44,7 @@ function hitTestElement(obj, elements) {
   else {
     let intersectRect = getIntersectRect.apply(null, arguments);
 
-    if (!assert(intersectRect, 'Invalid elements specified.')) return false;
+    assert(intersectRect, 'Invalid elements specified.');
 
     return (intersectRect.width * intersectRect.height !== 0);
   }

@@ -2,8 +2,8 @@
 
 'use strict';
 
-import getRect from './getRect';
-import assert from '../helpers/assert';
+import getRect from 'utils/getRect';
+import assert from 'assert';
 
 /**
  * Transforms a DOM element.
@@ -33,9 +33,9 @@ function transform(element, properties, constraints) {
   let n = elements.length;
 
   if (properties) {
-    if (!assert((properties.width === undefined) || !isNaN(properties.width), 'Width property must be a number.')) return null;
-    if (!assert((properties.height === undefined) || !isNaN(properties.height), 'Height property must be a number.')) return null;
-    if (!assert((properties.aspectRatio === undefined) || !isNaN(properties.aspectRatio), 'Aspect ratio property must be a number.')) return null;
+    assert((properties.width === undefined) || !isNaN(properties.width), 'Width property must be a number.');
+    assert((properties.height === undefined) || !isNaN(properties.height), 'Height property must be a number.');
+    assert((properties.aspectRatio === undefined) || !isNaN(properties.aspectRatio), 'Aspect ratio property must be a number.');
 
     let rect = getRect(element);
     let units = properties.units || 'px';

@@ -2,7 +2,7 @@
 
 'use strict';
 
-import assertType from '../helpers/assertType';
+import assertType from 'helpers/assertType';
 
 /**
  * Gets an attribute of an element by its name.
