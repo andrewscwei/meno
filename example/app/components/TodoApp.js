@@ -2,6 +2,8 @@ import { Element, DirtyType } from 'meno';
 import template from 'templates/components/todo-app';
 
 class TodoApp extends Element('todo-app') {
+  static get template() { return template; }
+
   defaults() {
     return {
       items: [],
@@ -60,8 +62,6 @@ class TodoApp extends Element('todo-app') {
     tmp.splice(idx, 1);
     this.data.items = tmp;
   }
-
-  template(data) { return template(data); }
 }
 
 export default TodoApp;

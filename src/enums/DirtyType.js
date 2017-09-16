@@ -25,6 +25,7 @@ const DirtyType = {
    * Indicates that UI element sizes have changed.
    */
   SIZE: 1 << 1,
+
   /**
    * Indicates that UI element layouts have changed.
    */
@@ -46,44 +47,29 @@ const DirtyType = {
   LOCALE: 1 << 5,
 
   /**
-   * Indicates that UI element depths have changed.
-   */
-  DEPTH: 1 << 6,
-
-  /**
    * Indicates that UI element configurations have changed.
    */
-  CONFIG: 1 << 7,
+  CONFIG: 1 << 6,
 
   /**
    * Indicates that UI element styles have changed.
    */
-  STYLE: 1 << 8,
+  STYLE: 1 << 7,
 
   /**
    * Indicates that UI input elements have changed.
    */
-  INPUT: 1 << 9,
+  INPUT: 1 << 8,
 
   /**
    * Indicates that UI element orientations have changed.
    */
-  ORIENTATION: 1 << 10,
-
-  /**
-   * Indicates that UI element frames have advanced.
-   */
-  FRAME: 1 << 11,
-
-  /**
-   * Indicates that UI element should rerender.
-   */
-  RENDER: 1 << 12,
+  ORIENTATION: 1 << 9,
 
   /**
    * Custom type used as a base for creating new types.
    */
-  CUSTOM: 1 << 13,
+  CUSTOM: 1 << 10,
 
   /**
    * Indicates that everything has changed in the UI.
@@ -114,13 +100,10 @@ const DirtyType = {
         case DirtyType.STATE: o += 'STATE'; break;
         case DirtyType.DATA: o += 'DATA'; break;
         case DirtyType.LOCALE: o += 'LOCALE'; break;
-        case DirtyType.DEPTH: o += 'DEPTH'; break;
         case DirtyType.CONFIG: o += 'CONFIG'; break;
         case DirtyType.STYLE: o += 'STYLE'; break;
         case DirtyType.INPUT: o += 'INPUT'; break;
         case DirtyType.ORIENTATION: o += 'ORIENTATION'; break;
-        case DirtyType.FRAME: o += 'FRAME'; break;
-        case DirtyType.RENDER: o += 'RENDER'; break;
         default: o += String(1<<i);
       }
     }

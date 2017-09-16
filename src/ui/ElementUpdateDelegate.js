@@ -345,7 +345,6 @@ class ElementUpdateDelegate {
       _cancelAnimationFrame(this._pendingAnimationFrame);
 
       if (this.delegate && this.delegate.update && this.delegate.nodeState <= NodeState.INITIALIZED) {
-        if (this.isDirty(DirtyType.RENDER)) this.delegate.__render__();
         this.delegate.update.call(this.delegate);
       }
 

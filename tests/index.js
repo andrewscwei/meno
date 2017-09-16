@@ -2,8 +2,9 @@
 
 'use strict';
 
-describe('Meno', function() {
-  it('should have some tests soon', function() {
+import assert from 'assert';
 
+describe('Meno', () => {
+  it('should have some tests soon', function() {
   });
 });

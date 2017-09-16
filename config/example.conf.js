@@ -2,6 +2,7 @@
 
 'use strict';
 
+const debug = process.env.NODE_ENV !== 'production';
 const path = require('path');
 const webpack = require('webpack');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
@@ -16,7 +17,7 @@ module.exports = {
   context: sourceDir,
   entry: './index.js',
   output: {
-    path: path.join(buildDir),
+    path: buildDir,
     publicPath: '/javascripts/',
     filename: '[name].js',
     chunkFilename: '[chunkhash].js',
@@ -24,8 +25,11 @@ module.exports = {
   },
   module: {
     rules: [{
-      test: /\.jsx?$/,
+      test: /\.js$/,
       loader: 'babel-loader'
+    }, {
+      test: /\.pug$/,
+      loader: 'pug-loader'
     }, {
       test: /\.sass$/,
       use: [{
@@ -40,23 +44,27 @@ module.exports = {
           sourceMap: true
         }
       }]
-    }, {
-      test: /\.pug$/,
-      loader: 'pug-loader'
     }]
   },
   resolve: {
     extensions: ['.js', '.sass', '.pug'],
     modules: [
       path.join(sourceDir),
-      process.env.NODE_ENV === 'production' ? path.join(baseDir, 'dist') : path.join(baseDir, 'src'),
+      debug ? path.join(baseDir, 'src') : path.join(baseDir, 'dist'),
       path.join(baseDir, 'node_modules')
     ]
   },
   plugins: [
     new webpack.DefinePlugin({
-      VERSION: JSON.stringify(version)
+      VERSION: JSON.stringify(version),
+      'process.env': {
+        'NODE_ENV': JSON.stringify(debug ? 'development' : 'production')
+      }
     }),
+    new webpack.WatchIgnorePlugin([
+      path.join(baseDir, 'dist'),
+      path.join(baseDir, 'lib')
+    ]),
     new HTMLWebpackPlugin({
       filename: path.join(buildDir, 'index.html'),
       alwaysWriteToDisk: true,
@@ -65,4 +73,10 @@ module.exports = {
     }),
     new HTMLWebpackHarddiskPlugin()
   ]
+  .concat(debug ? [
+  ] : [
+    new webpack.optimize.UglifyJsPlugin({
+      compress: { warnings: false }
+    })
+  ])
 };

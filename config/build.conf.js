@@ -16,7 +16,6 @@ const version = require(path.join(baseDir, 'package.json')).version;
 console.log(`${chalk.blue('[meno]')} Building bundle, debug=${chalk.cyan(debug)} enableSourcemaps=${chalk.cyan(enableSourcemaps)}`);
 
 module.exports = {
-  cache: debug,
   context: path.join(baseDir, 'src'),
   devtool: enableSourcemaps ? 'cheap-module-eval-source-map' : false,
   entry: {
@@ -26,7 +25,7 @@ module.exports = {
     path: path.join(baseDir, 'dist'),
     filename: debug ? '[name].js' : '[name].min.js',
     library: 'meno',
-    libraryTarget: 'commonjs2',
+    libraryTarget: 'umd',
     sourceMapFilename: debug ? '[name].map' : '[name].min.map'
   },
   module: {
@@ -36,7 +35,7 @@ module.exports = {
         loader: 'babel-loader'
       }]
       .concat(debug ? [] : [{
-        loader: 'strip-loader?strip[]=assert,strip[]=assertType'
+        loader: 'strip-loader?strip[]=assert,strip[]=assertType,strip[]=debug'
       }])
     }]
   },
@@ -47,11 +46,9 @@ module.exports = {
   ]
   .concat(debug ? [] : [
     new webpack.DefinePlugin({
-      'process.env': {
-        'NODE_ENV': JSON.stringify('production')
-      }
+      'process.env': { 'NODE_ENV': JSON.stringify('production') }
     }),
-    new webpack.NormalModuleReplacementPlugin(/assert|assertType/, path.join(baseDir, 'src/helpers/noop')),
+    new webpack.NormalModuleReplacementPlugin(/assert|assertType|debug/, path.join(baseDir, 'src/helpers/noop')),
     new webpack.optimize.UglifyJsPlugin({
       sourceMap: false,
       compress: { 

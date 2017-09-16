@@ -2,6 +2,10 @@
 
 'use strict';
 
+import assert from '../helpers/assert';
+import assertType from '../helpers/assertType';
+import debug from '../helpers/debug';
+
 import ElementUpdateDelegate from './ElementUpdateDelegate';
 import addChild from '../dom/addChild';
 import getChild from '../dom/getChild';
@@ -23,9 +27,6 @@ import Directive from '../enums/Directive';
 import DirtyType from '../enums/DirtyType';
 import NodeState from '../enums/NodeState';
 import EventQueue from '../events/EventQueue';
-import assert from '../helpers/assert';
-import assertType from '../helpers/assertType';
-import defineProperty from '../helpers/defineProperty';
 import getDirectCustomChildren from '../helpers/getDirectCustomChildren';
 import hasOwnValue from '../helpers/hasOwnValue';
 
@@ -91,6 +92,17 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   static get extends() { return this.tag && 'div' || null; }
 
   /**
+   * The template function.
+   *
+   * @return {Function} The function to invoke to generate the template of this
+   *                    element. This template function should yield a string
+   *                    that represents a HTML tree.
+   * 
+   * @alias module:meno~ui.Element.template
+   */
+  static get template() { return null; }
+
+  /**
    * Creates a new DOM element from this Element class.
    *
    * @return {Node}
@@ -117,6 +129,46 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   }
 
   /**
+   * Current node state of this Element instance.
+   *
+   * @type {NodeState}
+   * 
+   * @alias module:meno~ui.Element#nodeState
+   */
+  get nodeState() { return this.get('nodeState', NodeState.IDLE); }
+
+  /**
+   * Indicates whether this Element instance is disabled.
+   *
+   * @type {boolean}
+   * 
+   * @alias module:meno~ui.Element#disabled
+   */
+  get disabled() { return this.hasAttribute('disabled') ? this.getAttribute('disabled') : false; }
+  set disabled(val) { this.setAttribute('disabled', (value ? true : false)); }
+
+  /**
+   * Indiciates whether this Element is invisible.
+   * 
+   * @type {boolean}
+   * 
+   * @alias module:meno~ui.Element#invisible
+   */
+  get invisible() { return this.get('invisible', false); }
+  set invisible(val) {
+    if (this.nodeState === NodeState.INITIALIZED) {
+      if (value) {
+        this.setStyle('visibility', 'hidden');
+      }
+      else if (this.getStyle('visibility') === 'hidden') {
+        this.setStyle('visibility', null);
+      }
+    }
+
+    this.set('invisible', val);
+  }
+
+  /**
    * Opacity of this Element instance.
    *
    * @type {number}
@@ -134,10 +186,13 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @ignore
    */
   createdCallback() {
-    console.log(`[${this.constructor.name}] createdCallback()`);
+    debug(`<${this.constructor.name}> createdCallback()`);
 
-    // Define instance properties.
-    this.__defineProperties__();
+    this.__private__ = {};
+    this.__private__.childRegistry = {};
+    this.__private__.listenerRegistry = {};
+    this.__private__.updateDelegate = new ElementUpdateDelegate(this);
+    this.data = {};
 
     // Scan for internal DOM element attributes prefixed with Directive.DATA
     // and generate data properties from them.
@@ -194,7 +249,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @ignore
    */
   attachedCallback() {
-    console.log(`[${this.constructor.name}] attachedCallback()`);
+    debug(`<${this.constructor.name}> attachedCallback()`);
 
     // Wait for children to initialize before initializing this element.
     this.__awaitInit__();
@@ -207,11 +262,11 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @ignore
    */
   detachedCallback() {
-    console.log(`[${this.constructor.name}] detachedCallback()`);
+    debug(`<${this.constructor.name}> detachedCallback()`);
 
     this.__destroy__();
     this.removeAllEventListeners();
-    this.updateDelegate.destroy();
+    this.__private__.updateDelegate.destroy();
     this.__setNodeState__(NodeState.DESTROYED);
   }
 
@@ -223,13 +278,19 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @ignore
    */
   attributeChangedCallback(attrName, oldVal, newVal) {
-    console.log(`[${this.constructor.name}] attributeChangedCallback(${attrName}, ${oldVal}, ${newVal})`);
+    debug(`<${this.constructor.name}> attributeChangedCallback(${attrName}, ${oldVal}, ${newVal})`);
   }
 
   /**
-   * Default data.
+   * Define default data here. This method returns an object, where each 
+   * key/value pair represents a data in this element. The key is the name of
+   * the data and the value is the default/initial value. You can express the
+   * value as an object to provide additional configuration for Element#setData.
+   * In this case, the value key of the object is the initial value. When the
+   * initial value is a function, this data is inferred as computed data, hence
+   * there are no setters.
    * 
-   * @return {Object} Seed data.
+   * @return {Object} Default data.
    */
   defaults() {
     return null;
@@ -277,7 +338,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @see module:meno~ui.ElementUpdateDelegate#initResponsiveness 
    * @alias module:meno~ui.Element#respondsTo
    */
-  respondsTo() { this.updateDelegate.initResponsiveness.apply(this.updateDelegate, arguments); }
+  respondsTo() { this.__private__.updateDelegate.initResponsiveness.apply(this.__private__.updateDelegate, arguments); }
 
   /** 
    * @see module:meno~dom.addChild 
@@ -600,88 +661,145 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   }
 
   /**
-   * Defines multiple data properties if the first argument is an object literal
-   * (hence using its key/value pairs) or sets a single data property of the
-   * specified name with the specified value. If the data property does not
-   * exist, it will be newly defined.
+   * Defines or updates a data for this element.
    *
-   * @param {string} key - Name of the data property if defining only one, or
-   *                          an object literal containing key/value pairs to be
-   *                          merged into this Element instance's data
-   *                          properties.
-   * @param {*} value - Value of the data property (if defining only one).
-   * @param {Object} [options] - If defining only one data property, specifies 
-   *                             the options for 
-   *                             module:meno~helpers.defineProperty.
-   * @param {boolean} [options.unique=true] - Specifies that the modifier method 
-   *                                          will only invoke if the new value 
+   * @param {string} key - Name of the data to be defined or updated.
+   * @param {*} value - The value to update or to set as the initial value.
+   * @param {Object} options - An object literal that defines the behavior of this 
+   *                           data. This object literal inherits that of the 
+   *                           descriptor param in Object#defineProperty.
+   * @param {boolean} [options.unique=true] - Specifies that the on change hooks
+   *                                          are only triggered if the new value 
    *                                          is different from the old value.
-   * @param {DirtyType} [options.renderOnChange] - Specifies whether the element
-   *                                               should render whenever a new 
-   *                                               value is set.
+   * @param {DirtyType} [options.dirtyType=DirtyType.DATA] - Specifies the flag to
+   *                                                         mark as dirty when
+   *                                                         a new value is set.
    * @param {String} [options.eventType] - Specifies the event type to dispatch 
    *                                       whenever a new value is set.
-   * @param {boolean} [options.attributed] - Specifies whether a corresponding 
-   *                                         DOM attribute will update whenever 
-   *                                         a new value is set.
-   * @param {Function} [options.onChange] - Method invoked when the value
-   *                                        changes.
-   * 
+   * @param {boolean} [options.renderOnChange=true] - Specifies whether this
+   *                                                  element rerenders when a new 
+   *                                                  value is set.
+   * @param {boolean} [options.attributed] - Specifies whether a corresponding DOM 
+   *                                         attribute will update whenever a new 
+   *                                         value is set.
+   * @param {Function} [options.onChange] - Method invoked when the data changes.
+   *
    * @alias module:meno~ui.Element#setData
    */
   setData(key, value, options) {
-    if (typeof key !== 'string') return;
-
+    // If this element already has this data defined, simply update its value.
     if (this.hasData(key)) {
       this.data[key] = value;
+      return;
     }
-    else {
-      if (!options) options = {};
 
-      let opts = {
-        defaultValue: value,
-        dirtyType: DirtyType.DATA,
-        get: true,
-        set: true
-      };
+    // Create the internal data dictionary.
+    if (this.data === undefined) this.data = {};
+    if (this.data.__private__ === undefined) this.data.__private__ = {};
 
-      if (typeof value === 'function') {
-        opts.get = value;
-        opts.defaultValue = undefined;
-        opts.set = false;
+    if (!options) options = {};
+
+    assertType(options.unique, 'boolean', true, 'Optional unique key in options must be a boolean');
+    assertType(options.dirtyType, 'number', true, 'Optional dirty type must be of DirtyType enum (number)');
+    assertType(options.eventType, 'string', true, 'Optional event type must be a string');
+    assertType(options.renderOnChange, 'boolean', true, 'Optional renderOnChange must be a boolean');
+    assertType(options.attributed, 'boolean', true, 'Optional attributed must be a boolean');
+    assertType(options.onChange, 'function', true, 'Optional change handler must be a function');
+  
+    const dirtyType = options.dirtyType === undefined ? DirtyType.DATA : options.dirtyType;
+    const renderOnChange = typeof options.renderOnChange === 'boolean' ? options.renderOnChange : true;
+    const attributed = typeof options.attributed === 'boolean' ? options.attributed : false;
+    const attributeName = Directive.DATA + key.replace(/([A-Z])/g, ($1) => ('-'+$1.toLowerCase()));
+    const eventType = options.eventType;
+    const unique = (typeof unique === 'boolean') ? options.unique : true;
+  
+    assert(!attributeName || !hasOwnValue(Directive, attributeName), 'Attribute \'' + attributeName + '\' is reserved');
+  
+    // Set the default value if its is not a computed value.
+    if (value !== undefined && typeof value !== 'function') {
+      Object.defineProperty(this.data.__private__, key, { value: value, writable: true });
+    }
+  
+    let descriptor = {};
+  
+    descriptor.get = (typeof value === 'function') ? value : () => (this.data.__private__[key]);
+
+    if (typeof value !== 'function') {
+      descriptor.set = (val) => {
+        const oldVal = this.data.__private__[key];
+
+        // Early exit if new value is the same as old value, and that unique
+        // values are required.
+        if (unique && (oldVal === val)) return;
+  
+        if (oldVal === undefined) {
+          Object.defineProperty(this.data.__private__, key, { value: val, writable: true });
+        }
+        else {
+          this.data.__private__[key] = val;
+        }
+  
+        // If change callback is specified, trigger it.
+        if (options.onChange !== undefined) options.onChange(oldVal, val);
+
+        // If this data is attributed, update the attribute.
+        if (attributed === true) this.setAttribute(attributeName, val);
+
+        // If a dirty flag is associated with this data, mark it as dirty.
+        if (dirtyType !== undefined) {
+          this.setDirty(dirtyType);
+        }
+
+        // If this data is set to render on change, do so.
+        if (options.renderOnChange) {
+          this.__render__();
+        }
+  
+        // If there is an event associated with this data, dispatch it.
+        if (eventType) {
+          const event = new CustomEvent(eventType, {
+            detail: {
+              property: key,
+              oldValue: oldVal,
+              newValue: val
+            }
+          });
+  
+          this.dispatchEvent(event);
+        }
       }
-      if (typeof options.unique === 'boolean') opts.unique = options.unique;
-      if (typeof options.renderOnChange === 'boolean') opts.dirtyType |= DirtyType.RENDER;
-      if (typeof options.eventType === 'string') opts.eventType = options.eventType;
-      if (typeof options.attributed === 'boolean') opts.attributed = options.attributed;
-      if (typeof options.onChange === 'function') opts.onChange = options.onChange;
-
-      defineProperty(this, key, opts, 'data');
     }
-  }
+  
+    Object.defineProperty(this.data, key, descriptor);
+    
+    // Trigger hooks when this method is first called.
+    if (typeof value !== 'function') {
+      if (value !== undefined && attributed === true) {
+        this.setAttribute(attributeName, value);
+      }
 
-  /**
-   * Creates the associated DOM element from a template.
-   *
-   * @return {Node|string}
-   * 
-   * @alias module:meno~ui.Element#template
-   */
-  template(data) {
-    return null;
+      if (options.onChange && value !== undefined) {
+        options.onChange(undefined, value);
+      }
+
+      if (value !== undefined && dirtyType !== undefined && this.nodeState === NodeState.INITIALIZED) {
+        this.setDirty(dirtyType);
+        this.__render__();
+      }
+    }
   }
 
   /** 
    * @see ElementUpdateDelegate#isDirty 
    * @alias module:meno~ui.Element#isDirty
    */
-  isDirty() { return this.updateDelegate.isDirty.apply(this.updateDelegate, arguments); }
+  isDirty() { return this.__private__.updateDelegate.isDirty.apply(this.__private__.updateDelegate, arguments); }
 
   /** 
    * @see ElementUpdateDelegate#setDirty 
    * @alias module:meno~ui.Element#setDirty
    */
-  setDirty() { return this.updateDelegate.setDirty.apply(this.updateDelegate, arguments); }
+  setDirty() { return this.__private__.updateDelegate.setDirty.apply(this.__private__.updateDelegate, arguments); }
 
   /**
    * Shorthand for creating/accessing private properties.
@@ -722,10 +840,13 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @private 
    */
   __init__() {
-    console.log(`[${this.constructor.name}] __init__()`);
+    debug(`<${this.constructor.name}> __init__()`);
+
+    // Initial render.
+    this.__render__();
     
     // Invoke update delegate.
-    this.updateDelegate.init();
+    this.__private__.updateDelegate.init();
     
     // Now that the initial update is complete, unhide the element.
     this.setStyle('visibility', this.invisible ? 'hidden' : null);
@@ -742,7 +863,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @private
    */
   __destroy__() {
-    console.log(`[${this.constructor.name}] __destroy__()`);
+    debug(`<${this.constructor.name}> __destroy__()`);
     if (this.__private__.eventQueue) this.__private__.eventQueue.kill();
     if (this.destroy) this.destroy();
   }
@@ -753,13 +874,13 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @private
    */
   __render__() {
-    const template = this.template(this.data);
-
     // If this element doesn't use a template, skip it.
-    if (!template) return sightread(this);
+    if (!this.constructor.template) return sightread(this);
 
     // Otherwise continue processing template.
-    console.log(`[${this.constructor.name}] __render__()`);
+    debug(`<${this.constructor.name}> __render__()`);
+
+    const template = this.constructor.template(this.data);
 
     // Use VDOM?
     if (USE_VIRTUAL_DOM) {
@@ -843,70 +964,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     }
     else {
       this.__init__();
-    }
-  }
-
-  /**
-   * Defines all properties.
-   *
-   * @private
-   */
-  __defineProperties__() {
-    this.__private__ = {};
-    this.__private__.childRegistry = {};
-    this.__private__.listenerRegistry = {};
-    this.data = {};
-
-    /**
-     * Current node state of this Element instance.
-     *
-     * @type {NodeState}
-     */
-    defineProperty(this, 'nodeState', { defaultValue: NodeState.IDLE, get: true });
-
-    /**
-     * ElementUpdateDelegate instance.
-     *
-     * @type {ElementUpdateDelegate}
-     */
-    defineProperty(this, 'updateDelegate', { defaultValue: new ElementUpdateDelegate(this), get: true });
-
-    /**
-     * Specifies whether this Element instance is invisible. This property
-     * follows the rules of the CSS rule 'visibility: hidden'.
-     *
-     * @type {boolean}
-     */
-    defineProperty(this, 'invisible', {
-      get: true,
-      set: (value) => {
-        assertType(value, 'boolean', false);
-
-        if (this.nodeState === NodeState.INITIALIZED) {
-          if (value) {
-            this.setStyle('visibility', 'hidden');
-          }
-          else {
-            if (this.getStyle('visibility') === 'hidden') {
-              this.setStyle('visibility', null);
-            }
-          }
-        }
-
-        return value;
-      }
-    });
-
-    if (this.disabled === undefined) {
-      /**
-       * Specifies whether this Element instance is disabled.
-       *
-       * @type {boolean}
-       */
-      Object.defineProperty(this, 'disabled', {
-        get: () => (this.hasAttribute('disabled') ? this.getAttribute('disabled') : false),
-        set: (value) => this.setAttribute('disabled', (value ? true : false))
-      });
     }
   }
 

@@ -2,6 +2,8 @@ import { Element, DirtyType } from 'meno';
 import template from 'templates/components/todo-input';
 
 class TodoInput extends Element('todo-input') {
+  static get template() { return template; }
+
   get value() {
     const input = this.$('input');
     if (!input.value || input.value === '') return null;
@@ -27,7 +29,7 @@ class TodoInput extends Element('todo-input') {
 
   handleInput() {
     this.focus();
-    const keyCode = this.updateDelegate.keyCode.up;
+    const keyCode = this.__private__.updateDelegate.keyCode.up;
 
     if (!keyCode || keyCode.length <= 0) return;
 
@@ -41,8 +43,6 @@ class TodoInput extends Element('todo-input') {
       this.clear();
     }
   }
-
-  template(data) { return template(data) }
 }
 
 export default TodoInput;
