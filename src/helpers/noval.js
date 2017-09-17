@@ -19,13 +19,10 @@
 function noval(value, recursive) {
   if (recursive === undefined) recursive = false;
 
-  if (value === undefined || value === null) {
-    return true;
-  }
-  else if (typeof value === 'string') {
-    return (value === '');
-  }
-  else if (recursive && (value instanceof Array)) {
+  if (value === undefined || value === null) return true;
+  if (typeof value === 'string') return (value === '');
+  
+  if (recursive && (value instanceof Array)) {
     const n = value.length;
     for (let i = 0; i < n; i++) {
       if (!noval(value[i], true)) return false;

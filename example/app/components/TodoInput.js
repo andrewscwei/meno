@@ -4,19 +4,27 @@ import template from 'templates/components/todo-input';
 class TodoInput extends Element('todo-input') {
   static get template() { return template; }
 
+  get responsiveness() {
+    return {
+      keyup: 10.0
+    }
+  }
+
   get value() {
     const input = this.$('input');
     if (!input.value || input.value === '') return null;
     return input.value;
   }
 
-  init() {
-    this.respondsTo(10.0, 'keyup');
-    this.focus();
+  update(info) {
+    if (this.isDirty(DirtyType.INPUT)) {
+      console.log(info[DirtyType.INPUT])
+      this.handleKeyCodes(info[DirtyType.INPUT] && info[DirtyType.INPUT].keyUp);
+    }
   }
 
-  update() {
-    if (this.isDirty(DirtyType.INPUT)) this.handleInput();
+  render() {
+    this.focus();
   }
 
   clear() {
@@ -27,19 +35,18 @@ class TodoInput extends Element('todo-input') {
     this.$('input').focus();
   }
 
-  handleInput() {
+  handleKeyCodes(keyCodes) {
+    if (!keyCodes || keyCodes.length <= 0) return;
+
     this.focus();
-    const keyCode = this.__private__.updateDelegate.keyCode.up;
 
-    if (!keyCode || keyCode.length <= 0) return;
-
-    if (~keyCode.indexOf(13)) {
+    if (~keyCodes.indexOf(13)) {
       this.dispatchEvent(new Event('insert'));
       this.clear();
       // If this is not rerendered every time, this would work.
       // this.focus();
     }
-    else if (~keyCode.indexOf(27)) {
+    else if (~keyCodes.indexOf(27)) {
       this.clear();
     }
   }

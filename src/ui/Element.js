@@ -113,6 +113,8 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    */
   static factory() { return new (register(this))(); }
 
+  get responsiveness() { return {}; }
+
   /**
    * Instance name of this Element instance. Once set, it cannot be changed.
    *
@@ -300,11 +302,11 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
 
   /**
    * Lifecycle hook: This method is invoked after this element is
-   * added to the DOM, AFTER the initial render is complete, and RIGHT BEFORE 
+   * added to the DOM, BEFORE the initial render starts, and RIGHT BEFORE 
    * the node state changes to NodeState.INITIALIZED. This is a good place to 
    * perform initial set up for this element. Note that if you want to set up 
    * the children of this element, there is a better hook for that. See 
-   * Element#render.
+   * Element#render. At this point, the children may not be rendered yet.
    * 
    * @alias module:meno~ui.Element#init
    */
@@ -335,12 +337,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @alias module:meno~ui.Element#update
    */
   update() {}
-
-  /** 
-   * @see module:meno~ui.ElementUpdateDelegate#initResponsiveness 
-   * @alias module:meno~ui.Element#respondsTo
-   */
-  respondsTo() { this.__private__.updateDelegate.initResponsiveness.apply(this.__private__.updateDelegate, arguments); }
 
   /** 
    * @see module:meno~dom.addChild 
@@ -852,6 +848,38 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   __init__() {
     if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> __init__()`);
 
+    // Initialize responsive behaviors.
+    const responsiveness = this.responsiveness;
+
+    if (process.env.NODE_ENV === 'development') {
+      assertType(responsiveness, Object, true, `The static property 'responsiveness' must be an Object`);
+    }
+
+    if (responsiveness) {
+      for (let key in responsiveness) {
+        let value = responsiveness[key];
+
+        if (typeof value === 'number') {
+          this.__private__.updateDelegate.initResponsiveness.apply(this.__private__.updateDelegate, [value, key]);
+        }
+        else if (typeof value === 'object') {
+          let args = [];
+          if (value.conductor) args.push(value.conductor);
+          if (value.delay) args.push(value.delay);
+          args.push(key);
+          this.__private__.updateDelegate.initResponsiveness.apply(this.__private__.updateDelegate, args);
+        }
+        else {
+          this.__private__.updateDelegate.initResponsiveness.apply(this.__private__.updateDelegate, [key]);
+        }
+      }
+    }
+
+    if (this.init) this.init();
+    
+    // Update the node state to `initialized`.
+    this.__setNodeState__(NodeState.INITIALIZED);
+
     // Initial render.
     this.__render__();
     
@@ -860,11 +888,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     
     // Now that the initial update is complete, unhide the element.
     this.setStyle('visibility', this.invisible ? 'hidden' : null);
-
-    if (this.init) this.init();
-
-    // Update the node state to `initialized`.
-    this.__setNodeState__(NodeState.INITIALIZED);
   }
 
   /**

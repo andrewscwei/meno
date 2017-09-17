@@ -3,10 +3,11 @@
 'use strict';
 
 const path = require('path');
+const baseDir = path.resolve(__dirname, '../');
 
 module.exports = function(config) {
   config.set({
-    basePath: path.resolve(__dirname, '../'),
+    basePath: baseDir,
     frameworks: ['mocha'],
     files: ['tests/**/*.js'],
     preprocessors: {
@@ -24,6 +25,13 @@ module.exports = function(config) {
           test: /\.js$/,
           loader: 'babel-loader'
         }]
+      },
+      resolve: {
+        extensions: ['.js'],
+        modules: [
+          path.join(baseDir, 'src'),
+          path.join(baseDir, 'node_modules')
+        ]
       }
     },
     webpackMiddleware: {

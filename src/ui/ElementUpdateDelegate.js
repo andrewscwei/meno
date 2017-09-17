@@ -71,6 +71,7 @@ class ElementUpdateDelegate {
     Object.defineProperty(this, 'delegate', { value: delegate, writable: false });
 
     let mDirtyTable = 0;
+    let mDirtyInfo = {};
     let mConductorTable = {};
     let mResizeHandler = null;
     let mScrollHandler = null;
@@ -134,8 +135,9 @@ class ElementUpdateDelegate {
      * @private
      */
     let _onWindowMouseMove = (event) => {
-      this.mouse.pointerX = event.clientX;
-      this.mouse.pointerY = event.clientY;
+      if (!mDirtyInfo[DirtyType.INPUT]) mDirtyInfo[DirtyType.INPUT] = {};
+      mDirtyInfo[DirtyType.INPUT].mouseX = event.clientX;
+      mDirtyInfo[DirtyType.INPUT].mouseY = event.clientY;
       this.setDirty(DirtyType.INPUT);
     };
 
@@ -147,8 +149,9 @@ class ElementUpdateDelegate {
      * @private
      */
     let _onWindowMouseWheel = (event) => {
-      this.mouse.wheelX = event.deltaX;
-      this.mouse.wheelY = event.deltaY;
+      if (!mDirtyInfo[DirtyType.INPUT]) mDirtyInfo[DirtyType.INPUT] = {};
+      mDirtyInfo[DirtyType.INPUT].mouseWheelX = event.deltaX;
+      mDirtyInfo[DirtyType.INPUT].mouseWheelY = event.deltaY;
       this.setDirty(DirtyType.INPUT);
     };
 
@@ -178,9 +181,10 @@ class ElementUpdateDelegate {
         z = event.orientation.z * 50;
       }
 
-      this.orientation.x = x;
-      this.orientation.y = y;
-      this.orientation.z = z;
+      if (!mDirtyInfo[DirtyType.ORIENTATION]) mDirtyInfo[DirtyType.ORIENTATION] = {};
+      mDirtyInfo[DirtyType.ORIENTATION].x = x;
+      mDirtyInfo[DirtyType.ORIENTATION].y = y;
+      mDirtyInfo[DirtyType.ORIENTATION].z = z;
 
       this.setDirty(DirtyType.ORIENTATION);
     };
@@ -193,8 +197,10 @@ class ElementUpdateDelegate {
      * @private
      */
     let _onWindowKeyDown = (event) => {
-      if (this.keyCode.down === undefined) this.keyCode.down = [];
-      this.keyCode.down.push(event.keyCode);
+      if (!mDirtyInfo[DirtyType.INPUT]) mDirtyInfo[DirtyType.INPUT] = {};
+      if (!mDirtyInfo[DirtyType.INPUT].keyDown) mDirtyInfo[DirtyType.INPUT].keyDown = [];
+      mDirtyInfo[DirtyType.INPUT].keyDown.push(event.keyCode);
+
       this.setDirty(DirtyType.INPUT);
     };
 
@@ -206,8 +212,10 @@ class ElementUpdateDelegate {
      * @private
      */
     let _onWindowKeyPress = (event) => {
-      if (this.keyCode.press === undefined) this.keyCode.press = [];
-      this.keyCode.press.push(event.keyCode);
+      if (!mDirtyInfo[DirtyType.INPUT]) mDirtyInfo[DirtyType.INPUT] = {};
+      if (!mDirtyInfo[DirtyType.INPUT].keyPress) mDirtyInfo[DirtyType.INPUT].keyPress = [];
+      mDirtyInfo[DirtyType.INPUT].keyPress.push(event.keyCode);
+
       this.setDirty(DirtyType.INPUT);
     };
 
@@ -219,8 +227,10 @@ class ElementUpdateDelegate {
      * @private
      */
     let _onWindowKeyUp = (event) => {
-      if (this.keyCode.up === undefined) this.keyCode.up = [];
-      this.keyCode.up.push(event.keyCode);
+      if (!mDirtyInfo[DirtyType.INPUT]) mDirtyInfo[DirtyType.INPUT] = {};
+      if (!mDirtyInfo[DirtyType.INPUT].keyUp) mDirtyInfo[DirtyType.INPUT].keyUp = [];
+      mDirtyInfo[DirtyType.INPUT].keyUp.push(event.keyCode);
+
       this.setDirty(DirtyType.INPUT);
     };
 
@@ -244,15 +254,18 @@ class ElementUpdateDelegate {
       if (this.isDirty(dirtyType) && !validateNow) return;
 
       switch (dirtyType) {
-        case DirtyType.NONE:
-        case DirtyType.ALL:
-          mDirtyTable = dirtyType;
-          break;
-        default:
-          mDirtyTable |= dirtyType;
+      case DirtyType.NONE:
+      case DirtyType.ALL:
+        mDirtyTable = dirtyType;
+        break;
+      default:
+        mDirtyTable |= dirtyType;
       }
 
-      if (mDirtyTable === DirtyType.NONE) return;
+      if (mDirtyTable === DirtyType.NONE) {
+        mDirtyInfo = {};
+        return;
+      }
 
       if (validateNow) {
         this.update();
@@ -274,11 +287,11 @@ class ElementUpdateDelegate {
      */
     this.isDirty = (dirtyType) => {
       switch (dirtyType) {
-        case DirtyType.NONE:
-        case DirtyType.ALL:
-          return (mDirtyTable === dirtyType);
-        default:
-          return ((dirtyType & mDirtyTable) !== 0);
+      case DirtyType.NONE:
+      case DirtyType.ALL:
+        return (mDirtyTable === dirtyType);
+      default:
+        return ((dirtyType & mDirtyTable) !== 0);
       }
     };
 
@@ -307,7 +320,7 @@ class ElementUpdateDelegate {
 
       if (mMouseWheelHandler) {
         let conductor = mConductorTable.mouseWheel || window;
-        conductor.removeEventListener('wheel', mMouseWheelHandler);
+        conductor.removeEventListener('mousewheel', mMouseWheelHandler);
       }
 
       if (mMouseMoveHandler) {
@@ -348,22 +361,11 @@ class ElementUpdateDelegate {
       _cancelAnimationFrame(this._pendingAnimationFrame);
 
       if (this.delegate && this.delegate.update && this.delegate.nodeState <= NodeState.INITIALIZED) {
-        this.delegate.update.call(this.delegate);
+        this.delegate.update.call(this.delegate, mDirtyInfo);
       }
 
       // Reset the dirty status of all types.
       this.setDirty(DirtyType.NONE);
-
-      delete this.mouse.pointerX;
-      delete this.mouse.pointerY;
-      delete this.mouse.wheelX;
-      delete this.mouse.wheelY;
-      delete this.orientation.x;
-      delete this.orientation.y;
-      delete this.orientation.z;
-      delete this.keyCode.up;
-      delete this.keyCode.press;
-      delete this.keyCode.down;
 
       this._pendingAnimationFrame = null;
     };
@@ -373,7 +375,7 @@ class ElementUpdateDelegate {
      * event types support a custom conductor; the rest uses window as the
      * conductor:
      *   1. 'scroll'
-     *   2. 'wheel'
+     *   2. 'mousewheel'
      *   3. 'mousemove'
      *
      * @param {Object|Number|...args} - This could be the conductor (defaults to
@@ -388,6 +390,7 @@ class ElementUpdateDelegate {
      */
     this.initResponsiveness = function() {
       let args = Array.prototype.slice.call(arguments);
+      console.log(args)
 
       if (process.env.NODE_ENV === 'development') {
         assert(args.length > 0, 'Insufficient arguments provided');
@@ -421,14 +424,14 @@ class ElementUpdateDelegate {
         conductor.addEventListener('scroll', mScrollHandler);
       }
 
-      if (universal || args.indexOf('wheel') > -1) {
+      if (universal || args.indexOf('mousewheel') > -1) {
         if (mMouseWheelHandler) {
           let c = mConductorTable.mouseWheel || window;
-          c.removeEventListener('wheel', mMouseWheelHandler);
+          c.removeEventListener('mousewheel', mMouseWheelHandler);
         }
         mMouseWheelHandler = (delay === 0.0) ? _onWindowMouseWheel.bind(this) : debounce(_onWindowMouseWheel.bind(this), delay);
         mConductorTable.mouseWheel = conductor;
-        conductor.addEventListener('wheel', mMouseWheelHandler);
+        conductor.addEventListener('mousewheel', mMouseWheelHandler);
       }
 
       if (universal || args.indexOf('mousemove') > -1) {
