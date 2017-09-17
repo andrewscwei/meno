@@ -113,6 +113,18 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    */
   static factory() { return new (register(this))(); }
 
+  /**
+   * Override this method to define the responsive behavior of this element.
+   * This method should return an object, where each key is a supported event
+   * type and each value can either be a number representing the refresh delay
+   * or an object literal with `delay` and/or `conductor`, indicating the 
+   * refresh delay and element to respond to, respectively.
+   * 
+   * @type {Object}
+   * 
+   * @see ElementUpdateDelegate#initResponsiveness
+   * 
+   */
   get responsiveness() { return {}; }
 
   /**
