@@ -5,8 +5,7 @@
 import Directive from 'enums/Directive';
 import createElement from 'vdom/createElement';
 import setAttribute from 'dom/setAttribute';
-import VNode from 'vdom/VNode';
-import VTextNode from 'vdom/VTextNode';
+import vnode from 'vdom/vnode';
 
 if (process.env.NODE_ENV === 'development') {
   var assert = require('assert');
@@ -102,22 +101,23 @@ function updateAttributes(element, newAttributes, oldAttributes) {
 /**
  * Checks if two vnodes are different.
  * 
- * @param {VNode|VTextNode} vnode1 - The first vnode to compare.
- * @param {VNode|VTextNode} vnode2 - The second vnode to compare.
+ * @param {VNode} vnode1 - The first vnode to compare.
+ * @param {VNode} vnode2 - The second vnode to compare.
  * 
  * @return {boolean} `true` if the vnodes are different, `false` otherwise.
  */
 function isDifferent(vnode1, vnode2) {
   if (process.env.NODE_ENV) {
-    assert(vnode1 instanceof VNode || vnode1 instanceof VTextNode, `'vnode1' must be an instance of VNode or VTextNode`);
-    assert(vnode2 instanceof VNode || vnode2 instanceof VTextNode, `'vnode2' must be an instance of VNode or VTextNode`);
+    assert(typeof vnode1 === 'string' || typeof vnode1.tag === 'string', `Invalid vnode for param 'vnode1'`);
+    assert(typeof vnode2 === 'string' || typeof vnode2.tag === 'string', `Invalid vnode for param 'vnode2'`);
   }
 
-  if (vnode1.constructor !== vnode2.constructor) return true;
+  if (typeof vnode1 !== typeof vnode2) return true;
+  if (vnode1 === vnode2) return false;
   if (vnode1.tag !== vnode2.tag) return true;
   if ((vnode1.attributes && vnode1.attributes[Directive.IS]) !== (vnode2.attributes && vnode2.attributes[Directive.IS])) return true;
   if ((vnode1.attributes && vnode1.attributes[Directive.NAME]) !== (vnode2.attributes && vnode2.attributes[Directive.NAME])) return true;
-  if ((vnode1 instanceof VTextNode) && (vnode2 instanceof VTextNode) && (vnode1.text !== vnode2.text)) return true;
+  if ((typeof vnode1 === 'string') && (typeof vnode2 === 'string') && (vnode1 !== vnode2)) return true;
 
   return false;
 }

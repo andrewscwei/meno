@@ -1,9 +1,12 @@
-import { Element, DirtyType } from 'meno';
-import createVTree from 'vdom/createVTree';
-import template from 'templates/components/todo-item';
+import { Element, DirtyType, h } from 'meno';
 
 class TodoItem extends Element('todo-item') {
-  get template() { return createVTree(template(this.data)); }
+  get template() { 
+    return h('template', [
+      h('span', { type: 'label', name: 'label' }, [this.data.text || 'No description']),
+      h('button', { type: 'button', name: 'delete'}, ['Delete'])
+    ]);
+  }
 
   render() {
     this.$('label').addEventListener('click', this.toggle.bind(this));

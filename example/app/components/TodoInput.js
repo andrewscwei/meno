@@ -1,9 +1,11 @@
-import { Element, DirtyType } from 'meno';
-import createVTree from 'vdom/createVTree';
-import template from 'templates/components/todo-input';
+import { Element, DirtyType, h } from 'meno';
 
 class TodoInput extends Element('todo-input') {
-  get template() { return createVTree(template(this.data)); }
+  get template() {
+    return h('template', [
+      h('input', { name: 'input-field', type: 'textfield', placeholder: 'What to do?' })
+    ]);
+  }
 
   get responsiveness() {
     return {

@@ -214,7 +214,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
         // All default data should affect rendering by default unless otherwise specified.
         if (typeof options.renderOnChange !== 'boolean') options.renderOnChange = true;
 
-        this.setData(key, value, options);
+        this.__set_data__(key, value, options);
       }
     }
 
@@ -243,7 +243,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
       if (hasOwnValue(Directive, attribute.name) || !regex.test(attribute.name)) continue;
       // Generate camel case property name from the attribute.
       let propertyName = attribute.name.replace(regex, '').replace(/-([a-z])/g, (g) => (g[1].toUpperCase()));
-      this.setData(propertyName, this.getAttribute(attribute.name), { attributed: true });
+      this.__set_data__(propertyName, this.getAttribute(attribute.name), { attributed: true });
     }
 
     this.__render__();
@@ -284,7 +284,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * Define default data here. This method returns an object, where each 
    * key/value pair represents a data in this element. The key is the name of
    * the data and the value is the default/initial value. You can express the
-   * value as an object to provide additional configuration for Element#setData.
+   * value as an object to provide additional configuration for Element#__set_data__.
    * In this case, the value key of the object is the initial value. When the
    * initial value is a function, this data is inferred as computed data, hence
    * there are no setters.
@@ -549,12 +549,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     }
   }
 
-  /** 
-   * @see module:meno~ui.Element#removeEventListener 
-   * @alias module:meno~ui.Element#off
-   */
-  off() { this.removeEventListener.apply(this, arguments); }
-
   /**
    * Removes all cached event listeners from this Element instance.
    * 
@@ -564,166 +558,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     if (this.__private__.listenerRegistry) {
       for (let event in this.__private__.listenerRegistry) {
         this.removeEventListener(event);
-      }
-    }
-  }
-
-  /**
-   * Gets the value of the data property with the specified name.
-   *
-   * @param {string} key - Name of the data property.
-   *
-   * @return {*} Value of the data property.
-   * 
-   * @alias module:meno~ui.Element#getData
-   */
-  getData(key) {
-    return this.data[key];
-  }
-
-  /**
-   * Checks to see if this Element instance has the data property of the
-   * specified name.
-   *
-   * @param {string} key - Name of the data property.
-   *
-   * @return {boolean} True if data property exists, false othwerwise.
-   * 
-   * @alias module:meno~ui.Element#hasData
-   */
-  hasData(key) {
-    return this.data.hasOwnProperty(key);
-  }
-
-  /**
-   * Defines or updates a data for this element.
-   *
-   * @param {string} key - Name of the data to be defined or updated.
-   * @param {*} value - The value to update or to set as the initial value.
-   * @param {Object} options - An object literal that defines the behavior of this 
-   *                           data. This object literal inherits that of the 
-   *                           descriptor param in Object#defineProperty.
-   * @param {boolean} [options.unique=true] - Specifies that the on change hooks
-   *                                          are only triggered if the new value 
-   *                                          is different from the old value.
-   * @param {DirtyType} [options.dirtyType=DirtyType.DATA] - Specifies the flag to
-   *                                                         mark as dirty when
-   *                                                         a new value is set.
-   * @param {String} [options.eventType] - Specifies the event type to dispatch 
-   *                                       whenever a new value is set.
-   * @param {boolean} [options.renderOnChange=true] - Specifies whether this
-   *                                                  element rerenders when a new 
-   *                                                  value is set.
-   * @param {boolean} [options.attributed] - Specifies whether a corresponding DOM 
-   *                                         attribute will update whenever a new 
-   *                                         value is set.
-   * @param {Function} [options.onChange] - Method invoked when the data changes.
-   *
-   * @alias module:meno~ui.Element#setData
-   */
-  setData(key, value, options) {
-    // If this element already has this data defined, simply update its value.
-    if (this.hasData(key)) {
-      this.data[key] = value;
-      return;
-    }
-
-    // Create the internal data dictionary.
-    if (this.data === undefined) this.data = {};
-    if (this.data.__private__ === undefined) this.data.__private__ = {};
-
-    if (!options) options = {};
-
-    if (process.env.NODE_ENV === 'development') {
-      assertType(options.unique, 'boolean', true, 'Optional unique key in options must be a boolean');
-      assertType(options.dirtyType, 'number', true, 'Optional dirty type must be of DirtyType enum (number)');
-      assertType(options.eventType, 'string', true, 'Optional event type must be a string');
-      assertType(options.renderOnChange, 'boolean', true, 'Optional renderOnChange must be a boolean');
-      assertType(options.attributed, 'boolean', true, 'Optional attributed must be a boolean');
-      assertType(options.onChange, 'function', true, 'Optional change handler must be a function');
-    }
-  
-    const dirtyType = options.dirtyType === undefined ? DirtyType.DATA : options.dirtyType;
-    const renderOnChange = typeof options.renderOnChange === 'boolean' ? options.renderOnChange : true;
-    const attributed = typeof options.attributed === 'boolean' ? options.attributed : false;
-    const attributeName = Directive.DATA + key.replace(/([A-Z])/g, ($1) => ('-'+$1.toLowerCase()));
-    const eventType = options.eventType;
-    const unique = (typeof unique === 'boolean') ? options.unique : true;
-  
-    if (process.env.NODE_ENV === 'development') {
-      assert(!attributeName || !hasOwnValue(Directive, attributeName), 'Attribute \'' + attributeName + '\' is reserved');
-    }
-  
-    // Set the default value if its is not a computed value.
-    if (value !== undefined && typeof value !== 'function') {
-      Object.defineProperty(this.data.__private__, key, { value: value, writable: true });
-    }
-  
-    let descriptor = {};
-  
-    descriptor.get = (typeof value === 'function') ? value : () => (this.data.__private__[key]);
-
-    if (typeof value !== 'function') {
-      descriptor.set = (val) => {
-        const oldVal = this.data.__private__[key];
-
-        // Early exit if new value is the same as old value, and that unique
-        // values are required.
-        if (unique && (oldVal === val)) return;
-  
-        if (oldVal === undefined) {
-          Object.defineProperty(this.data.__private__, key, { value: val, writable: true });
-        }
-        else {
-          this.data.__private__[key] = val;
-        }
-  
-        // If change callback is specified, trigger it.
-        if (options.onChange !== undefined) options.onChange(oldVal, val);
-
-        // If this data is attributed, update the attribute.
-        if (attributed === true) this.setAttribute(attributeName, val);
-
-        // If a dirty flag is associated with this data, mark it as dirty.
-        if (dirtyType !== undefined) {
-          this.setDirty(dirtyType);
-        }
-
-        // If this data is set to render on change, do so.
-        if (options.renderOnChange) {
-          this.__render__();
-        }
-  
-        // If there is an event associated with this data, dispatch it.
-        if (eventType) {
-          const event = new CustomEvent(eventType, {
-            detail: {
-              property: key,
-              oldValue: oldVal,
-              newValue: val
-            }
-          });
-  
-          this.dispatchEvent(event);
-        }
-      }
-    }
-  
-    Object.defineProperty(this.data, key, descriptor);
-    
-    // Trigger hooks when this method is first called.
-    if (typeof value !== 'function') {
-      if (value !== undefined && attributed === true) {
-        this.setAttribute(attributeName, value);
-      }
-
-      if (options.onChange && value !== undefined) {
-        options.onChange(undefined, value);
-      }
-
-      if (value !== undefined && dirtyType !== undefined && this.nodeState === NodeState.INITIALIZED) {
-        this.setDirty(dirtyType);
-        this.__render__();
       }
     }
   }
@@ -925,6 +759,139 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
         newValue: nodeState
       }
     }));
+  }
+
+  /**
+   * Defines or updates a data for this element.
+   *
+   * @param {string} key - Name of the data to be defined or updated.
+   * @param {*} value - The value to update or to set as the initial value.
+   * @param {Object} options - An object literal that defines the behavior of this 
+   *                           data. This object literal inherits that of the 
+   *                           descriptor param in Object#defineProperty.
+   * @param {boolean} [options.unique=true] - Specifies that the on change hooks
+   *                                          are only triggered if the new value 
+   *                                          is different from the old value.
+   * @param {DirtyType} [options.dirtyType=DirtyType.DATA] - Specifies the flag to
+   *                                                         mark as dirty when
+   *                                                         a new value is set.
+   * @param {String} [options.eventType] - Specifies the event type to dispatch 
+   *                                       whenever a new value is set.
+   * @param {boolean} [options.renderOnChange=true] - Specifies whether this
+   *                                                  element rerenders when a new 
+   *                                                  value is set.
+   * @param {boolean} [options.attributed] - Specifies whether a corresponding DOM 
+   *                                         attribute will update whenever a new 
+   *                                         value is set.
+   * @param {Function} [options.onChange] - Method invoked when the data changes.
+   *
+   * @private
+   */
+  __set_data__(key, value, options) {
+    // If this element already has this data defined, simply update its value.
+    if (this.data.hasOwnProperty(key)) {
+      this.data[key] = value;
+      return;
+    }
+
+    // Create the internal data dictionary.
+    if (this.data === undefined) this.data = {};
+    if (this.data.__private__ === undefined) this.data.__private__ = {};
+
+    if (!options) options = {};
+
+    if (process.env.NODE_ENV === 'development') {
+      assertType(options.unique, 'boolean', true, 'Optional unique key in options must be a boolean');
+      assertType(options.dirtyType, 'number', true, 'Optional dirty type must be of DirtyType enum (number)');
+      assertType(options.eventType, 'string', true, 'Optional event type must be a string');
+      assertType(options.renderOnChange, 'boolean', true, 'Optional renderOnChange must be a boolean');
+      assertType(options.attributed, 'boolean', true, 'Optional attributed must be a boolean');
+      assertType(options.onChange, 'function', true, 'Optional change handler must be a function');
+    }
+  
+    const dirtyType = options.dirtyType === undefined ? DirtyType.DATA : options.dirtyType;
+    const renderOnChange = typeof options.renderOnChange === 'boolean' ? options.renderOnChange : true;
+    const attributed = typeof options.attributed === 'boolean' ? options.attributed : false;
+    const attributeName = Directive.DATA + key.replace(/([A-Z])/g, ($1) => ('-'+$1.toLowerCase()));
+    const eventType = options.eventType;
+    const unique = (typeof unique === 'boolean') ? options.unique : true;
+  
+    if (process.env.NODE_ENV === 'development') {
+      assert(!attributeName || !hasOwnValue(Directive, attributeName), 'Attribute \'' + attributeName + '\' is reserved');
+    }
+  
+    // Set the default value if its is not a computed value.
+    if (value !== undefined && typeof value !== 'function') {
+      Object.defineProperty(this.data.__private__, key, { value: value, writable: true });
+    }
+  
+    let descriptor = {};
+  
+    descriptor.get = (typeof value === 'function') ? value : () => (this.data.__private__[key]);
+
+    if (typeof value !== 'function') {
+      descriptor.set = (val) => {
+        const oldVal = this.data.__private__[key];
+
+        // Early exit if new value is the same as old value, and that unique
+        // values are required.
+        if (unique && (oldVal === val)) return;
+  
+        if (oldVal === undefined) {
+          Object.defineProperty(this.data.__private__, key, { value: val, writable: true });
+        }
+        else {
+          this.data.__private__[key] = val;
+        }
+  
+        // If change callback is specified, trigger it.
+        if (options.onChange !== undefined) options.onChange(oldVal, val);
+
+        // If this data is attributed, update the attribute.
+        if (attributed === true) this.setAttribute(attributeName, val);
+
+        // If a dirty flag is associated with this data, mark it as dirty.
+        if (dirtyType !== undefined) {
+          this.setDirty(dirtyType);
+        }
+
+        // If this data is set to render on change, do so.
+        if (options.renderOnChange) {
+          this.__render__();
+        }
+  
+        // If there is an event associated with this data, dispatch it.
+        if (eventType) {
+          const event = new CustomEvent(eventType, {
+            detail: {
+              property: key,
+              oldValue: oldVal,
+              newValue: val
+            }
+          });
+  
+          this.dispatchEvent(event);
+        }
+      }
+    }
+  
+    Object.defineProperty(this.data, key, descriptor);
+    
+    // Trigger hooks when this method is first called.
+    if (typeof value !== 'function') {
+      if (value !== undefined && attributed === true) {
+        this.setAttribute(attributeName, value);
+      }
+
+      if (options.onChange && value !== undefined) {
+        options.onChange(undefined, value);
+      }
+
+      if (value !== undefined && dirtyType !== undefined && this.nodeState === NodeState.INITIALIZED) {
+        this.setDirty(dirtyType);
+        this.__render__();
+      }
+    }
   }
 });
 

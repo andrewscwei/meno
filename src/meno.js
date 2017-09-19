@@ -11,7 +11,7 @@ import getStyle from 'dom/getStyle';
 import setStyle from 'dom/setStyle';
 import hasStyle from 'dom/hasStyle';
 import register from 'dom/register';
-import VNode from 'vdom/VNode';
+import vnode from 'vdom/vnode';
 import Directive from 'enums/Directive';
 import DirtyType from 'enums/DirtyType';
 import NodeState from 'enums/NodeState';
@@ -39,7 +39,7 @@ meno.Directive = Directive;
 meno.DirtyType = DirtyType;
 meno.NodeState = NodeState;
 meno.register = register;
-meno.h = VNode;
+meno.h = vnode;
 meno.dom = {
   getChild: getChild,
   hasChild: hasChild,

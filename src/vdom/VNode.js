@@ -3,44 +3,31 @@
 'use strict';
 
 /**
- * @class
  * 
- * Virtual DOM node.
+ * Creates a new VNode instance.
  * 
- * @alias module:meno~vdom.VNode
+ * @param {string} tag - The element tag.
+ * @param {Object} [attributes={}] - Attributes of the element.
+ * @param {VNode[]} [children=[]] - Child vnodes of the element.
+ * 
+ * @return {VNode} - Virtual node.
+ * 
+ * @alias module:meno~vdom.vnode
  */
-class VNode {
-  /**
-   * @class
-   * 
-   * Creates a new VNode instance.
-   * 
-   * @param {string} tag - The element tag.
-   * @param {Object} [attributes={}] - Attributes of the element.
-   * @param {VNode[]} [children=[]] - Child nodes of the element.
-   * 
-   * @return {VNode} - Virtual equivalent of a DOM node.
-   * 
-   * @alias module:meno~vdom.VNode
-   */
-  constructor() {
-    let args = Array.prototype.slice.call(arguments);
-    let tag = args.shift();
-    let attributes = (typeof args[0] === 'object') ? args.shift() : {};
-    let children = (args[0] instanceof Array) ? args.shift() : [];
+function vnode() {
+  let args = Array.prototype.slice.call(arguments);
+  let tag = args.shift();
+  let attributes = (typeof args[0] === 'object' && !(args[0] instanceof Array)) ? args.shift() : {};
+  let children = (args[0] instanceof Array) ? args.shift() : [];
+  let text = (typeof args[0] === 'string') ? args.shift() : undefined;
 
-    this.__private__ = {
-      tag: tag,
-      attributes: attributes,
-      children: children
-    };
-  }
+  if (text) return text;
 
-  get tag() { return this.__private__.tag; }
-
-  get attributes() { return this.__private__.attributes; }
-
-  get children() { return this.__private__.children; }
+  return {
+    tag: tag,
+    attributes: attributes,
+    children: children
+  };
 }
 
-export default VNode;
+export default vnode;

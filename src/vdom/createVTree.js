@@ -3,8 +3,7 @@
 'use strict';
 
 import htmlParser from 'htmlparser2';
-import VNode from 'vdom/VNode';
-import VTextNode from 'vdom/VTextNode';
+import vnode from 'vdom/vnode';
 
 if (process.env.NODE_ENV === 'development') {
   var assert = require('assert');
@@ -31,13 +30,13 @@ function createVTree(htmlString) {
   const parser = new htmlParser.Parser({
     onopentag: (name, attrs) => {
       const parentNode = nodeStack.length > 0 ? nodeStack[nodeStack.length - 1] : undefined;
-      const node = new VNode(name, attrs || {});
+      const node = vnode(name, attrs || {});
       if (parentNode) parentNode.children.push(node);
       nodeStack.push(node);
     },
     ontext: (text) => {
       const parentNode = nodeStack.length > 0 ? nodeStack[nodeStack.length - 1] : undefined;
-      const node = new VTextNode(text);
+      const node = vnode(null, text);
       if (parentNode) parentNode.children.push(node);
     },
     onclosetag: (tag) => {

@@ -4,8 +4,7 @@
 
 import setAttribute from 'dom/setAttribute';
 import Directive from 'enums/Directive';
-import VNode from 'vdom/VNode';
-import VTextNode from 'vdom/VTextNode';
+import vnode from 'vdom/vnode';
 
 if (process.env.NODE_ENV === 'development') {
   var assert = require('assert');
@@ -20,10 +19,10 @@ if (process.env.NODE_ENV === 'development') {
  */
 function createElement(vnode) {
   if (process.env.NODE_ENV === 'development') {
-    assert(vnode instanceof VNode || vnode instanceof VTextNode, `The 'vnode' param must be an instance of VNode or VTextNode`);
+    assert((typeof vnode === 'string') || (typeof vnode.tag === 'string'), `Invalid vnode provided`);
   }
 
-  if (vnode instanceof VTextNode) return document.createTextNode(vnode.text);
+  if (typeof vnode === 'string') return document.createTextNode(vnode);
 
   // Create the DOM element, account for custom elements.
   const element = document.createElement(vnode.tag, { is: vnode.attributes[Directive.IS] });
