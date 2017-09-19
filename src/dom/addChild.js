@@ -99,28 +99,33 @@ function addChild() {
     let children = [];
 
     if (prepend) {
-      for (let i = n-1; i >= 0; i--)
+      for (let i = n-1; i >= 0; i--) {
         children.push(addChild(element, child[i], name, prepend));
+      }
     }
     else {
-      for (let i = 0; i < n; i++)
+      for (let i = 0; i < n; i++) {
         children.push(addChild(element, child[i], name, prepend));
+      }
     }
 
     return children;
   }
   else {
-    if (name)
+    if (name) {
       addToChildRegistry(childRegistry, child, name);
+    }
 
     if (!isCustomElement(child)) sightread(child);
 
     if (element.shadowRoot) element = element.shadowRoot;
 
-    if (prepend)
+    if (prepend) {
       element.insertBefore(child, element.firstChild);
-    else
+    }
+    else {
       element.appendChild(child);
+    }
 
     return child;
   }

@@ -24,13 +24,13 @@ const Directive = {
    * Use this directive as an attribute prefix to map any attribute to the 
    * data registry of the custom element.
    */
-  DATA: ':',
+  DATA: 'data-',
 
   /**
    * Use this directive as an attribute prefix to map any attribute to the 
    * event registry of the custom element.
    */
-  EVENT: '@'
+  EVENT: 'on-'
 };
 
 export default Directive;
