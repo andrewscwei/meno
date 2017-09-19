@@ -125,7 +125,7 @@ class EventQueue extends EventDispatcher {
 
           if (allDone) {
             this.kill();
-            this.dispatchEvent(new CustomEvent('complete'));
+            this.dispatchEvent(new Event('complete'));
           }
         };
 
@@ -136,7 +136,7 @@ class EventQueue extends EventDispatcher {
 
     if (!this.__private__.isWaiting) {
       this.kill();
-      this.dispatchEvent(new CustomEvent('complete'));
+      this.dispatchEvent(new Event('complete'));
     }
   }
 

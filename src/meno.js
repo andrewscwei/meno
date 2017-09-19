@@ -2,6 +2,7 @@
 
 'use strict';
 
+import Element from 'core/Element';
 import getChild from 'dom/getChild';
 import hasChild from 'dom/hasChild';
 import getAttribute from 'dom/getAttribute';
@@ -15,7 +16,6 @@ import vnode from 'vdom/vnode';
 import Directive from 'enums/Directive';
 import DirtyType from 'enums/DirtyType';
 import NodeState from 'enums/NodeState';
-import Element from 'ui/Element';
 import EventQueue from 'events/EventQueue';
 
 import 'document-register-element';

@@ -9,6 +9,6 @@ m(require('./components/TodoInput').default);
 m(require('./components/TodoItem').default);
 m(require('./components/TodoApp').default);
 
-localStorage.debug = 'meno';
+localStorage.debug = 'meno*';
 
 if (module.hot) module.hot.accept();

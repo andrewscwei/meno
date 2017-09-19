@@ -14,7 +14,7 @@ if (process.env.NODE_ENV === 'development') {
  * Default refresh (debounce) rate in milliseconds.
  *
  * @const
- * @memberof module:meno~ui.ElementUpdateDelegate
+ * @memberof module:meno~core.ElementUpdateDelegate
  * @type {number}
  * @default
  */
@@ -25,7 +25,7 @@ const DEFAULT_REFRESH_RATE = 0.0;
  *
  * Delegate for managing update calls of a Meno Element.
  *
- * @alias module:meno~ui.ElementUpdateDelegate
+ * @alias module:meno~core.ElementUpdateDelegate
  */
 class ElementUpdateDelegate {
   /**
@@ -36,7 +36,7 @@ class ElementUpdateDelegate {
    * @param {Element} delegate - The Meno Element instance of which this
    *                             ElementUpdateDelgate instance manages.
    *
-   * @alias module:meno~ui.ElementUpdateDelegate
+   * @alias module:meno~core.ElementUpdateDelegate
    */
   constructor(delegate) {
     /**
