@@ -13,6 +13,12 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 /**
+ * Patches a DOM element with changes between two virtual trees.
+ * 
+ * @param {Node} element - The DOM element to patch.
+ * @param {Node} newTree - The new vtree.
+ * @param {Node} oldTree - The old vtree to diff from.
+ * 
  * @alias module:meno~vdom.patch
  */
 function patch(element, newTree, oldTree) {
