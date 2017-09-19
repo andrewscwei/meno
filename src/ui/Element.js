@@ -5,6 +5,7 @@
 import ElementUpdateDelegate from 'ui/ElementUpdateDelegate';
 import getChild from 'dom/getChild';
 import hasChild from 'dom/hasChild';
+import getAttribute from 'dom/getAttribute';
 import hasAttribute from 'dom/hasAttribute';
 import getStyle from 'dom/getStyle';
 import setStyle from 'dom/setStyle';
@@ -16,6 +17,7 @@ import DirtyType from 'enums/DirtyType';
 import NodeState from 'enums/NodeState';
 import EventQueue from 'events/EventQueue';
 import getDirectCustomChildren from 'dom/getDirectCustomChildren';
+import isCustomElement from 'dom/isCustomElement';
 import hasOwnValue from 'helpers/hasOwnValue';
 
 if (process.env.NODE_ENV === 'development') {
@@ -184,10 +186,22 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   createdCallback() {
     if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> createdCallback()`);
 
+    // Create object to hold all custom properties.
     this.__private__ = {};
-    this.__private__.childRegistry = {};
+
+    // This registry is for bookkeeping registered event listeners for child 
+    // nodes with custom event directives.
+    this.__private__.eventRegistry = {};
+
+    // This registry is for bookkeeping external event listeners added to this 
+    // element instance. This is for auto garbage cleaning listeners when this
+    // element instance is removed from DOM.
     this.__private__.listenerRegistry = {};
+
+    // This delegate object is for managing dirty updates.
     this.__private__.updateDelegate = new ElementUpdateDelegate(this);
+
+    // This property is for storing all data.
     this.data = {};
 
     // Check if this Element has default data.
@@ -691,7 +705,13 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
 
     this.__private__.vtree = patch(this, vtree, this.__private__.vtree);
 
+    this.__sync_events__();
+
     if (this.render) this.render();
+  }
+
+  __sync_events() {
+
   }
 
   /**
@@ -893,6 +913,114 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
       if (value !== undefined && dirtyType !== undefined && this.nodeState === NodeState.INITIALIZED) {
         this.setDirty(dirtyType);
         this.__render__();
+      }
+    }
+  }
+
+  __sync_events__(parentNode) {
+    if (!parentNode || (parentNode === this)) {
+      this.__unregister_event__();
+      parentNode = this;
+    }
+
+    const n = parentNode.childNodes.length;
+    const regex = new RegExp('^' + Directive.EVENT, 'i');
+
+    
+    for (let i = 0; i < n; i++) {
+      const child = parentNode.childNodes[i];
+      
+      if (!child.attributes) continue;
+      
+      for (let j = 0; j < child.attributes.length; j++) {
+        const attribute = child.attributes[j];
+        if (!regex.test(attribute.name)) continue;
+        const eventType = attribute.name.replace(Directive.EVENT, '');
+        const handlerName = getAttribute(child, attribute.name);
+        this.__register_event__(child, eventType, handlerName);
+      }
+
+      if (!isCustomElement(child)) {
+        this.__sync_events__(child);
+      }
+    }
+  }
+
+  __register_event__(dispatcher, eventType, handlerName) {
+    let entries = this.__private__.eventRegistry[eventType] || [];
+    const n = entries.length;
+
+    for (let i = 0; i < n; i++) {
+      const entry = entries[i];
+      if (entry.dispatcher === dispatcher) return;
+    }
+    
+    if (!this[handlerName]) return;
+  
+    const handler = function(event) {
+      this[handlerName](event);
+    }.bind(this);
+  
+    entries.push({
+      dispatcher: dispatcher,
+      handler: handler
+    });
+  
+    dispatcher.addEventListener(eventType, handler);
+    this.__private__.eventRegistry[eventType] = entries;
+  }
+
+  __unregister_event__(dispatcher, eventType) {
+    // If no dispatcher is specified, remove all events.
+    if (!dispatcher) {
+      for (let key in this.__private__.eventRegistry) {
+        const entries = this.__private__.eventRegistry[key];
+        const n = entries.length;
+
+        for (let i = 0; i < n; i++) {
+          const entry = entries[i];
+          entry.dispatcher.removeEventListener(key, entry.handler);
+        }
+      }
+      this.__private__.eventRegistry = {};
+      return;
+    }
+
+    // If no event type is specified, unregister all events for the specified
+    // dispatcher.
+    if (!eventType) {
+      for (let key in this.__private__.eventRegistry) {
+        const entries = this.__private__.eventRegistry[key];
+        const n = entries.length;
+
+        for (let i = 0; i < n; i++) {
+          const entry = entries[i];
+
+          if (entry.dispatcher === dispatcher) {
+            entry.dispatcher.removeEventListener(key, entry.handler);
+            entries.splice(i, 1);
+            break;
+          }
+        }
+      }
+
+      return;
+    }
+    else {
+      const entries = this.__private__.eventRegistry[eventType];
+
+      if (!entries) return;
+
+      const n = entries.length;
+
+      for (let i = 0; i < n; i++) {
+        const entry = entries[i];
+        
+        if (entry.dispatcher === dispatcher) {
+          entry.dispatcher.removeEventListener(eventType, entry.handler);
+          entries.splice(i, 1);
+          break;
+        }
       }
     }
   }

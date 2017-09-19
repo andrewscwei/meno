@@ -15,26 +15,19 @@ class TodoApp extends Element('todo-app') {
     }
   }
 
-  render() {
-    const input = this.$('input');
-    input.on('insert', this.onInsert.bind(this));
+  onSelectAll(event) {
+    this.data.filter = 'all';
+  }
 
-    const items = this.$('item') ? [].concat(this.$('item')) : [];
-    const nItems = items.length;
+  onSelectActive(event) {
+    this.data.filter = 'active';
+  }
 
-    for (let i = 0; i < nItems; i++) {
-      const item = items[i];
-      item.on('toggle', this.onToggle.bind(this));
-      item.on('delete', this.onDelete.bind(this));
-    }
-
-    this.$('button-all').addEventListener('click', (event) => this.data.filter = 'all');
-    this.$('button-active').addEventListener('click', (event) => this.data.filter = 'active');
-    this.$('button-completed').addEventListener('click', (event) => this.data.filter = 'completed');
+  onSelectCompleted(event) {
+    this.data.filter = 'completed';
   }
 
   onInsert(event) {
-    console.log('foo')
     const input = event.currentTarget;
 
     this.data.items = this.data.items.concat([{
