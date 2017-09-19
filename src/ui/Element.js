@@ -651,9 +651,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     // Update the node state to `initialized`.
     this.__setNodeState__(NodeState.INITIALIZED);
 
-    // Initial render.
-    // this.__render__();
-    
     // Invoke update delegate.
     this.__private__.updateDelegate.init();
     
@@ -685,6 +682,12 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
 
     // Otherwise continue processing vtree.
     if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> __render__()`);
+
+    if (!this.__private__.vtree) {
+      while (this.lastChild) {
+        this.removeChild(this.lastChild);
+      }
+    }
 
     this.__private__.vtree = patch(this, vtree, this.__private__.vtree);
 

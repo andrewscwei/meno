@@ -34,6 +34,7 @@ class TodoApp extends Element('todo-app') {
   }
 
   onInsert(event) {
+    console.log('foo')
     const input = event.currentTarget;
 
     this.data.items = this.data.items.concat([{
