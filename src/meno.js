@@ -33,18 +33,13 @@ function meno() {
 }
 
 meno.version = process.env.BUNDLE_VERSION;
-
 meno.Element = Element;
 meno.EventQueue = EventQueue;
-
 meno.Directive = Directive;
 meno.DirtyType = DirtyType;
 meno.NodeState = NodeState;
-
 meno.register = register;
-
 meno.h = VNode;
-
 meno.dom = {
   getChild: getChild,
   hasChild: hasChild,
