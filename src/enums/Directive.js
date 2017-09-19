@@ -21,10 +21,15 @@ const Directive = {
   NAME: 'name',
   
   /**
-   * Use this directive to map any property from the DOM to the controller.
+   * Use this directive as an attribute prefix to map any attribute to the 
+   * data registry of the custom element.
    */
   DATA: ':',
 
+  /**
+   * Use this directive as an attribute prefix to map any attribute to the 
+   * event registry of the custom element.
+   */
   EVENT: '@'
 };
 
