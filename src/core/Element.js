@@ -8,7 +8,6 @@ import hasChild from 'dom/hasChild';
 import getAttribute from 'dom/getAttribute';
 import getStyle from 'dom/getStyle';
 import setStyle from 'dom/setStyle';
-import hasStyle from 'dom/hasStyle';
 import register from 'dom/register';
 import patch from 'vdom/patch';
 import Directive from 'enums/Directive';
@@ -402,12 +401,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @alias module:meno~core.Element#setStyle
    */
   setStyle(key, value) { return setStyle(this, key, value); }
-
-  /** 
-   * @see module:meno~dom.hasStyle 
-   * @alias module:meno~core.Element#hasStyle
-   */
-  hasStyle(key) { return hasStyle(this, key); }
 
   /** 
    * @inheritdoc 

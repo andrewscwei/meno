@@ -9,13 +9,11 @@ import getAttribute from 'dom/getAttribute';
 import setAttribute from 'dom/setAttribute';
 import getStyle from 'dom/getStyle';
 import setStyle from 'dom/setStyle';
-import hasStyle from 'dom/hasStyle';
 import register from 'dom/register';
 import vnode from 'vdom/vnode';
 import Directive from 'enums/Directive';
 import DirtyType from 'enums/DirtyType';
 import NodeState from 'enums/NodeState';
-import EventQueue from 'events/EventQueue';
 
 import 'document-register-element';
 
@@ -33,7 +31,6 @@ function meno() {
 
 meno.version = process.env.BUNDLE_VERSION;
 meno.Element = Element;
-meno.EventQueue = EventQueue;
 meno.Directive = Directive;
 meno.DirtyType = DirtyType;
 meno.NodeState = NodeState;
@@ -45,8 +42,7 @@ meno.dom = {
   getAttribute: getAttribute,
   setAttribute: setAttribute,
   getStyle: getStyle,
-  setStyle: setStyle,
-  hasStyle: hasStyle
+  setStyle: setStyle
 };
 
 module.exports = meno;
