@@ -4,16 +4,12 @@
 
 import getChild from 'dom/getChild';
 import hasChild from 'dom/hasChild';
-import addClass from 'dom/addClass';
-import hasClass from 'dom/hasClass';
-import removeClass from 'dom/removeClass';
 import getAttribute from 'dom/getAttribute';
 import setAttribute from 'dom/setAttribute';
 import hasAttribute from 'dom/hasAttribute';
 import getStyle from 'dom/getStyle';
 import setStyle from 'dom/setStyle';
 import hasStyle from 'dom/hasStyle';
-import createElement from 'dom/createElement';
 import register from 'dom/register';
 import VNode from 'vdom/VNode';
 import Directive from 'enums/Directive';
@@ -52,16 +48,12 @@ meno.h = VNode;
 meno.dom = {
   getChild: getChild,
   hasChild: hasChild,
-  addClass: addClass,
-  hasClass: hasClass,
-  removeClass: removeClass,
   getAttribute: getAttribute,
   setAttribute: setAttribute,
   hasAttribute: hasAttribute,
   getStyle: getStyle,
   setStyle: setStyle,
-  hasStyle: hasStyle,
-  createElement: createElement
+  hasStyle: hasStyle
 };
 
 module.exports = meno;

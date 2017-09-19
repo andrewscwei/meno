@@ -5,14 +5,10 @@
 import ElementUpdateDelegate from 'ui/ElementUpdateDelegate';
 import getChild from 'dom/getChild';
 import hasChild from 'dom/hasChild';
-import addClass from 'dom/addClass';
-import removeClass from 'dom/removeClass';
-import hasClass from 'dom/hasClass';
 import hasAttribute from 'dom/hasAttribute';
 import getStyle from 'dom/getStyle';
 import setStyle from 'dom/setStyle';
 import hasStyle from 'dom/hasStyle';
-import createElement from 'dom/createElement';
 import register from 'dom/register';
 import patch from 'vdom/patch';
 import Directive from 'enums/Directive';
@@ -353,24 +349,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @alias module:meno~ui.Element#hasChild
    */
   hasChild(child) { return hasChild(child, this); }
-
-  /** 
-   * @see module:meno~dom.addClass 
-   * @alias module:meno~ui.Element#addClass
-   */
-  addClass(className) { return addClass(this, className); }
-
-  /** 
-   * @see module:meno~dom.removeClass 
-   * @alias module:meno~ui.Element#removeClass
-   */
-  removeClass(className) { return removeClass(this, className); }
-
-  /** 
-   * @see module:meno~dom.hasClass 
-   * @alias module:meno~ui.Element#hasClass
-   */
-  hasClass(className) { return hasClass(this, className); }
 
   /** 
    * @inheritdoc 
