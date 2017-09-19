@@ -19,6 +19,7 @@ import removeFromChildRegistry from 'dom/removeFromChildRegistry';
 import createElement from 'dom/createElement';
 import register from 'dom/register';
 import sightread from 'dom/sightread';
+import patch from 'vdom/patch';
 import Directive from 'enums/Directive';
 import DirtyType from 'enums/DirtyType';
 import NodeState from 'enums/NodeState';
@@ -31,16 +32,6 @@ if (process.env.NODE_ENV === 'development') {
   var assertType = require('debug/assertType');
   var debug = require('debug')('meno');
 }
-
-// import h from 'virtual-dom/h';
-// import diff from 'virtual-dom/diff';
-// import patch from 'virtual-dom/patch';
-// import createElement from 'virtual-dom/create-element';
-
-// const convertHTML = require('html-to-vdom')({
-//   VNode: require('virtual-dom/vnode/vnode'),
-//   VText: require('virtual-dom/vnode/vtext')
-// });
 
 const USE_VIRTUAL_DOM = false;
 const USE_SHADOW_DOM = false;
@@ -92,17 +83,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @alias module:meno~ui.Element.extends
    */
   static get extends() { return this.tag && 'div' || null; }
-
-  /**
-   * The template function.
-   *
-   * @return {Function} The function to invoke to generate the template of this
-   *                    element. This template function should yield a string
-   *                    that represents a HTML tree.
-   * 
-   * @alias module:meno~ui.Element.template
-   */
-  static get template() { return null; }
 
   /**
    * Creates a new DOM element from this Element class.
@@ -194,6 +174,15 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   get opacity() { return this.getStyle('opacity', true); }
   set opacity(val) { this.setStyle('opacity', val); }
 
+  /**
+   * The VNode template of this element.
+   *
+   * @return {VNode} The VNode representing this element's DOM tree.
+   * 
+   * @alias module:meno~ui.Element.template
+   */
+  get template() { return null; }
+
   /** 
    * Lifecycle callback invoked whenever an instance of this element is created.
    * This does not mean the element is inserted into the DOM.
@@ -209,22 +198,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     this.__private__.listenerRegistry = {};
     this.__private__.updateDelegate = new ElementUpdateDelegate(this);
     this.data = {};
-
-    // Scan for internal DOM element attributes prefixed with Directive.DATA
-    // and generate data properties from them.
-    let attributes = this.attributes;
-    let nAtributes = attributes.length;
-    let regex = new RegExp('^' + Directive.DATA, 'i');
-
-    for (let i = 0; i < nAtributes; i++) {
-      let attribute = attributes[i];
-
-      if (hasOwnValue(Directive, attribute.name) || !regex.test(attribute.name)) continue;
-
-      // Generate camel case property name from the attribute.
-      let propertyName = attribute.name.replace(regex, '').replace(/-([a-z])/g, (g) => (g[1].toUpperCase()));
-      this.setData(propertyName, this.getAttribute(attribute.name), { attributed: true });
-    }
 
     // Check if this Element has default data.
     const defaults = this.defaults();
@@ -267,6 +240,21 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   attachedCallback() {
     if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> attachedCallback()`);
 
+    // Scan for internal DOM element attributes prefixed with Directive.DATA
+    // and generate data properties from them.
+    let attributes = this.attributes;
+    let nAttributes = attributes.length;
+    let regex = new RegExp('^' + Directive.DATA, 'i');
+
+    for (let i = 0; i < nAttributes; i++) {
+      let attribute = attributes[i];
+
+      if (hasOwnValue(Directive, attribute.name) || !regex.test(attribute.name)) continue;
+      // Generate camel case property name from the attribute.
+      let propertyName = attribute.name.replace(regex, '').replace(/-([a-z])/g, (g) => (g[1].toUpperCase()));
+      this.setData(propertyName, this.getAttribute(attribute.name), { attributed: true });
+    }
+
     // Wait for children to initialize before initializing this element.
     this.__awaitInit__();
   }
@@ -294,7 +282,9 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @ignore
    */
   attributeChangedCallback(attrName, oldVal, newVal) {
-    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> attributeChangedCallback(${attrName}, ${oldVal}, ${newVal})`);
+    // if (process.env.NODE_ENV === 'development') {
+    //   debug(`<${this.constructor.name}> attributeChangedCallback(${attrName}, ${oldVal}, ${newVal})`);
+    // }
   }
 
   /**
@@ -919,33 +909,20 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @private
    */
   __render__() {
-    // If this element doesn't use a template, skip it.
-    if (!this.constructor.template) return sightread(this);
+    // If this element doesn't use a vtree, skip it.
+    const vtree = this.template;
 
-    // Otherwise continue processing template.
+    if (!vtree) return sightread(this);
+
+    // Otherwise continue processing vtree.
     if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> __render__()`);
 
-    const template = this.constructor.template(this.data);
-
     // Use VDOM?
-    if (USE_VIRTUAL_DOM) {
-      // const vtree = h('div', { innerHTML: template });
-      const vtree = convertHTML(template);
-
-      if (this.__private__.rootNode === undefined && this.__private__.vtree === undefined) {
-        this.__private__.rootNode = createElement(vtree);
-        this.removeAllChildren();
-        this.appendChild(this.__private__.rootNode);
-      }
-      else {
-        const patches = diff(this.__private__.vtree, vtree);
-        this.__private__.rootNode = patch(this.__private__.rootNode, patches);
-      }
-  
-      this.__private__.vtree = vtree;
+    if (true) {
+      this.__private__.vtree = patch(this, vtree, this.__private__.vtree);
     }
     else {
-      let t = createElement(template);
+      let t = createElement(vtree);
   
       if (t) {
         if (t instanceof HTMLTemplateElement) {

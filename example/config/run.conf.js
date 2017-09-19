@@ -51,7 +51,8 @@ module.exports = {
     modules: [
       path.join(sourceDir),
       path.join(baseDir, 'src'),
-      path.join(__dirname, '../node_modules')
+      path.join(__dirname, '../node_modules'),
+      path.join(baseDir, 'node_modules')
     ]
   },
   plugins: [

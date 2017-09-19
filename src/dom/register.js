@@ -5,6 +5,7 @@
 import getElementRegistry from 'dom/getElementRegistry';
 
 if (process.env.NODE_ENV === 'development') {
+  var debug = require('debug')('meno');
   var assert = require('assert');
   var assertType = require('debug/assertType');
 }
@@ -80,6 +81,10 @@ function register(tagOrClass, options) {
   tag = tag.toLowerCase();
 
   if (!getElementRegistry()[tag]) {
+    if (process.env.NODE_ENV === 'development') {
+      debug(`[register] Registering tag <${tag}> with constructor ${o.prototype.constructor.name}`);
+    }
+
     getElementRegistry()[tag] = document.registerElement(tag, o);
   }
 

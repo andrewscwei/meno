@@ -18,13 +18,14 @@ import hasStyle from 'dom/hasStyle';
 import createElement from 'dom/createElement';
 import register from 'dom/register';
 import sightread from 'dom/sightread';
+import VNode from 'vdom/VNode';
 import Directive from 'enums/Directive';
 import DirtyType from 'enums/DirtyType';
 import NodeState from 'enums/NodeState';
 import Element from 'ui/Element';
 import EventQueue from 'events/EventQueue';
 
-// import 'document-register-element';
+import 'document-register-element';
 
 if (process.env.NODE_ENV === 'development') {
   var assert = require('assert');
@@ -49,6 +50,8 @@ meno.NodeState = NodeState;
 
 meno.sightread = sightread;
 meno.register = register;
+
+meno.h = VNode;
 
 meno.dom = {
   getChild: getChild,

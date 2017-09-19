@@ -1,8 +1,10 @@
-import { Element, DirtyType } from 'meno';
+import { Element, DirtyType, vdom } from 'meno';
+import createVTree from 'vdom/createVTree';
+import createElement from 'vdom/createElement';
 import template from 'templates/components/todo-app';
 
 class TodoApp extends Element('todo-app') {
-  static get template() { return template; }
+  get template() { return createVTree(template(this.data)); }
 
   defaults() {
     return {

@@ -23,7 +23,9 @@ const Directive = {
   /**
    * Use this directive to map any property from the DOM to the controller.
    */
-  DATA: ':'
+  DATA: ':',
+
+  EVENT: '@'
 };
 
 export default Directive;

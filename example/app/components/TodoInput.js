@@ -1,8 +1,9 @@
 import { Element, DirtyType } from 'meno';
+import createVTree from 'vdom/createVTree';
 import template from 'templates/components/todo-input';
 
 class TodoInput extends Element('todo-input') {
-  static get template() { return template; }
+  get template() { return createVTree(template(this.data)); }
 
   get responsiveness() {
     return {
@@ -18,13 +19,8 @@ class TodoInput extends Element('todo-input') {
 
   update(info) {
     if (this.isDirty(DirtyType.INPUT)) {
-      console.log(info[DirtyType.INPUT])
       this.handleKeyCodes(info[DirtyType.INPUT] && info[DirtyType.INPUT].keyUp);
     }
-  }
-
-  render() {
-    this.focus();
   }
 
   clear() {
@@ -43,8 +39,6 @@ class TodoInput extends Element('todo-input') {
     if (~keyCodes.indexOf(13)) {
       this.dispatchEvent(new Event('insert'));
       this.clear();
-      // If this is not rerendered every time, this would work.
-      // this.focus();
     }
     else if (~keyCodes.indexOf(27)) {
       this.clear();

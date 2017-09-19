@@ -390,7 +390,6 @@ class ElementUpdateDelegate {
      */
     this.initResponsiveness = function() {
       let args = Array.prototype.slice.call(arguments);
-      console.log(args)
 
       if (process.env.NODE_ENV === 'development') {
         assert(args.length > 0, 'Insufficient arguments provided');
