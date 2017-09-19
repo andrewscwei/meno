@@ -183,7 +183,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @ignore
    */
   createdCallback() {
-    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> createdCallback()`);
+    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Custom element created.`);
 
     // Create object to hold all custom properties.
     this.__private__ = {};
@@ -228,6 +228,8 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
         if (typeof options.renderOnChange !== 'boolean') options.renderOnChange = true;
 
         this.__set_data__(key, value, options);
+
+        if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Registered default data "${key}"`);
       }
     }
 
@@ -242,7 +244,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @ignore
    */
   attachedCallback() {
-    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> attachedCallback()`);
+    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Attached to DOM.`);
 
     // Scan for internal DOM element attributes prefixed with Directive.DATA
     // and generate data properties from them.
@@ -250,13 +252,14 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     let nAttributes = attributes.length;
     let regex = new RegExp('^' + Directive.DATA, 'i');
 
+    
     for (let i = 0; i < nAttributes; i++) {
       let attribute = attributes[i];
-
       if (hasOwnValue(Directive, attribute.name) || !regex.test(attribute.name)) continue;
       // Generate camel case property name from the attribute.
       let propertyName = attribute.name.replace(regex, '').replace(/-([a-z])/g, (g) => (g[1].toUpperCase()));
       this.__set_data__(propertyName, this.getAttribute(attribute.name), { attributed: true });
+      if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Registered data "${propertyName}" from attribute.`);
     }
 
     this.__render__();
@@ -272,7 +275,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @ignore
    */
   detachedCallback() {
-    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> detachedCallback()`);
+    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Removed from DOM.`);
 
     this.__destroy__();
     this.removeAllEventListeners();
@@ -630,8 +633,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @private 
    */
   __init__() {
-    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> __init__()`);
-
     // Initialize responsive behaviors.
     const responsiveness = this.responsiveness;
 
@@ -660,6 +661,8 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     }
 
     if (this.init) this.init();
+
+    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Initialized.`);
     
     // Update the node state to `initialized`.
     this.__setNodeState__(NodeState.INITIALIZED);
@@ -677,9 +680,9 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @private
    */
   __destroy__() {
-    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> __destroy__()`);
     if (this.__private__.eventQueue) this.__private__.eventQueue.kill();
     if (this.destroy) this.destroy();
+    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Node destroyed.`);
   }
 
   /**
@@ -693,13 +696,15 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
 
     if (!vtree) return;
 
-    // Otherwise continue processing vtree.
-    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> __render__()`);
-
     if (!this.__private__.vtree) {
+      if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Rendering element for the first time.`);
+      
       while (this.lastChild) {
         this.removeChild(this.lastChild);
       }
+    }
+    else {
+      if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Patching element with new vtree.`);
     }
 
     this.__private__.vtree = patch(this, vtree, this.__private__.vtree);
@@ -707,10 +712,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     this.__sync_child_events__();
 
     if (this.render) this.render();
-  }
-
-  __sync_events() {
-
   }
 
   /**
@@ -725,6 +726,8 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     const customChildren = getDirectCustomChildren(this);
     const n = customChildren.length;
 
+    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Waiting for ${n} custom child node(s) to initialize.`);
+    
     // Reset internal event queue.
     if (this.__private__.eventQueue) {
       this.__private__.eventQueue.removeAllEventListeners();
@@ -767,6 +770,8 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     if (this.__private__.nodeState === nodeState) return;
     let oldVal = this.__private__.nodeState;
     this.__private__.nodeState = nodeState;
+
+    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Node state changed to "${NodeState.toString(nodeState)}".`);
 
     if (nodeState === NodeState.INITIALIZED) {
       this.dispatchEvent(new Event('nodeinitialize'));
@@ -893,7 +898,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     }
   
     Object.defineProperty(this.data, key, descriptor);
-    
+
     // Trigger hooks when this method is first called.
     if (typeof value !== 'function') {
       if (value !== undefined && attributed === true) {
