@@ -788,23 +788,25 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    *
    * @param {string} key - Name of the data to be defined or updated.
    * @param {*} value - The value to update or to set as the initial value.
-   * @param {Object} options - An object literal that defines the behavior of this 
-   *                           data. This object literal inherits that of the 
-   *                           descriptor param in Object#defineProperty.
+   * @param {Object} options - An object literal that defines the behavior of 
+   *                           this data. This object literal inherits that of 
+   *                           the descriptor param in Object#defineProperty.
    * @param {boolean} [options.unique=true] - Specifies that the on change hooks
-   *                                          are only triggered if the new value 
-   *                                          is different from the old value.
-   * @param {DirtyType} [options.dirtyType=DirtyType.DATA] - Specifies the flag to
-   *                                                         mark as dirty when
-   *                                                         a new value is set.
+   *                                          are only triggered if the new 
+   *                                          value is different from the old 
+   *                                          value.
+   * @param {DirtyType} [options.dirtyType=DirtyType.DATA] - Specifies the flag 
+   *                                                         to mark as dirty 
+   *                                                         when a new value is 
+   *                                                         set.
    * @param {String} [options.eventType] - Specifies the event type to dispatch 
    *                                       whenever a new value is set.
    * @param {boolean} [options.renderOnChange=true] - Specifies whether this
-   *                                                  element rerenders when a new 
-   *                                                  value is set.
-   * @param {boolean} [options.attributed] - Specifies whether a corresponding DOM 
-   *                                         attribute will update whenever a new 
-   *                                         value is set.
+   *                                                  element rerenders when a 
+   *                                                  new value is set.
+   * @param {boolean} [options.attributed] - Specifies whether a corresponding 
+   *                                         DOM attribute will update whenever 
+   *                                         a new value is set.
    * @param {Function} [options.onChange] - Method invoked when the data changes.
    *
    * @private
