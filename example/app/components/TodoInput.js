@@ -1,22 +1,12 @@
 import { Element, DirtyType, h } from 'meno';
 
-class TodoInput extends Element('todo-input') {
-  get template() {
-    return h('template', [
-      h('input', { name: 'input-field', type: 'textfield', placeholder: 'What to do?' })
-    ]);
-  }
+class TodoInput extends Element(HTMLInputElement, 'todo-input') {
+  static get extends() { return 'input'; }
 
   get responsiveness() {
     return {
       keyup: 10.0
     }
-  }
-
-  get value() {
-    const input = this.$('input-field');
-    if (!input.value || input.value === '') return null;
-    return input.value;
   }
 
   update(info) {
@@ -26,11 +16,7 @@ class TodoInput extends Element('todo-input') {
   }
 
   clear() {
-    this.$('input-field').value = '';
-  }
-
-  focus() {
-    this.$('input-field').focus();
+    this.value = '';
   }
 
   handleKeyCodes(keyCodes) {

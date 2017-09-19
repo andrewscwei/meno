@@ -6,7 +6,6 @@ import ElementUpdateDelegate from 'core/ElementUpdateDelegate';
 import getChild from 'dom/getChild';
 import hasChild from 'dom/hasChild';
 import getAttribute from 'dom/getAttribute';
-import hasAttribute from 'dom/hasAttribute';
 import getStyle from 'dom/getStyle';
 import setStyle from 'dom/setStyle';
 import hasStyle from 'dom/hasStyle';
@@ -73,7 +72,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * 
    * @alias module:meno~core.Element.extends
    */
-  static get extends() { return this.tag && 'div' || null; }
+  static get extends() { return null; }
 
   /**
    * Creates a new DOM element from this Element class.
@@ -176,14 +175,13 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   get template() { return null; }
 
   /** 
-   * Lifecycle callback invoked whenever an instance of this element is created.
-   * This does not mean the element is inserted into the DOM.
+   * Lifecycle callback invoked whenever this element is inserted into the DOM.
    * 
    * @inheritdoc 
    * @ignore
    */
-  createdCallback() {
-    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Custom element created.`);
+  connectedCallback() {
+    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Attached to DOM.`);
 
     // Create object to hold all custom properties.
     this.__private__ = {};
@@ -216,9 +214,9 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
         // Default data can be expressed in object literals. This allows for
         // additional config options.
         if (typeof descriptor === 'object' && descriptor.hasOwnProperty('value')) {
-           value = descriptor.value;
-           options = descriptor;
-           delete options.value;
+            value = descriptor.value;
+            options = descriptor;
+            delete options.value;
         }
         else {
           value = descriptor;
@@ -235,16 +233,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
 
     // Make element invisible until its first update.
     this.setStyle('visibility', 'hidden');
-  }
-
-  /** 
-   * Lifecycle callback invoked whenever this element is inserted into the DOM.
-   * 
-   * @inheritdoc 
-   * @ignore
-   */
-  attachedCallback() {
-    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Attached to DOM.`);
 
     // Scan for internal DOM element attributes prefixed with Directive.DATA
     // and generate data properties from them.
@@ -252,7 +240,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     let nAttributes = attributes.length;
     let regex = new RegExp('^' + Directive.DATA, 'i');
 
-    
     for (let i = 0; i < nAttributes; i++) {
       let attribute = attributes[i];
       if (hasOwnValue(Directive, attribute.name) || !regex.test(attribute.name)) continue;
@@ -274,13 +261,14 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @inheritdoc 
    * @ignore
    */
-  detachedCallback() {
+  disconnectedCallback() {
     if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Removed from DOM.`);
 
     this.__destroy__();
     this.removeAllEventListeners();
     this.__private__.updateDelegate.destroy();
     this.__setNodeState__(NodeState.DESTROYED);
+    // delete this.__private__;
   }
 
   /**
@@ -402,12 +390,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
           this.setDirty(DirtyType.STATE);
     }
   }
-
-  /** 
-   * @see module:meno~dom.hasAttribute 
-   * @alias module:meno~core.Element#hasAttribute
-   */
-  hasAttribute(name) { return hasAttribute(this, name); }
 
   /** 
    * @see module:meno~dom.getStyle 

@@ -7,7 +7,6 @@ import getChild from 'dom/getChild';
 import hasChild from 'dom/hasChild';
 import getAttribute from 'dom/getAttribute';
 import setAttribute from 'dom/setAttribute';
-import hasAttribute from 'dom/hasAttribute';
 import getStyle from 'dom/getStyle';
 import setStyle from 'dom/setStyle';
 import hasStyle from 'dom/hasStyle';
@@ -45,7 +44,6 @@ meno.dom = {
   hasChild: hasChild,
   getAttribute: getAttribute,
   setAttribute: setAttribute,
-  hasAttribute: hasAttribute,
   getStyle: getStyle,
   setStyle: setStyle,
   hasStyle: hasStyle

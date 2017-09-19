@@ -36,20 +36,17 @@ body
 
 +element('todo-input')
   +size(100% 100px)
+  +padding(0 0px)
+  +transition(border color, .2s, ease-out)
+  font-weight: 300
+  font-size: 2em
+  color: rgba(#fff, .6)
+  background: transparent
+  border-bottom: 2px solid #161616
 
-  input
-    +padding(0 0px)
-    +size(100%)
-    +transition(border color, .2s, ease-out)
-    font-weight: 300
-    font-size: 2em
-    color: rgba(#fff, .6)
-    background: transparent
-    border-bottom: 2px solid #161616
-
-    &:focus
-      color: rgba(#fff, 1)
-      border-bottom: 2px solid #fff
+  &:focus
+    color: rgba(#fff, 1)
+    border-bottom: 2px solid #fff
   
 .list
   +size(80% auto)

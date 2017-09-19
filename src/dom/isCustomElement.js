@@ -3,7 +3,6 @@
 'use strict';
 
 import getAttribute from 'dom/getAttribute';
-import getElementRegistry from 'dom/getElementRegistry';
 import Directive from 'enums/Directive';
 
 if (process.env.NODE_ENV === 'development') {
@@ -27,8 +26,8 @@ function isCustomElement(element) {
   const is = getAttribute(element, Directive.IS);
   const tag = element.tagName.toLowerCase();
 
-  if (is && (getElementRegistry(is) !== undefined)) return true;
-  if (tag && (getElementRegistry(tag) !== undefined)) return true;
+  if (is && (customElements.get(is) !== undefined)) return true;
+  if (tag && (customElements.get(tag) !== undefined)) return true;
   return false;
 }
 

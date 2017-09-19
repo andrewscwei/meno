@@ -2,12 +2,9 @@
 
 'use strict';
 
-import getElementRegistry from 'dom/getElementRegistry';
-
 if (process.env.NODE_ENV === 'development') {
   var debug = require('debug')('meno:register');
   var assert = require('assert');
-  var assertType = require('debug/assertType');
 }
 
 /**
@@ -32,63 +29,28 @@ if (process.env.NODE_ENV === 'development') {
  *
  * @alias module:meno~dom.register
  */
-function register(tagOrClass, options) {
+function register(ElementClass) {
   if (process.env.NODE_ENV === 'development') {
-    assertType(tagOrClass, ['string', Function], false, 'Invalid tag or class specified');
+    assert(typeof ElementClass === 'function', 'Invalid element class specified');
+    assert(typeof ElementClass.tag === 'string', 'Element class must have a tag');
+    assert(!ElementClass.extends || (typeof ElementClass.extends === 'string'), `The 'extends' property of the element class, if specified, must be a string`);
   }
 
-  let tag;
-  let o = {};
+  const tag = ElementClass.tag;
+  const ext = ElementClass.extends;
 
-  if (tagOrClass instanceof Function) {
-    tag = tagOrClass.tag;
-    o = {
-      prototype: tagOrClass.prototype,
-      extends: tagOrClass.extends
-    };
-  }
-  else {
-    if (process.env.NODE_ENV === 'development') {
-      assertType(options, ['object', 'function'], false, `Second param must be a class or an object literal containing at least the 'prototype' key`);
-    }
-
-    tag = tagOrClass;
-
-    if (typeof options === 'object') {
-      if (process.env.NODE_ENV === 'development') {
-        assertType(options['prototype'], 'function', true, 'Invalid prototype class provided: ' + options['prototype']);
-        assertType(options['class'], 'function', true, 'Invalid class provided: ' + options['class']);
-        assert(!options['extends'] || typeof options['extends'] ===  'string', true, 'Invalid value specified for options.extends: ' + options['extends']);
-      }
-    }
-
-    if (typeof options === 'function') {
-      o = options
+  if (process.env.NODE_ENV === 'development') {
+    if (ext) {
+      debug(`Registering custom element with tag <${tag}> that extends <${ext}>`);
     }
     else {
-      if (options['class']) {
-        o['prototype'] = options['class'].prototype;
-      }
-      else if (options['prototype']) {
-        o['prototype'] = options['prototype'];
-      }
-
-      if (options['extends']) o['extends'] = options['extends'];
+      debug(`Registering custom element with tag <${tag}>`);
     }
   }
 
-  if (tag.indexOf('-') < 0) tag += '-element';
-  tag = tag.toLowerCase();
+  customElements.define(tag, ElementClass, ext ? { extends: ext } : undefined);
 
-  if (!getElementRegistry()[tag]) {
-    if (process.env.NODE_ENV === 'development') {
-      debug(`Registering tag <${tag}> with constructor ${o.prototype.constructor.name}.`);
-    }
-
-    getElementRegistry()[tag] = document.registerElement(tag, o);
-  }
-
-  return getElementRegistry()[tag];
+  return customElements.get(tag);
 }
 
 export default register;

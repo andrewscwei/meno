@@ -2,14 +2,14 @@
 
 ## Caveats
 
-2017.09.14 - Avoid using custom tags directly. Use the `is` attribute instead. Currently the registered custom element constructor is not used when an element is added via `innerHTML`.
+When extending another DOM tag (i.e. specifying the `extends` static property of `Element`), you must use the `is` syntax to define your DOM element.
 
 ```html
-<!-- Don't do this -->
-<my-element></my-element>
+<!-- Do this -->
+<button is='my-button'></button>
 
-<!-- Do this instead -->
-<div is='my-element'></div>
+<!-- Don't do this -->
+<my-button></my-button>
 ```
 
 ## License
