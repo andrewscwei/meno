@@ -29,7 +29,7 @@ function hasChild(child, element) {
   }
 
   if (typeof child === 'string') {
-    return !noval(getChild(element, child, true));
+    return !noval(getChild(element, child));
   }
   else {
     if (!element || element === window || element === document) element = document.body;

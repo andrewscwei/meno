@@ -3,10 +3,7 @@ import createVTree from 'vdom/createVTree';
 import template from 'templates/components/todo-item';
 
 class TodoItem extends Element('todo-item') {
-  get template() { 
-    console.log(this.data)
-    return createVTree(template(this.data)); 
-  }
+  get template() { return createVTree(template(this.data)); }
 
   render() {
     this.$('label').addEventListener('click', this.toggle.bind(this));

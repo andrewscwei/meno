@@ -3,7 +3,6 @@
 'use strict';
 
 import ElementUpdateDelegate from 'ui/ElementUpdateDelegate';
-import addChild from 'dom/addChild';
 import getChild from 'dom/getChild';
 import hasChild from 'dom/hasChild';
 import addClass from 'dom/addClass';
@@ -13,12 +12,8 @@ import hasAttribute from 'dom/hasAttribute';
 import getStyle from 'dom/getStyle';
 import setStyle from 'dom/setStyle';
 import hasStyle from 'dom/hasStyle';
-import removeChild from 'dom/removeChild';
-import getChildRegistry from 'dom/getChildRegistry';
-import removeFromChildRegistry from 'dom/removeFromChildRegistry';
 import createElement from 'dom/createElement';
 import register from 'dom/register';
-import sightread from 'dom/sightread';
 import patch from 'vdom/patch';
 import Directive from 'enums/Directive';
 import DirtyType from 'enums/DirtyType';
@@ -255,6 +250,8 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
       this.setData(propertyName, this.getAttribute(attribute.name), { attributed: true });
     }
 
+    this.__render__();
+
     // Wait for children to initialize before initializing this element.
     this.__awaitInit__();
   }
@@ -339,46 +336,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @alias module:meno~ui.Element#update
    */
   update() {}
-
-  /** 
-   * @see module:meno~dom.addChild 
-   * @alias module:meno~ui.Element#addChild
-   */
-  addChild(child, name, prepend) { return addChild(this, child, name, prepend); }
-
-  /** 
-   * @see module:meno~dom.removeChild 
-   * @alias module:meno~ui.Element#removeChild
-   */
-  removeChild(child) {
-    if ((child instanceof Node) && (child.parentNode === this)) {
-      removeFromChildRegistry(getChildRegistry(this), child);
-      return super.removeChild(child);
-    }
-    else {
-      return removeChild(this, child);
-    }
-  }
-
-  /**
-   * Removes all children from this element.
-   * 
-   * @alias module:meno~ui.Element#removeAllChildren
-   * @todo Support shadow DOM.
-   */
-  removeAllChildren() {
-    if (USE_SHADOW_DOM && this.shadowRoot) {
-      try {
-        while (this.shadowRoot.lastChild) this.shadowRoot.removeChild(this.shadowRoot.lastChild);
-      }
-      catch (err) {}
-    }
-    else {
-      while (this.lastChild) {
-        this.removeChild(this.lastChild);
-      }
-    }
-  }
 
   /**
    * Shorthand for Element#getChild.
@@ -883,7 +840,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     this.__setNodeState__(NodeState.INITIALIZED);
 
     // Initial render.
-    this.__render__();
+    // this.__render__();
     
     // Invoke update delegate.
     this.__private__.updateDelegate.init();
@@ -912,43 +869,12 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     // If this element doesn't use a vtree, skip it.
     const vtree = this.template;
 
-    if (!vtree) return sightread(this);
+    if (!vtree) return;
 
     // Otherwise continue processing vtree.
     if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> __render__()`);
 
-    // Use VDOM?
-    if (true) {
-      this.__private__.vtree = patch(this, vtree, this.__private__.vtree);
-    }
-    else {
-      let t = createElement(vtree);
-  
-      if (t) {
-        if (t instanceof HTMLTemplateElement) {
-          t = document.importNode(t.content, true);
-          this.removeAllChildren();
-          
-          if (USE_SHADOW_DOM) {
-            if (!this.shadowRoot) this.createShadowRoot();
-            this.shadowRoot.appendChild(t);
-          }
-          else {
-            this.appendChild(t);
-          }
-        }
-        else {
-          this.removeAllChildren();
-          const n = t.childNodes.length;
-          for (let i = 0; i < n; i++) {
-            let node = document.importNode(t.childNodes[i], true);
-            this.appendChild(node);
-          }
-        }
-      }
-    }
-
-    sightread(this);
+    this.__private__.vtree = patch(this, vtree, this.__private__.vtree);
 
     if (this.render) this.render();
   }
@@ -962,7 +888,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   __awaitInit__() {
     if (this.nodeState === NodeState.INITIALIZED) return;
 
-    const customChildren = getDirectCustomChildren(this, true);
+    const customChildren = getDirectCustomChildren(this);
     const n = customChildren.length;
 
     // Reset internal event queue.

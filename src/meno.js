@@ -3,9 +3,7 @@
 'use strict';
 
 import getChild from 'dom/getChild';
-import addChild from 'dom/addChild';
 import hasChild from 'dom/hasChild';
-import removeChild from 'dom/removeChild';
 import addClass from 'dom/addClass';
 import hasClass from 'dom/hasClass';
 import removeClass from 'dom/removeClass';
@@ -17,7 +15,6 @@ import setStyle from 'dom/setStyle';
 import hasStyle from 'dom/hasStyle';
 import createElement from 'dom/createElement';
 import register from 'dom/register';
-import sightread from 'dom/sightread';
 import VNode from 'vdom/VNode';
 import Directive from 'enums/Directive';
 import DirtyType from 'enums/DirtyType';
@@ -36,7 +33,7 @@ if (process.env.NODE_ENV === 'development') {
  * @module meno
  */
 function meno() {
-  return (arguments.length > 0) ? register.apply(null, arguments) : sightread.apply(null, arguments);
+  register.apply(null, arguments);
 }
 
 meno.version = process.env.BUNDLE_VERSION;
@@ -48,16 +45,13 @@ meno.Directive = Directive;
 meno.DirtyType = DirtyType;
 meno.NodeState = NodeState;
 
-meno.sightread = sightread;
 meno.register = register;
 
 meno.h = VNode;
 
 meno.dom = {
   getChild: getChild,
-  addChild: addChild,
   hasChild: hasChild,
-  removeChild: removeChild,
   addClass: addClass,
   hasClass: hasClass,
   removeClass: removeClass,
@@ -69,7 +63,5 @@ meno.dom = {
   hasStyle: hasStyle,
   createElement: createElement
 };
-
-meno();
 
 module.exports = meno;

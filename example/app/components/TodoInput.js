@@ -12,7 +12,7 @@ class TodoInput extends Element('todo-input') {
   }
 
   get value() {
-    const input = this.$('input');
+    const input = this.$('input-field');
     if (!input.value || input.value === '') return null;
     return input.value;
   }
@@ -24,11 +24,11 @@ class TodoInput extends Element('todo-input') {
   }
 
   clear() {
-    this.getChild('input').value = '';
+    this.$('input-field').value = '';
   }
 
   focus() {
-    this.$('input').focus();
+    this.$('input-field').focus();
   }
 
   handleKeyCodes(keyCodes) {
