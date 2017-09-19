@@ -42,6 +42,15 @@ function patch(element, newTree, oldTree) {
   return newTree;
 }
 
+/**
+ * Applies updates to an element, specified by its parent and its child index.
+ * 
+ * @param {Node} parent - The parent of the element.
+ * @param {VNode} newNode - The new VNode instance with updated properties.
+ * @param {VNode} oldNode - The old VNode instance to diff from.
+ * @param {number} [index=0] - The child index of the element with respect to 
+ *                             the parent.
+ */
 function updateElement(parent, newNode, oldNode, index = 0) {
   if (!oldNode) {
     parent.appendChild(createElement(newNode));
