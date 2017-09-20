@@ -912,7 +912,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     for (let i = 0; i < n; i++) {
       const child = parent.childNodes[i];
 
-      this.__register_child_events__(child);
+      this.__register_all_child_events__(child);
 
       if (!isCustomElement(child)) {
         this.__sync_child_events__(child);
@@ -927,62 +927,74 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * 
    * @private
    */
-  __register_child_events__(child) {
+  __register_all_child_events__(child) {
     if (process.env.NODE_ENV === 'development') {
       assert(child instanceof Node, `Invalid child specified`);
     }
 
-    if (!child.attributes) return;
-
-    const n = child.attributes.length;
     const regex = new RegExp('^' + Directive.EVENT, 'i');
-
-    if (n <= 0) return;
     
-    for (let i = 0; i < n; i++) {
+    if (!child.attributes) return;
+    
+    for (let i = 0; i < child.attributes.length; i++) {
       const attribute = child.attributes[i];
       if (!regex.test(attribute.name)) continue;
       const eventType = attribute.name.replace(Directive.EVENT, '');
       const handlerName = getAttribute(child, attribute.name);
-
-      // If this element doesn't have the handler name defined, early exit.
-      if (!this[handlerName]) {
-        if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Failed to register for event "${eventType}", this element does not have a method named "${handlerName}"`);
-        continue;
-      }
-      
-      // If the same event is already registered, early exit.
-      let entries = this.__private__.eventRegistry[eventType] || [];
-      let numEntries = entries.length;
-      let isAlreadyRegistered = false;
-      
-      for (let j = 0; j < numEntries; j++) {
-        const entry = entries[j];
-        
-        if (entry.dispatcher === child) {
-          if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Failed to register for event "${eventType}" with handler name "${handlerName}". The same event for this child is already registered.`);
-          isAlreadyRegistered = true;
-          break;
-        }
-      }
-
-      if (isAlreadyRegistered) continue;
-      
-      // Proceed to registering for the child event.
-      const handler = function(event) { this[handlerName](event); }.bind(this);
-  
-      entries.push({
-        dispatcher: child,
-        handler: handler
-      });
-  
-      child.addEventListener(eventType, handler);
-  
-      this.__private__.eventRegistry[eventType] = entries;
-
-      if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Registered event "${eventType}" with handler name "${handlerName}" for child:`, child);
+      this.__register_child_event__(child, eventType, handlerName);
     }
   }
+
+  /**
+   * Registers an event with a child node.
+   * 
+   * @param {Node} child - The child node dispatching the event.
+   * @param {string} eventType - Name of the event to listen to.
+   * @param {string} handlerName - Name of the listener handler.
+   * 
+   * @private
+   */
+  __register_child_event__(child, eventType, handlerName) {
+    if (process.env.NODE_ENV === 'development') {
+      assert(child instanceof Node, `Invalid child specified`);
+      assert(typeof eventType === 'string', `Invalid event type specified`);
+      assert(typeof handlerName === 'string', `Invalid handler name specified`);
+    }
+
+    // If this element doesn't have the handler name defined, early exit.
+    if (!this[handlerName]) {
+      if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Failed to register for event "${eventType}", this element does not have a method named "${handlerName}"`);
+      return;
+    }
+    
+    // If the same event is already registered, early exit.
+    let entries = this.__private__.eventRegistry[eventType] || [];
+    let n = entries.length;
+    
+    for (let i = 0; i < n; i++) {
+      const entry = entries[i];
+      
+      if (entry.dispatcher === child) {
+        if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Failed to register for event "${eventType}" with handler name "${handlerName}". The same event for this child is already registered.`);
+        return;
+      }
+    }
+    
+    // Proceed to registering for the child event.
+    const handler = function(event) { this[handlerName](event); }.bind(this);
+  
+    entries.push({
+      dispatcher: child,
+      handler: handler
+    });
+  
+    child.addEventListener(eventType, handler);
+
+    this.__private__.eventRegistry[eventType] = entries;
+
+    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Registered event "${eventType}" with handler name "${handlerName}" for child:`, child);
+  }
+
 
   /**
    * Unregisters an event or multiple events from a child (or all children).
