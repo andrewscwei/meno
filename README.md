@@ -2,27 +2,15 @@
 
 Meno is an lean (`12.8kb`), [WebComponents](http://webcomponents.org/)-based (namely custom elements) UI library. It is an experimental project and is not meant for production use.
 
-# Usage
+## Usage
 
 ```
 $ npm install meno
 ```
 
-## Example
+## Demo
 
-Install dependencies and run the todo list app example:
-
-```sh
-$ yarn
-$ cd example
-$ yarn
-$ cd ../
-$ npm run example:dev
-```
-
-# API
-
-Raw documentation is available [here](http://andrewscwei.github.io/meno).
+Check out the [todo list demo](http://andrewscwei.github.io/meno).
 
 ## Disclaimer
 

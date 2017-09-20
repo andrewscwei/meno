@@ -1,4 +1,4 @@
-import { Element, DirtyType, vdom } from 'meno';
+import { Element } from 'meno';
 import createVTree from 'vdom/createVTree';
 import template from 'templates/components/todo-app';
 

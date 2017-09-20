@@ -28,7 +28,7 @@ jobs:
               echo "Skipping publish because this is not a release"
             fi
       - deploy:
-          name: Publish docs to GitHub pages
+          name: Publish demo to GitHub pages
           command: |
             if [[ $(git describe --tags) =~ ^v[0-9]+(\.[0-9]+)+(-rc[0-9]+)?(-alpha[0-9]+)?$ ]]; then
               if [ `git branch | grep gh-pages` ]
@@ -36,12 +36,12 @@ jobs:
                 git branch -D gh-pages
               fi
               git checkout -b gh-pages
-              npm run docs
+              npm run demo:build
 
-              # Move generated docs to root and delete everything else.
-              find . -maxdepth 1 ! -name '.' ! -name '..' ! -name 'docs' ! -name '.git' ! -name '.gitignore' -exec rm -rf {} \;
-              mv docs/* .
-              rm -R docs/
+              # Move generated demo to root and delete everything else.
+              find . -maxdepth 1 ! -name '.' ! -name '..' ! -name 'demo' ! -name '.git' ! -name '.gitignore' -exec rm -rf {} \;
+              mv demo/public/* .
+              rm -R demo/
 
               # Push to gh-pages.
               ORIGIN_URL=`git config --get remote.origin.url`
@@ -52,7 +52,7 @@ jobs:
               git commit --allow-empty -m "$(git log -1 --pretty=%B) [ci skip]"
               git push -f $ORIGIN_URL gh-pages
 
-              echo "Successfully published docs to GitHub pages"
+              echo "Successfully published demo to GitHub pages"
             else
               echo "Skipping publish because this is not a release"
             fi

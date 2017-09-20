@@ -1,6 +1,6 @@
 {
   "name": "meno",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "An experimental JavaScript UI library",
   "main": "dist/meno.js",
   "unpkg": "dist/meno.min.js",
@@ -13,8 +13,9 @@
     "build:dev": "NODE_ENV=development webpack --colors --profile --config ./config/build.conf.js --display-error-details",
     "build:prod": "NODE_ENV=production webpack --colors --profile --config ./config/build.conf.js --display-error-details",
     "build:analyze": "USE_ANALYZER=true npm run build:prod",
-    "example:dev": "npm run dev --prefix example",
-    "example:prod": "npm run clean && npm run build:prod && npm start --prefix example",
+    "demo": "npm run clean && npm run build:prod && npm start --prefix demo",
+    "demo:dev": "npm run dev --prefix demo",
+    "demo:build": "npm run build && npm run build --prefix demo",
     "docs": "rimraf docs && jsdoc src -r -R README.md -c .jsdocrc"
   },
   "author": "Andrew Wei <andrewscwei@gmail.com>",
@@ -31,7 +32,6 @@
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-preset-es2015": "^6.24.1",
-    "cheerio": "^1.0.0-rc.2",
     "compression-webpack-plugin": "^1.0.0",
     "debug": "^3.0.1",
     "document-register-element": "^1.7.0",

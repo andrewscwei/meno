@@ -1,4 +1,4 @@
-import { Element, DirtyType, h } from 'meno';
+import { Element, h } from 'meno';
 
 class TodoItem extends Element('todo-item') {
   get template() { 

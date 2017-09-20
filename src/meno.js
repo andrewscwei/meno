@@ -19,6 +19,8 @@ import 'document-register-element';
 
 if (process.env.NODE_ENV === 'development') {
   var assert = require('assert');
+  var debug = require('debug')('meno');
+  debug(`v${process.env.BUNDLE_VERSION}, debug mode`);
   assert(window && document, 'Meno is a front-end web framework where \'window\' and \'document\' must be defined');
 }
 

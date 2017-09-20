@@ -2,7 +2,6 @@
 
 'use strict';
 
-const debug = process.env.NODE_ENV !== 'production';
 const path = require('path');
 const webpack = require('webpack');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
@@ -18,7 +17,6 @@ module.exports = {
   entry: './index.js',
   output: {
     path: buildDir,
-    publicPath: '/javascripts/',
     filename: '[name].js',
     chunkFilename: '[chunkhash].js',
     sourceMapFilename: '[name].map'
@@ -26,10 +24,20 @@ module.exports = {
   module: {
     rules: [{
       test: /\.js$/,
-      loader: 'babel-loader'
+      loader: 'babel-loader',
+      options: {
+        presets: ['es2015']
+      }
     }, {
       test: /\.pug$/,
-      loader: `pug-loader?root=${sourceDir}`
+      use: [{
+        loader: 'babel-loader',
+        options: {
+          presets: ['es2015']
+        }
+      }, {
+        loader: `pug-loader?root=${sourceDir}`
+      }]
     }, {
       test: /\.sass$/,
       use: [{
@@ -59,7 +67,7 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env': {
         BUNDLE_VERSION: JSON.stringify(version),
-        NODE_ENV: JSON.stringify(debug ? 'development' : 'production')
+        NODE_ENV: JSON.stringify('development')
       }
     }),
     new webpack.WatchIgnorePlugin([
@@ -68,18 +76,11 @@ module.exports = {
     ]),
     new HTMLWebpackPlugin({
       filename: path.join(buildDir, 'index.html'),
-      alwaysWriteToDisk: true,
+      // alwaysWriteToDisk: true,
       template: path.join(sourceDir, 'templates', 'index.pug'),
       inject: true
     }),
-    new HTMLWebpackHarddiskPlugin()
-  ]
-  .concat(debug ? [
+    // new HTMLWebpackHarddiskPlugin(),
     new webpack.NormalModuleReplacementPlugin(/^meno$/, path.join(baseDir, 'src/meno.js'))
-  ] : [
-    new webpack.NormalModuleReplacementPlugin(/^meno$/, path.join(baseDir, 'dist/meno.min.js')),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: { warnings: false }
-    })
-  ])
+  ]
 };

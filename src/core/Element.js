@@ -98,6 +98,87 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   get responsiveness() { return {}; }
 
   /**
+   * Data object.
+   * 
+   * @type {Object}
+   * 
+   * @alias module:meno~core.Element.data
+   */
+  get data() { 
+    let isInitial = false;
+
+    if (!this.__private__ || !this.__private__.hasOwnProperty('data')) {
+      isInitial = true;
+    }
+
+    const o = this.get('data', {});
+
+    if (isInitial) {
+      // Check if this Element has default data.
+      const defaults = this.defaults();
+    
+      if (defaults) {
+        // Go through each key/value pair and add it to this element's data.
+        for (let key in defaults) {
+          let descriptor = defaults[key];
+          let value = undefined;
+          let options = {};
+
+          // Default data can be expressed in object literals. This allows for
+          // additional config options.
+          if (typeof descriptor === 'object' && descriptor.hasOwnProperty('value')) {
+              value = descriptor.value;
+              options = descriptor;
+              delete options.value;
+          }
+          else {
+            value = descriptor;
+          }
+
+          // All default data should affect rendering by default unless otherwise specified.
+          if (typeof options.renderOnChange !== 'boolean') options.renderOnChange = true;
+
+          this.__set_data__(key, value, options);
+
+          if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Registered default data "${key}"`);
+        }
+      }
+    }
+
+    return o;
+  }
+
+  /**
+   * This registry is for bookkeeping external event listeners added to this 
+   * element instance. This is for auto garbage cleaning listeners when this
+   * element instance is removed from DOM.
+   * 
+   * @type {Object}
+   * 
+   * @private
+   */ 
+  get listenerRegistry() { return this.get('listenerRegistry', {}); }
+
+  /**
+   * This registry is for bookkeeping registered event listeners for child nodes 
+   * with custom event directives.
+   * 
+   * @type {Object}
+   * 
+   * @private
+   */
+  get eventRegistry() { return this.get('eventRegistry', {}); }
+
+  /**
+   * This delegate object is for managing dirty updates.
+   * 
+   * @type {ElementUpdateDelegate}
+   * 
+   * @private
+   */ 
+  get updateDelegate() { return this.get('updateDelegate', new ElementUpdateDelegate(this)); }
+
+  /**
    * Instance name of this Element instance. Once set, it cannot be changed.
    *
    * @type {string}
@@ -180,55 +261,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @ignore
    */
   connectedCallback() {
-    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Attached to DOM.`);
-
-    // Create object to hold all custom properties.
-    this.__private__ = {};
-
-    // This registry is for bookkeeping registered event listeners for child 
-    // nodes with custom event directives.
-    this.__private__.eventRegistry = {};
-
-    // This registry is for bookkeeping external event listeners added to this 
-    // element instance. This is for auto garbage cleaning listeners when this
-    // element instance is removed from DOM.
-    this.__private__.listenerRegistry = {};
-
-    // This delegate object is for managing dirty updates.
-    this.__private__.updateDelegate = new ElementUpdateDelegate(this);
-
-    // This property is for storing all data.
-    this.data = {};
-    
-    // Check if this Element has default data.
-    const defaults = this.defaults();
-
-    if (defaults) {
-      // Go through each key/value pair and add it to this element's data.
-      for (let key in defaults) {
-        let descriptor = defaults[key];
-        let value = undefined;
-        let options = {};
-
-        // Default data can be expressed in object literals. This allows for
-        // additional config options.
-        if (typeof descriptor === 'object' && descriptor.hasOwnProperty('value')) {
-            value = descriptor.value;
-            options = descriptor;
-            delete options.value;
-        }
-        else {
-          value = descriptor;
-        }
-
-        // All default data should affect rendering by default unless otherwise specified.
-        if (typeof options.renderOnChange !== 'boolean') options.renderOnChange = true;
-
-        this.__set_data__(key, value, options);
-
-        if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Registered default data "${key}"`);
-      }
-    }
+    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Attached to DOM`);
 
     // Make element invisible until its first update.
     this.setStyle('visibility', 'hidden');
@@ -245,7 +278,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
       // Generate camel case property name from the attribute.
       let propertyName = attribute.name.replace(regex, '').replace(/-([a-z])/g, (g) => (g[1].toUpperCase()));
       this.__set_data__(propertyName, this.getAttribute(attribute.name), { attributed: true });
-      if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Registered data "${propertyName}" from attribute.`);
+      if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Registered data "${propertyName}" from attribute`);
     }
 
     this.__render__();
@@ -261,12 +294,12 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @ignore
    */
   disconnectedCallback() {
-    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Removed from DOM.`);
+    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Removed from DOM`);
 
     this.__destroy__();
     this.removeAllEventListeners();
-    this.__private__.updateDelegate.destroy();
-    this.__setNodeState__(NodeState.DESTROYED);
+    this.updateDelegate.destroy();
+    this.__set_node_state__(NodeState.DESTROYED);
     // delete this.__private__;
   }
 
@@ -278,9 +311,9 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @ignore
    */
   attributeChangedCallback(attrName, oldVal, newVal) {
-    // if (process.env.NODE_ENV === 'development') {
-    //   debug(`<${this.constructor.name}> attributeChangedCallback(${attrName}, ${oldVal}, ${newVal})`);
-    // }
+    if (process.env.NODE_ENV === 'development') {
+      debug(`<${this.constructor.name}> attributeChangedCallback(${attrName}, ${oldVal}, ${newVal})`);
+    }
   }
 
   /**
@@ -411,11 +444,9 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     let listener = arguments[1];
     let useCapture = arguments[2] || false;
 
-    if (!this.__private__.listenerRegistry[event]) {
-      this.__private__.listenerRegistry[event] = [];
-    }
+    if (!this.listenerRegistry[event]) this.listenerRegistry[event] = [];
 
-    let m = this.__private__.listenerRegistry[event];
+    let m = this.listenerRegistry[event];
     let n = m.length;
     let b = true;
 
@@ -470,11 +501,10 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @alias module:meno~core.Element#hasEventListener
    */
   hasEventListener(event, listener) {
-    if (!this.__private__.listenerRegistry) return false;
-    if (!this.__private__.listenerRegistry[event]) return false;
+    if (!this.listenerRegistry[event]) return false;
 
     if (listener) {
-      let m = this.__private__.listenerRegistry[event];
+      let m = this.listenerRegistry[event];
       let n = m.length;
 
       for (let i = 0; i < n; i++) {
@@ -499,8 +529,8 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     let listener = arguments[1];
     let useCapture = arguments[2] || false;
 
-    if (this.__private__.listenerRegistry && this.__private__.listenerRegistry[event]) {
-      let m = this.__private__.listenerRegistry[event];
+    if (this.listenerRegistry[event]) {
+      let m = this.listenerRegistry[event];
       let n = m.length;
       let s = -1;
 
@@ -518,14 +548,14 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
           m.splice(s, 1);
 
           if (m.length === 0) {
-            this.__private__.listenerRegistry[event] = null;
-            delete this.__private__.listenerRegistry[event];
+            this.listenerRegistry[event] = null;
+            delete this.listenerRegistry[event];
           }
         }
       }
       else {
-        while (this.__private__.listenerRegistry[event] !== undefined) {
-          this.removeEventListener(event, this.__private__.listenerRegistry[event][0].listener, this.__private__.listenerRegistry[event][0].useCapture);
+        while (this.listenerRegistry[event] !== undefined) {
+          this.removeEventListener(event, this.listenerRegistry[event][0].listener, this.listenerRegistry[event][0].useCapture);
         }
       }
     }
@@ -546,10 +576,8 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @alias module:meno~core.Element#removeAllEventListeners
    */
   removeAllEventListeners() {
-    if (this.__private__.listenerRegistry) {
-      for (let event in this.__private__.listenerRegistry) {
-        this.removeEventListener(event);
-      }
+    for (let event in this.listenerRegistry) {
+      this.removeEventListener(event);
     }
   }
 
@@ -557,13 +585,13 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @see ElementUpdateDelegate#isDirty 
    * @alias module:meno~core.Element#isDirty
    */
-  isDirty() { return this.__private__.updateDelegate.isDirty.apply(this.__private__.updateDelegate, arguments); }
+  isDirty() { return this.updateDelegate.isDirty.apply(this.updateDelegate, arguments); }
 
   /** 
    * @see ElementUpdateDelegate#setDirty 
    * @alias module:meno~core.Element#setDirty
    */
-  setDirty() { return this.__private__.updateDelegate.setDirty.apply(this.__private__.updateDelegate, arguments); }
+  setDirty() { return this.updateDelegate.setDirty.apply(this.updateDelegate, arguments); }
 
   /**
    * Shorthand for creating/accessing private properties.
@@ -620,30 +648,30 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
         let value = responsiveness[key];
 
         if (typeof value === 'number') {
-          this.__private__.updateDelegate.initResponsiveness.apply(this.__private__.updateDelegate, [value, key]);
+          this.updateDelegate.initResponsiveness.apply(this.updateDelegate, [value, key]);
         }
         else if (typeof value === 'object') {
           let args = [];
           if (value.conductor) args.push(value.conductor);
           if (value.delay) args.push(value.delay);
           args.push(key);
-          this.__private__.updateDelegate.initResponsiveness.apply(this.__private__.updateDelegate, args);
+          this.updateDelegate.initResponsiveness.apply(this.updateDelegate, args);
         }
         else {
-          this.__private__.updateDelegate.initResponsiveness.apply(this.__private__.updateDelegate, [key]);
+          this.updateDelegate.initResponsiveness.apply(this.updateDelegate, [key]);
         }
       }
     }
 
     if (this.init) this.init();
 
-    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Initialized.`);
+    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Initialized`);
     
     // Update the node state to `initialized`.
-    this.__setNodeState__(NodeState.INITIALIZED);
+    this.__set_node_state__(NodeState.INITIALIZED);
 
     // Invoke update delegate.
-    this.__private__.updateDelegate.init();
+    this.updateDelegate.init();
     
     // Now that the initial update is complete, unhide the element.
     this.setStyle('visibility', this.invisible ? 'hidden' : null);
@@ -655,9 +683,9 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @private
    */
   __destroy__() {
-    if (this.__private__.eventQueue) this.__private__.eventQueue.kill();
+    if (this.get('eventQueue')) this.get('eventQueue').kill();
     if (this.destroy) this.destroy();
-    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Node destroyed.`);
+    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Node destroyed`);
   }
 
   /**
@@ -674,20 +702,28 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
       return;
     }
 
-    if (!this.__private__.vtree) {
-      if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Rendering element for the first time.`);
+    let isPatching = true;
+
+    if (!this.get('vtree')) {
+      isPatching = false;
       
       while (this.lastChild) {
         this.removeChild(this.lastChild);
       }
     }
-    else {
-      if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Patching element with new vtree.`);
-    }
 
-    this.__private__.vtree = patch(this, vtree, this.__private__.vtree);
+    this.set('vtree', patch(this, vtree, this.get('vtree')));
 
     if (this.render) this.render();
+
+    if (process.env.NODE_ENV === 'development') {
+      if (isPatching) {
+        debug(`<${this.constructor.name}> Patched element with new vtree`);
+      }
+      else {
+        debug(`<${this.constructor.name}> Rendered element for the first time`);
+      }
+    }
   }
 
   /**
@@ -702,26 +738,30 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     const customChildren = getDirectCustomChildren(this);
     const n = customChildren.length;
 
-    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Waiting for ${n} custom child node(s) to initialize.`);
+    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Waiting for ${n} custom child node(s) to initialize...`);
     
     // Reset internal event queue.
-    if (this.__private__.eventQueue) {
-      this.__private__.eventQueue.removeAllEventListeners();
-      this.__private__.eventQueue.kill();
+    const eventQueue = this.get('eventQueue');
+
+    if (eventQueue) {
+      eventQueue.removeAllEventListeners();
+      eventQueue.kill();
     }
 
     if (n > 0) {
-      this.__private__.eventQueue = new EventQueue();
+      let eq = new EventQueue();
 
       for (let i = 0; i < n; i++) {
         const child = customChildren[i];
         if ((child.nodeState === undefined) || (child.nodeState < NodeState.INITIALIZED)) {
-          this.__private__.eventQueue.enqueue(child, 'nodeinitialize');
+          eq.enqueue(child, 'nodeinitialize');
         }
       }
       
-      this.__private__.eventQueue.addEventListener('complete', this.__init__.bind(this));
-      this.__private__.eventQueue.start();
+      eq.addEventListener('complete', this.__init__.bind(this));
+      eq.start();
+
+      this.set('eventQueue', eq);
     }
     else {
       this.__init__();
@@ -742,12 +782,12 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    *
    * @private
    */
-  __setNodeState__(nodeState) {
+  __set_node_state__(nodeState) {
     if (this.__private__.nodeState === nodeState) return;
     let oldVal = this.__private__.nodeState;
     this.__private__.nodeState = nodeState;
 
-    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Node state changed to "${NodeState.toString(nodeState)}".`);
+    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Node state changed to "${NodeState.toString(nodeState)}"`);
 
     if (nodeState === NodeState.INITIALIZED) {
       this.dispatchEvent(new Event('nodeinitialize'));
@@ -795,7 +835,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     }
 
     // Create the internal data dictionary.
-    if (this.data === undefined) this.data = {};
     if (this.data.__private__ === undefined) this.data.__private__ = {};
 
     if (!options) options = {};
@@ -969,14 +1008,14 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     }
     
     // If the same event is already registered, early exit.
-    let entries = this.__private__.eventRegistry[eventType] || [];
+    let entries = this.eventRegistry[eventType] || [];
     let n = entries.length;
     
     for (let i = 0; i < n; i++) {
       const entry = entries[i];
       
       if (entry.dispatcher === child) {
-        if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Failed to register for event "${eventType}" with handler name "${handlerName}". The same event for this child is already registered.`);
+        if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Failed to register for event "${eventType}" with handler "${handlerName}", the same event for this child is already registered`);
         return;
       }
     }
@@ -991,11 +1030,10 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   
     child.addEventListener(eventType, handler);
 
-    this.__private__.eventRegistry[eventType] = entries;
+    this.eventRegistry[eventType] = entries;
 
-    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Registered event "${eventType}" with handler name "${handlerName}" for child:`, child);
+    if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Registered event "${eventType}" with handler "${handlerName}"`);
   }
-
 
   /**
    * Unregisters an event or multiple events from a child (or all children).
@@ -1010,8 +1048,8 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   __unregister_child_event__(child, eventType) {
     // If no child is specified, remove all events for all child nodes.
     if (!child) {
-      for (let key in this.__private__.eventRegistry) {
-        const entries = this.__private__.eventRegistry[key];
+      for (let key in this.eventRegistry) {
+        const entries = this.eventRegistry[key];
         const n = entries.length;
 
         for (let i = 0; i < n; i++) {
@@ -1021,9 +1059,9 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
       }
 
       // Empty the registry when done.
-      this.__private__.eventRegistry = {};
+      this.set('eventRegistry', {});
 
-      if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Unregistered all child events.`);
+      if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Unregistered all child events`);
 
       return;
     }
@@ -1031,8 +1069,8 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     // If no event type is specified, unregister all events for the specified
     // child.
     if (!eventType) {
-      for (let key in this.__private__.eventRegistry) {
-        const entries = this.__private__.eventRegistry[key];
+      for (let key in this.eventRegistry) {
+        const entries = this.eventRegistry[key];
         const n = entries.length;
 
         for (let i = 0; i < n; i++) {
@@ -1051,7 +1089,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
       return;
     }
     else {
-      const entries = this.__private__.eventRegistry[eventType];
+      const entries = this.eventRegistry[eventType];
 
       if (!entries) return;
 
