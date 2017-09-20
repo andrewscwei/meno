@@ -4,7 +4,8 @@
 
 import assert from 'assert';
 
-describe('Meno', () => {
+describe('meno', () => {
   it('should have some tests soon', function() {
+
   });
 });

@@ -149,7 +149,7 @@ function updateAttributes(rootNode, element, newAttributes, oldAttributes, isSVG
  * @return {boolean} `true` if the vnodes are different, `false` otherwise.
  */
 function isDifferent(vnode1, vnode2) {
-  if (process.env.NODE_ENV) {
+  if (process.env.NODE_ENV === 'development') {
     assert(typeof vnode1 === 'string' || typeof vnode1.tag === 'string', `Invalid vnode for param 'vnode1'`);
     assert(typeof vnode2 === 'string' || typeof vnode2.tag === 'string', `Invalid vnode for param 'vnode2'`);
   }
