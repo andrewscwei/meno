@@ -32,7 +32,7 @@ function hitTestRect(obj, rects) {
     for (let i = 0; i < n; i++) {
       let rect = args[i];
 
-      if (!(rect.top !== undefined && !isNaN(rect.top) && rect.right !== undefined && !isNaN(rect.right) && rect.bottom !== undefined && !isNaN(rect.bottom) && rect.left !== undefined && !isNaN(rect.left)) throw new Error('Invalid rect supplied. Rect must be an object containing "top", "right", "bottom", and "left" key values.');
+      if (!(rect.top !== undefined && !isNaN(rect.top) && rect.right !== undefined && !isNaN(rect.right) && rect.bottom !== undefined && !isNaN(rect.bottom) && rect.left !== undefined && !isNaN(rect.left))) throw new Error('Invalid rect supplied. Rect must be an object containing "top", "right", "bottom", and "left" key values.');
 
       let clampedX = ((vector.x >= rect.left) && (vector.x <= rect.right));
       let clampedY = ((vector.y >= rect.top) && (vector.x <= rect.bottom));
