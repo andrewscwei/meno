@@ -5,7 +5,6 @@
 const path = require('path');
 const webpack = require('webpack');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
-const HTMLWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
 const baseDir = path.resolve(__dirname, '../../');
 const version = require(path.join(baseDir, 'package.json')).version;
 const sourceDir = path.join(__dirname, '../app');
@@ -26,14 +25,14 @@ module.exports = {
       test: /\.js$/,
       loader: 'babel-loader',
       options: {
-        presets: ['es2015']
+        presets: ['env']
       }
     }, {
       test: /\.pug$/,
       use: [{
         loader: 'babel-loader',
         options: {
-          presets: ['es2015']
+          presets: ['env']
         }
       }, {
         loader: `pug-loader?root=${sourceDir}`
@@ -76,11 +75,9 @@ module.exports = {
     ]),
     new HTMLWebpackPlugin({
       filename: path.join(buildDir, 'index.html'),
-      // alwaysWriteToDisk: true,
       template: path.join(sourceDir, 'templates', 'index.pug'),
       inject: true
     }),
-    // new HTMLWebpackHarddiskPlugin(),
     new webpack.NormalModuleReplacementPlugin(/^meno$/, path.join(baseDir, 'src/meno.js'))
   ]
 };

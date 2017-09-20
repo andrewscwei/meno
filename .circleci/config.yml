@@ -36,6 +36,10 @@ jobs:
                 git branch -D gh-pages
               fi
               git checkout -b gh-pages
+
+              cd demo
+              yarn
+              cd ..
               npm run demo:build
 
               # Move generated demo to root and delete everything else.

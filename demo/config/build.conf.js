@@ -25,14 +25,14 @@ module.exports = {
       test: /\.js$/,
       loader: 'babel-loader',
       options: {
-        presets: ['es2015']
+        presets: ['env']
       }
     }, {
       test: /\.pug$/,
       use: [{
         loader: 'babel-loader',
         options: {
-          presets: ['es2015']
+          presets: ['env']
         }
       }, {
         loader: `pug-loader?root=${sourceDir}`
