@@ -1,12 +1,12 @@
 {
   "name": "meno",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "An experimental JavaScript UI library",
   "main": "dist/meno.js",
   "unpkg": "dist/meno.min.js",
   "homepage": "http://andrewscwei.github.io/meno",
   "scripts": {
-    "test": "karma start --single-run --browsers ChromeHeadless config/karma.conf.js",
+    "test": "echo \"No tests yet\"",
     "clean": "rimraf dist lib",
     "build": "npm run clean && npm run build:lib && npm run build:dev && npm run build:prod",
     "build:lib": "mkdirp lib && ncp src lib",
