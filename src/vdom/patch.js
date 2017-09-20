@@ -21,11 +21,13 @@ if (process.env.NODE_ENV === 'development') {
  * @alias module:meno~vdom.patch
  */
 function patch(element, newTree, oldTree) {
+  const isSVG = element.tagName === 'svg';
+
   if (!oldTree) {
     const nNewChildren = newTree.children.length;
   
     for (let i = 0; i < nNewChildren; i++) {
-      const child = createElement(newTree.children[i]);
+      const child = createElement(newTree.children[i], isSVG);
       element.appendChild(child);
     }
   }
@@ -34,7 +36,7 @@ function patch(element, newTree, oldTree) {
     const nOldChildren = oldTree.children.length;
   
     for (let i = 0; i < nNewChildren || i < nOldChildren; i++) {
-      updateElement(element, newTree.children[i], oldTree.children[i], i);
+      updateElement(element, newTree.children[i], oldTree.children[i], i, isSVG);
     }
   }
 
@@ -49,25 +51,27 @@ function patch(element, newTree, oldTree) {
  * @param {VNode} oldNode - The old VNode instance to diff from.
  * @param {number} [index=0] - The child index of the element with respect to 
  *                             the parent.
+ * @param {boolean} [isSVG=false] - Specifies whether the updates are for an SVG
+ *                                  element or its child nodes.
  */
-function updateElement(parent, newNode, oldNode, index = 0) {
+function updateElement(parent, newNode, oldNode, index = 0, isSVG = false) {
   if (!oldNode) {
-    parent.appendChild(createElement(newNode));
+    parent.appendChild(createElement(newNode), parent.tagName === 'svg');
   }
   else if (!newNode) {
     parent.removeChild(parent.childNodes[index]);
   }
   else if (isDifferent(newNode, oldNode)) {
-    parent.replaceChild(createElement(newNode), parent.childNodes[index]);
+    parent.replaceChild(createElement(newNode, parent.tagName === 'svg'), parent.childNodes[index]);
   }
   else if (newNode.tag) {
-    updateAttributes(parent.childNodes[index], newNode.attributes, oldNode.attributes);
+    updateAttributes(parent.childNodes[index], newNode.attributes, oldNode.attributes, isSVG || parent.tagName === 'svg' || parent.childNodes[index].tagName === 'svg');
 
     const nNewChildren = newNode.children.length;
     const nOldChildren = oldNode.children.length;
 
     for (let i = 0; i < nNewChildren || i < nOldChildren; i++) {
-      updateElement(parent.childNodes[index], newNode.children[i], oldNode.children[i], i);
+      updateElement(parent.childNodes[index], newNode.children[i], oldNode.children[i], i, isSVG || parent.tagName === 'svg' || parent.childNodes[index].tagName === 'svg');
     }
   }
 }
@@ -79,9 +83,12 @@ function updateElement(parent, newNode, oldNode, index = 0) {
  * @param {Node} element - The element instance to modify.
  * @param {Object} newAttributes - New attributes to apply.
  * @param {Object} oldAttributes - Old attributes to compare against.
+ * @param {boolean} isSVG - Specifies whether the attribute updates are for an
+ *                          SVG element or its child nodes.
  */
-function updateAttributes(element, newAttributes, oldAttributes) {
+function updateAttributes(element, newAttributes, oldAttributes, isSVG) {
   const attributes = Object.assign({}, newAttributes, oldAttributes);
+  isSVG = isSVG || element.tagName === 'svg';
   
   for (let key in attributes) {
     if (key === Directive.IS) continue;
@@ -90,10 +97,10 @@ function updateAttributes(element, newAttributes, oldAttributes) {
     const newVal = newAttributes[key];
 
     if (newVal === undefined) {
-      setAttribute(element, key, undefined);
+      setAttribute(element, key, undefined, isSVG);
     }
     else if (oldVal === undefined || newVal !== oldVal) {
-      setAttribute(element, key, newVal);
+      setAttribute(element, key, newVal, isSVG);
     }
   }
 }

@@ -31,7 +31,7 @@ class TodoApp extends Element('todo-app') {
     const input = event.currentTarget;
 
     this.data.items = this.data.items.concat([{
-      text: input.value,
+      text: input.value === '' ? null : input.value,
       completed: false
     }]);
   }

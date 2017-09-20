@@ -42,6 +42,8 @@ function createVTree(htmlString) {
     onclosetag: (tag) => {
       if (nodeStack.length > 1) nodeStack.pop();
     }
+  }, {
+    lowerCaseAttributeNames: false
   });
 
   parser.write(htmlString);

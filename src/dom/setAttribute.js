@@ -3,6 +3,7 @@
 'use strict';
 
 import DirtyType from 'enums/DirtyType';
+import SVGAttributeNamespace from 'enums/SVGAttributeNamespace';
 
 if (process.env.NODE_ENV === 'development') {
   var assertType = require('debug/assertType');
@@ -14,22 +15,42 @@ if (process.env.NODE_ENV === 'development') {
  * @param {Node} element - Target element.
  * @param {string} name - Attribute name.
  * @param {*} value - Attribute value.
+ * @param {boolean} [isSVG=false] - Specifies whether the attribute is for an
+ *                                  SVG element or its child nodes.
  *
  * @alias module:meno~dom.setAttribute
  */
-function setAttribute(element, name, value) {
+function setAttribute(element, name, value, isSVG=false) {
   if (process.env.NODE_ENV === 'development') {
     assertType(element, Node, false, 'Invalid element specified');
   }
 
+  isSVG = isSVG || element.tagName === 'svg';
+  const namespace = SVGAttributeNamespace(name);
+
   if (value === undefined || value === null || value === false) {
-    element.removeAttribute(name);
+    if (isSVG && (namespace !== undefined)) {
+      element.removeAttributeNS(namespace, name);
+    }
+    else {
+      element.removeAttribute(name);
+    }
   }
   else if (value === true) {
-    element.setAttribute(name, '');
+    if (isSVG && (namespace !== undefined)) {
+      element.setAttributeNS(namespace, name, '');
+    }
+    else {
+      element.setAttribute(name, '');
+    }
   }
   else {
-    element.setAttribute(name, value);
+    if (isSVG && (namespace !== undefined)) {
+      element.setAttributeNS(namespace, name, value);
+    }
+    else {
+      element.setAttribute(name, value);
+    }
   }
 
   if (name === 'disabled' && element.setDirty) {

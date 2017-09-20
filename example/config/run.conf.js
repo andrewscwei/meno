@@ -29,7 +29,7 @@ module.exports = {
       loader: 'babel-loader'
     }, {
       test: /\.pug$/,
-      loader: 'pug-loader'
+      loader: `pug-loader?root=${sourceDir}`
     }, {
       test: /\.sass$/,
       use: [{
