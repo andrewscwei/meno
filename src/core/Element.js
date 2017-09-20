@@ -199,7 +199,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
 
     // This property is for storing all data.
     this.data = {};
-
+    
     // Check if this Element has default data.
     const defaults = this.defaults();
 
@@ -669,7 +669,10 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     // If this element doesn't use a vtree, skip it.
     const vtree = this.template;
 
-    if (!vtree) return;
+    if (!vtree) {
+      this.__sync_child_events__();
+      return;
+    }
 
     if (!this.__private__.vtree) {
       if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Rendering element for the first time.`);
@@ -683,8 +686,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     }
 
     this.__private__.vtree = patch(this, vtree, this.__private__.vtree);
-
-    this.__sync_child_events__();
 
     if (this.render) this.render();
   }
@@ -913,10 +914,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
       const child = parent.childNodes[i];
 
       this.__register_all_child_events__(child);
-
-      if (!isCustomElement(child)) {
-        this.__sync_child_events__(child);
-      }
     }
   }
 
@@ -942,6 +939,10 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
       const eventType = attribute.name.replace(Directive.EVENT, '');
       const handlerName = getAttribute(child, attribute.name);
       this.__register_child_event__(child, eventType, handlerName);
+    }
+
+    if (!isCustomElement(child)) {
+      this.__sync_child_events__(child);
     }
   }
 

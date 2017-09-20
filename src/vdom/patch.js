@@ -14,29 +14,31 @@ if (process.env.NODE_ENV === 'development') {
 /**
  * Patches a DOM element with changes between two virtual trees.
  * 
- * @param {Node} element - The DOM element to patch.
+ * @param {Node} rootNode - The DOM element to patch.
  * @param {Node} newTree - The new vtree.
  * @param {Node} oldTree - The old vtree to diff from.
  * 
  * @alias module:meno~vdom.patch
  */
-function patch(element, newTree, oldTree) {
-  const isSVG = element.tagName === 'svg';
+function patch(rootNode, newTree, oldTree) {
+  const isSVG = rootNode.tagName === 'svg';
 
   if (!oldTree) {
     const nNewChildren = newTree.children.length;
   
     for (let i = 0; i < nNewChildren; i++) {
       const child = createElement(newTree.children[i], isSVG);
-      element.appendChild(child);
+      rootNode.appendChild(child);
     }
+
+    if (rootNode.__sync_child_events__) rootNode.__sync_child_events__();
   }
   else {
     const nNewChildren = newTree.children.length;
     const nOldChildren = oldTree.children.length;
   
     for (let i = 0; i < nNewChildren || i < nOldChildren; i++) {
-      updateElement(element, newTree.children[i], oldTree.children[i], i, isSVG);
+      updateElement(rootNode, rootNode, newTree.children[i], oldTree.children[i], i, isSVG);
     }
   }
 
@@ -46,6 +48,7 @@ function patch(element, newTree, oldTree) {
 /**
  * Applies updates to an element, specified by its parent and its child index.
  * 
+ * @param {Node} rootNode - The root element.
  * @param {Node} parent - The parent of the element.
  * @param {VNode} newNode - The new VNode instance with updated properties.
  * @param {VNode} oldNode - The old VNode instance to diff from.
@@ -54,24 +57,39 @@ function patch(element, newTree, oldTree) {
  * @param {boolean} [isSVG=false] - Specifies whether the updates are for an SVG
  *                                  element or its child nodes.
  */
-function updateElement(parent, newNode, oldNode, index = 0, isSVG = false) {
+function updateElement(rootNode, parent, newNode, oldNode, index = 0, isSVG = false) {
+  // Old node doesn't exist, that means new node is indeed new. Append it to the
+  // parent.
   if (!oldNode) {
-    parent.appendChild(createElement(newNode), parent.tagName === 'svg');
+    const element = createElement(newNode, parent.tagName === 'svg');
+    parent.appendChild(element);
+    if (rootNode.__register_all_child_events__ && element instanceof Element) rootNode.__register_all_child_events__(element);
   }
+  // New node doesn't exist, that means the old node is deleted.
   else if (!newNode) {
-    parent.removeChild(parent.childNodes[index]);
+    const element = parent.childNodes[index];
+    if (rootNode.__unregister_child_event__ && element instanceof Element) rootNode.__unregister_child_event__(element);
+    parent.removeChild(element);
   }
+  // New node is different from the old node, replace them.
   else if (isDifferent(newNode, oldNode)) {
-    parent.replaceChild(createElement(newNode, parent.tagName === 'svg'), parent.childNodes[index]);
+    const oldElement = parent.childNodes[index];
+    const newElement = createElement(newNode, parent.tagName === 'svg');
+    if (rootNode.__unregister_child_event__ && oldElement instanceof Element) rootNode.__unregister_child_event__(oldElement);
+    if (rootNode.__register_all_child_events__ && newElement instanceof Element) rootNode.__register_all_child_events__(newElement);
+    parent.replaceChild(newElement, oldElement);
   }
+  // New node is the same as the old node, but check if its properties have
+  // changed.
   else if (newNode.tag) {
-    updateAttributes(parent.childNodes[index], newNode.attributes, oldNode.attributes, isSVG || parent.tagName === 'svg' || parent.childNodes[index].tagName === 'svg');
+    updateAttributes(rootNode, parent.childNodes[index], newNode.attributes, oldNode.attributes, isSVG || parent.tagName === 'svg' || parent.childNodes[index].tagName === 'svg');
 
     const nNewChildren = newNode.children.length;
     const nOldChildren = oldNode.children.length;
 
+    // Also update its children.
     for (let i = 0; i < nNewChildren || i < nOldChildren; i++) {
-      updateElement(parent.childNodes[index], newNode.children[i], oldNode.children[i], i, isSVG || parent.tagName === 'svg' || parent.childNodes[index].tagName === 'svg');
+      updateElement(rootNode, parent.childNodes[index], newNode.children[i], oldNode.children[i], i, isSVG || parent.tagName === 'svg' || parent.childNodes[index].tagName === 'svg');
     }
   }
 }
@@ -80,13 +98,14 @@ function updateElement(parent, newNode, oldNode, index = 0, isSVG = false) {
  * Updates all the attributes of an element and does so precisly by comparing 
  * with its old attributes.
  * 
+ * @param {Node} rootNode - The root element.
  * @param {Node} element - The element instance to modify.
  * @param {Object} newAttributes - New attributes to apply.
  * @param {Object} oldAttributes - Old attributes to compare against.
  * @param {boolean} isSVG - Specifies whether the attribute updates are for an
  *                          SVG element or its child nodes.
  */
-function updateAttributes(element, newAttributes, oldAttributes, isSVG) {
+function updateAttributes(rootNode, element, newAttributes, oldAttributes, isSVG) {
   const attributes = Object.assign({}, newAttributes, oldAttributes);
   isSVG = isSVG || element.tagName === 'svg';
   
@@ -96,11 +115,27 @@ function updateAttributes(element, newAttributes, oldAttributes, isSVG) {
     const oldVal = oldAttributes[key];
     const newVal = newAttributes[key];
 
+    // No new attribute defined, that means the old one is deleted.
     if (newVal === undefined) {
       setAttribute(element, key, undefined, isSVG);
+
+      const regex = new RegExp('^' + Directive.EVENT, 'i');
+      if (regex.test(key)) {
+        const eventType = key.replace(Directive.EVENT, '');
+        if (rootNode.__unregister_child_event__ && element instanceof Element) rootNode.__unregister_child_event__(element, eventType);
+      }
     }
+    // New attribute is defined or has changed from the old one, update it.
     else if (oldVal === undefined || newVal !== oldVal) {
       setAttribute(element, key, newVal, isSVG);
+
+      const regex = new RegExp('^' + Directive.EVENT, 'i');
+      if (regex.test(key)) {
+        const eventType = attribute.name.replace(Directive.EVENT, '');
+        const handlerName = getAttribute(element, key);
+        if (rootNode.__unregister_child_event__ && element instanceof Element) rootNode.__unregister_child_event__(element, eventType);
+        if (rootNode.__register_child_event__ && element instanceof Element) rootNode.__register_child_event__(element, eventType, handlerName);
+      }
     }
   }
 }
