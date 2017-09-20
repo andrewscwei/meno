@@ -3,7 +3,6 @@
 'use strict';
 
 import DirtyType from 'enums/DirtyType';
-import SVGAttributeNamespace from 'enums/SVGAttributeNamespace';
 
 if (process.env.NODE_ENV === 'development') {
   var assertType = require('debug/assertType');
@@ -26,27 +25,26 @@ function setAttribute(element, name, value, isSVG=false) {
   }
 
   isSVG = isSVG || element.tagName === 'svg';
-  const namespace = SVGAttributeNamespace(name);
 
   if (value === undefined || value === null || value === false) {
-    if (isSVG && (namespace !== undefined)) {
-      element.removeAttributeNS(namespace, name);
+    if (isSVG) {
+      element.removeAttributeNS(null, name);
     }
     else {
       element.removeAttribute(name);
     }
   }
   else if (value === true) {
-    if (isSVG && (namespace !== undefined)) {
-      element.setAttributeNS(namespace, name, '');
+    if (isSVG && !name.startsWith('xmlns')) {
+      element.setAttributeNS(null, name, '');
     }
     else {
       element.setAttribute(name, '');
     }
   }
   else {
-    if (isSVG && (namespace !== undefined)) {
-      element.setAttributeNS(namespace, name, value);
+    if (isSVG && !name.startsWith('xmlns')) {
+      element.setAttributeNS(null, name, value);
     }
     else {
       element.setAttribute(name, value);
