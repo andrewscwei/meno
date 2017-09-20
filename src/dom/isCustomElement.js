@@ -23,8 +23,9 @@ function isCustomElement(element) {
   if (process.env.NODE_ENV === 'development') {
     assertType(element, Node, false, 'Invalid element specified');
   }
+
   const is = getAttribute(element, Directive.IS);
-  const tag = element.tagName.toLowerCase();
+  const tag = element.tagName;
 
   if (is && (customElements.get(is) !== undefined)) return true;
   if (tag && (customElements.get(tag) !== undefined)) return true;
