@@ -11,16 +11,17 @@ body
 
 +element('todo-logo')
   @extend %box-reset
+  $_scale: .45
   +align(top center)
   +edge(100px _ _ _)
-  +size(236px*.8 136px*.8)
+  +size(236px*$_scale 136px*$_scale)
 
 +element('todo-app')
   @extend %box-reset
   +display('boxv', top center)
   +size(100%)
   +max-size(800px _)
-  +padding(300px 50px 100px)
+  +padding(250px 50px 100px)
 
   .categories
     +margin(80px auto 20px)
