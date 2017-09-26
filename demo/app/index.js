@@ -17,7 +17,8 @@ m(TodoInput);
 m(TodoItem);
 m(TodoApp);
 
-localStorage.debug = '';
-// localStorage.debug = 'meno*';
+if (process.env.NODE_ENV === 'development') {
+  localStorage.debug = ''; //'meno*';
+}
 
 if (module.hot) module.hot.accept();

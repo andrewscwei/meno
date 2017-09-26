@@ -4,7 +4,7 @@ template
     .categories
       button(class=filter === 'all' ? 'active' : '', name='button-all', on:click='onSelectAll')= `All (${total})`
       button(class=filter === 'active' ? 'active' : '', name='button-active', on:click='onSelectActive')= `Active (${totalActive})`
-      button(class=filter === 'completed' ? 'active' : '', name='button-completed', on:click='onSelectCompleted')= `Completed (${totalCompleted})`
+      button(class=filter === 'completed' ? 'active' : '', name='button-completed', on:click='onSelectCompleted')= `Done (${totalCompleted})`
     .list
       - for (var i = 0; i < items.length; i++)
         todo-item.item(

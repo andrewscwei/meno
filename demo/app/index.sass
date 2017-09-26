@@ -2,118 +2,118 @@
 
 +reset(true)
 
-// Firefox, Edge...
-=for-browsers-without-shadowdom()
-  @content
-
 body
   +display('boxv', top center)
   background: #111
   font-family: 'Roboto', sans-serif
   font-size: 1.6em
+  overflow-x: hidden
 
 +element('todo-logo')
-  $_scale: .45
-  +align(top center)
-  +edge(100px _ _ _)
+  $_scale: .2
+  +align(top left)
+  +edge(30px _ _ 20px)
   +size(236px*$_scale 136px*$_scale)
 
 +element('todo-app')
   +max-size(800px _)
-  +margin(250px 50px 100px)
+  +margin(150px 50px 50px)
 
-  +for-browsers-without-shadowdom
-    main
-      +display('boxv', top center)
-      +size(100%)
+// When shadow DOM is off, we can't use :host. These styles are identical to the
+// ones defined in the individual component styles.
++element('todo-app')
+  +size(100% auto)
 
-    .categories
-      +margin(80px auto 20px)
-      +display('box>', center)
+  > main
+    +display('boxv', top center)
+    +size(100%)
+    +padding(0 20px)
 
-      button
-        +space-between(10px, '>')
-        +size(auto 40px)
-        +padding(0 20px)
-        +transition(background color, .2s, ease-out)
-        background: #222
-        color: #fff
-        text-transform: uppercase
-        letter-spacing: 1px
-        font-size: .6em
+  .categories
+    +margin(30px auto 30px)
+    +display('box>', center)
 
-        &:hover, &.active
-          background: #fff
-          color: #111
-
-        &.active
-          pointer-events: none
-
-    .list
-      +size(100% auto)
-      +display('boxv')
-      +padding(_ _ 100px _)
-
-+element('todo-input')
-  +for-browsers-without-shadowdom
-    +size(100% 100px)
-
-    input 
-      +transition(border color, .2s, ease-out)
-      +size(100%)
-      font-weight: 300
-      font-size: 2em
-      color: rgba(#fff, .6)
-      background: transparent
-      border: none
-      outline: none
-      border-bottom: 2px solid #161616
-
-      &:focus
-        color: rgba(#fff, 1)
-        border-bottom: 2px solid #fff
-
-+element('todo-item')
-  +for-browsers-without-shadowdom
-    +margin(_ _ 10px _)
-    +size(100% 50px)
-    background: #161616
-
-    span[type='label']
-      +transition(opacity, .2s, ease-out)
-      +padding(10px 20px)
-      flex-grow: 1
-      flex-shrink: 1
-      text-overflow: ellipsis
-      white-space: nowrap
-      overflow: hidden
-      color: #fff
-      opacity: .6
-      font-size: 1em
-      font-weight: 400
-      cursor: pointer
-      
-      &:hover 
-        opacity: 1
-
-    main
-      +size(100%)
-      +display('box>', top left)
-      align-items: stretch
-      
     button
-      +size(100px auto)
+      +space-between(10px, '>')
+      +size(auto 34px)
+      +padding(0 10px)
       +transition(background color, .2s, ease-out)
       background: #222
       color: #fff
-      font-weight: 400
-      font-size: .6em
       text-transform: uppercase
       letter-spacing: 1px
+      font-size: .5em
 
-      &:hover
-        color: #111
+      &:hover, &.active
         background: #fff
+        color: #111
+
+      &.active
+        pointer-events: none
+
+  .list
+    +size(100% auto)
+    +display('boxv')
+    +padding(_ _ 100px _)
+
++element('todo-input')
+  +size(100% 100px)
+
+  input 
+    +transition(border color, .2s, ease-out)
+    +size(100%)
+    font-weight: 300
+    font-size: 2.4em
+    color: rgba(#fff, .6)
+    background: transparent
+    border: none
+    outline: none
+    border-bottom: 2px solid #161616
+
+    &:focus
+      color: rgba(#fff, 1)
+      border-bottom: 2px solid #fff
+
++element('todo-item')
+  +margin(_ _ 10px _)
+  +size(100% 50px)
+  background: #161616
+
+  span[type='label']
+    +transition(opacity, .2s, ease-out)
+    +padding(10px 20px)
+    flex-grow: 1
+    flex-shrink: 1
+    text-overflow: ellipsis
+    white-space: nowrap
+    overflow: hidden
+    color: #fff
+    opacity: .6
+    font-size: 1em
+    font-weight: 400
+    cursor: pointer
+    
+    &:hover 
+      opacity: 1
+
+  > main
+    +size(100%)
+    +display('box>', top left)
+    align-items: stretch
+    
+  button
+    +size(100px auto)
+    +transition(background color, .2s, ease-out)
+    background: #222
+    color: #fff
+    font-weight: 400
+    font-size: .6em
+    text-transform: uppercase
+    letter-spacing: 1px
+
+    &:hover
+      color: #111
+      background: #fff
 
   &[hidden]
     display: none

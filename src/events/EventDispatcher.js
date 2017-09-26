@@ -43,9 +43,6 @@ class EventDispatcher {
     this.__private__.listenerRegistry[type].push(listener);
   }
 
-  /** @see module:meno~events.EventDispatcher#addEventListener */
-  on() { this.addEventListener.apply(this, arguments); }
-
   /**
    * Removes an event listener from this EventDispatcher instance. If no
    * listener method is specified, all the listeners of the specified type
@@ -72,9 +69,6 @@ class EventDispatcher {
       delete this.__private__.listenerRegistry[type];
     }
   }
-
-  /** @see module:meno~events.EventDispatcher#removeEventListener */
-  off() { this.removeEventListener.apply(this, arguments); }
 
   /**
    * Removes all cached event listeners from this Element instance.

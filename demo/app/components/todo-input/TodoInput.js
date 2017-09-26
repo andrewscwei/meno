@@ -1,8 +1,9 @@
 import { Element, DirtyType, h } from 'meno';
+// import createVTree from 'vdom/createVTree';
 
 class TodoInput extends Element('todo-input') {
   get template() { 
-    // return require('./todo-input.sass')(this.data);
+    // return createVTree(require('./todo-input.sass')(this.data));
     return h('template', [
       h('input', { type: 'textfield', placeholder: 'What to do?', name: 'textfield' })
     ]);

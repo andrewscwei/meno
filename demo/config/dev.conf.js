@@ -49,7 +49,8 @@ module.exports = {
         loader: 'sass-loader',
         options: {
           outputStyle: 'expanded',
-          sourceMap: true
+          sourceMap: true,
+          includePaths: [path.join(sourceDir, 'stylesheets')]
         }
       }]
     }]
@@ -67,9 +68,12 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env': {
         BUNDLE_VERSION: JSON.stringify(version),
-        NODE_ENV: JSON.stringify('development')
+        NODE_ENV: JSON.stringify('development'),
+        SHADOW_DOM_ENABLED: JSON.stringify(false)
       }
     }),
+    // @see https://github.com/webcomponents/webcomponentsjs/issues/794
+    new webpack.IgnorePlugin(/vertx/),
     new webpack.WatchIgnorePlugin([
       path.join(libRoot, 'dist'),
       path.join(libRoot, 'lib')

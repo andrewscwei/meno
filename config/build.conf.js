@@ -43,7 +43,8 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env': {
         BUNDLE_VERSION: JSON.stringify(version),
-        NODE_ENV: JSON.stringify(debug ? 'development' : 'production')
+        NODE_ENV: JSON.stringify(debug ? 'development' : 'production'),
+        SHADOW_DOM_ENABLED: JSON.stringify(false)
       }
     })
   ]

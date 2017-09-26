@@ -262,10 +262,13 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    */
   get styles() { return null; }
 
+  /**
+   * @class
+   */
   constructor() {
     super();
 
-    if (document.head.createShadowRoot || document.head.attachShadow) {
+    if (process.env.SHADOW_DOM_ENABLED && document.head.attachShadow) {
       if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Attached shadow DOM`);
       this.attachShadow({ mode: 'open' });
     }
@@ -317,7 +320,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     this.removeAllEventListeners();
     this.updateDelegate.destroy();
     this.__set_node_state__(NodeState.DESTROYED);
-    // delete this.__private__;
   }
 
   /**
@@ -499,12 +501,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
       super.addEventListener.apply(this, arguments);
     }
   }
-
-  /** 
-   * @see module:meno~core.Element#addEventListener 
-   * @alias module:meno~core.Element#on
-   */
-  on() { this.addEventListener.apply(this, arguments); }
 
   /**
    * Determines if a particular listener (or any listener in the specified
@@ -732,11 +728,13 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
 
     this.set('vtree', patch(this, vtree, this.get('vtree')));
 
-    // Apply styles only on first render.
+    // Apply shadow styles only on first render.
     if (this.styles && this.shadowRoot && this.nodeState < NodeState.INITIALIZED) {
       const element = document.createElement('style');
       element.appendChild(document.createTextNode(this.styles));
       this.shadowRoot.appendChild(element);
+
+      console.log(this.shadowRoot.childNodes);
     }
 
     if (this.render) this.render();

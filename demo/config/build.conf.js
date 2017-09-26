@@ -49,7 +49,8 @@ module.exports = {
         loader: 'sass-loader',
         options: {
           outputStyle: 'compressed',
-          sourceMap: false
+          sourceMap: false,
+          includePaths: [path.join(sourceDir, 'stylesheets')]
         }
       }]
     }]
@@ -66,7 +67,8 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: JSON.stringify('production')
+        NODE_ENV: JSON.stringify('production'),
+        SHADOW_DOM_ENABLED: JSON.stringify(false)
       }
     }),
     new HTMLWebpackPlugin({
@@ -74,6 +76,8 @@ module.exports = {
       template: path.join(sourceDir, 'index.pug'),
       inject: true
     }),
+    // @see https://github.com/webcomponents/webcomponentsjs/issues/794
+    new webpack.IgnorePlugin(/vertx/),
     new webpack.NormalModuleReplacementPlugin(/^meno$/, path.join(libRoot, 'dist/meno.min.js')),
     new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } })
   ]

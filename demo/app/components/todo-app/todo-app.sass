@@ -2,25 +2,27 @@
 
 \:host
   +reset()
+  +size(100% auto)
 
-  main
+  > main
     +display('boxv', top center)
     +size(100%)
+    +padding(0 20px)
 
   .categories
-    +margin(80px auto 20px)
+    +margin(30px auto 30px)
     +display('box>', center)
 
     button
       +space-between(10px, '>')
-      +size(auto 40px)
-      +padding(0 20px)
+      +size(auto 34px)
+      +padding(0 10px)
       +transition(background color, .2s, ease-out)
       background: #222
       color: #fff
       text-transform: uppercase
       letter-spacing: 1px
-      font-size: .6em
+      font-size: .5em
 
       &:hover, &.active
         background: #fff
