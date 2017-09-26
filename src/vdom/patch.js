@@ -37,9 +37,11 @@ function patch(rootNode, newVTree, oldVTree) {
   else {
     const nNewChildren = newVTree.children.length;
     const nOldChildren = oldVTree.children.length;
+    let idx = 0;
   
     for (let i = 0; i < nNewChildren || i < nOldChildren; i++) {
-      updateNodeAt(i, rootNode, rootNode, newVTree.children[i], oldVTree.children[i], isSVGElement(rootNode));
+      const d = updateNodeAt(idx, rootNode, rootNode, newVTree.children[i], oldVTree.children[i], isSVGElement(rootNode));
+      idx += 1 + d;
     }
   }
 
@@ -57,6 +59,9 @@ function patch(rootNode, newVTree, oldVTree) {
  * @param {VNode} oldVNode - The old VNode instance to diff from.
  * @param {boolean} [isSVG=false] - Specifies the node to update is part of an
  *                                  SVG element.
+ * 
+ * @return {number} Indicates how many child nodes are added/removed from the 
+ *                  parent as a result of this operation.
  */
 function updateNodeAt(index = 0, parentNode, rootNode, newVNode, oldVNode, isSVG = false) {
   // Old node doesn't exist, that means new node is indeed new. Append it to the
@@ -65,7 +70,8 @@ function updateNodeAt(index = 0, parentNode, rootNode, newVNode, oldVNode, isSVG
     const element = createElement(newVNode, isSVGElement(parentNode));
     getTreeRoot(parentNode).appendChild(element);
     if (rootNode.__register_all_child_events__ && element instanceof Element) rootNode.__register_all_child_events__(element);
-    return;
+    
+    return 0;
   }
 
   const childNode = getTreeRoot(parentNode).childNodes[index];
@@ -74,9 +80,12 @@ function updateNodeAt(index = 0, parentNode, rootNode, newVNode, oldVNode, isSVG
   if (!newVNode) {
     if (rootNode.__unregister_child_event__ && childNode instanceof Element) rootNode.__unregister_child_event__(childNode);
     getTreeRoot(parentNode).removeChild(childNode);
+
+    return -1;
   }
+
   // New node is different from the old node, replace them.
-  else if (isDifferent(newVNode, oldVNode)) {
+  if (isDifferent(newVNode, oldVNode)) {
     const newChildNode = createElement(newVNode, isSVGElement(parentNode));
     if (rootNode.__unregister_child_event__ && childNode instanceof Element) rootNode.__unregister_child_event__(childNode);
     if (rootNode.__register_all_child_events__ && newChildNode instanceof Element) rootNode.__register_all_child_events__(newChildNode);
@@ -89,12 +98,16 @@ function updateNodeAt(index = 0, parentNode, rootNode, newVNode, oldVNode, isSVG
 
     const nNewChildren = newVNode.children.length;
     const nOldChildren = oldVNode.children.length;
+    let idx = 0;
 
     // Also update its children.
     for (let i = 0; i < nNewChildren || i < nOldChildren; i++) {
-      updateNodeAt(i, childNode, rootNode, newVNode.children[i], oldVNode.children[i], isSVG || isSVGElement(parentNode));
+      const d = updateNodeAt(idx, childNode, rootNode, newVNode.children[i], oldVNode.children[i], isSVG || isSVGElement(parentNode));
+      idx += 1 + d;
     }
   }
+
+  return 0;
 }
 
 /**
