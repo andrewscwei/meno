@@ -42,7 +42,7 @@ class TodoApp extends Element('todo-app') {
     const item = event.currentTarget;
     const items = this.$('item') ? [].concat(this.$('item')) : [];
     const idx = items.indexOf(item);
-    
+
     let tmp = [].concat(this.data.items);
     tmp[idx].completed = !tmp[idx].completed;
     this.data.items = tmp;

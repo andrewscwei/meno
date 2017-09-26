@@ -16,7 +16,6 @@ import NodeState from 'enums/NodeState';
 import EventQueue from 'events/EventQueue';
 import getDirectCustomChildren from 'dom/getDirectCustomChildren';
 import isCustomElement from 'dom/isCustomElement';
-import hasOwnValue from 'helpers/hasOwnValue';
 
 if (process.env.NODE_ENV === 'development') {
   var assert = require('assert');
@@ -288,13 +287,13 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     // and generate data properties from them.
     let attributes = this.attributes;
     let nAttributes = attributes.length;
-    let regex = new RegExp('^' + Directive.DATA, 'i');
 
     for (let i = 0; i < nAttributes; i++) {
       let attribute = attributes[i];
-      if (hasOwnValue(Directive, attribute.name) || !regex.test(attribute.name)) continue;
-      // Generate camel case property name from the attribute.
-      let propertyName = attribute.name.replace(regex, '').replace(/-([a-z])/g, (g) => (g[1].toUpperCase()));
+      let propertyName = Directive.getDataPropertyName(attribute.name);
+
+      if (!propertyName) continue;
+
       this.__set_data__(propertyName, this.getAttribute(attribute.name), { attributed: true });
       if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Registered data "${propertyName}" from attribute`);
     }
@@ -733,8 +732,8 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
 
     this.set('vtree', patch(this, vtree, this.get('vtree')));
 
-    // Apply styles.
-    if (this.styles && this.shadowRoot) {
+    // Apply styles only on first render.
+    if (this.styles && this.shadowRoot && this.nodeState < NodeState.INITIALIZED) {
       const element = document.createElement('style');
       element.appendChild(document.createTextNode(this.styles));
       this.shadowRoot.appendChild(element);
@@ -877,13 +876,9 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     const dirtyType = options.dirtyType === undefined ? DirtyType.DATA : options.dirtyType;
     const renderOnChange = typeof options.renderOnChange === 'boolean' ? options.renderOnChange : true;
     const attributed = typeof options.attributed === 'boolean' ? options.attributed : false;
-    const attributeName = Directive.DATA + key.replace(/([A-Z])/g, ($1) => ('-'+$1.toLowerCase()));
+    const attributeName = Directive.getDataAttributeName(key);
     const eventType = options.eventType;
     const unique = (typeof unique === 'boolean') ? options.unique : true;
-  
-    if (process.env.NODE_ENV === 'development') {
-      assert(!attributeName || !hasOwnValue(Directive, attributeName), 'Attribute \'' + attributeName + '\' is reserved');
-    }
   
     // Set the default value if its is not a computed value.
     if (value !== undefined && typeof value !== 'function') {

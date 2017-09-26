@@ -110,7 +110,7 @@ function updateNodeAt(index = 0, parentNode, rootNode, newVNode, oldVNode, isSVG
  */
 function updateAttributes(rootNode, node, newAttributes, oldAttributes, isSVG) {
   const attributes = Object.assign({}, newAttributes, oldAttributes);
-  
+
   for (let key in attributes) {
     if (key === Directive.IS) continue;
 
@@ -121,6 +121,11 @@ function updateAttributes(rootNode, node, newAttributes, oldAttributes, isSVG) {
     if (newVal === undefined) {
       setAttribute(node, key, undefined, isSVG || isSVGElement(node));
 
+      if (node.__set_data__) {
+        const propertyName = Directive.getDataPropertyName(key);
+        if (propertyName) node.__set_data__(propertyName, undefined);
+      }
+
       const regex = new RegExp('^' + Directive.EVENT, 'i');
       if (regex.test(key)) {
         const eventType = key.replace(Directive.EVENT, '');
@@ -130,6 +135,11 @@ function updateAttributes(rootNode, node, newAttributes, oldAttributes, isSVG) {
     // New attribute is defined or has changed from the old one, update it.
     else if (oldVal === undefined || newVal !== oldVal) {
       setAttribute(node, key, newVal, isSVG || isSVGElement(node));
+
+      if (node.__set_data__) {
+        const propertyName = Directive.getDataPropertyName(key);
+        if (propertyName) node.__set_data__(propertyName, newVal, { attributed: true });
+      }
 
       const regex = new RegExp('^' + Directive.EVENT, 'i');
       if (regex.test(key)) {

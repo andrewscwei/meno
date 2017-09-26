@@ -2,6 +2,7 @@
 
 'use strict';
 
+import Directive from 'enums/Directive';
 import DirtyType from 'enums/DirtyType';
 
 if (process.env.NODE_ENV === 'development') {

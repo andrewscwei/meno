@@ -15,6 +15,12 @@ class TodoItem extends Element('todo-item') {
     return require('./todo-item.sass').toString();
   }
 
+  defaults() {
+    return {
+      text: ''
+    }
+  }
+
   onToggle() {
     this.dispatchEvent(new Event('toggle'));
   }

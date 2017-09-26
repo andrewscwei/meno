@@ -6,6 +6,42 @@
   +size(100% 50px)
   background: #161616
 
+  span[type='label']
+    +transition(opacity, .2s, ease-out)
+    +padding(10px 20px)
+    flex-grow: 1
+    flex-shrink: 1
+    text-overflow: ellipsis
+    white-space: nowrap
+    overflow: hidden
+    color: #fff
+    opacity: .6
+    font-size: 1em
+    font-weight: 400
+    cursor: pointer
+    
+    &:hover 
+      opacity: 1
+
+  main
+    +size(100%)
+    +display('box>', top left)
+    align-items: stretch
+    
+  button
+    +size(100px auto)
+    +transition(background color, .2s, ease-out)
+    background: #222
+    color: #fff
+    font-weight: 400
+    font-size: .6em
+    text-transform: uppercase
+    letter-spacing: 1px
+
+    &:hover
+      color: #111
+      background: #fff
+
 \:host([hidden])
   display: none
 
@@ -15,39 +51,3 @@
     text-decoration: line-through
     &:hover
       opacity: .5
-
-span[type='label']
-  +transition(opacity, .2s, ease-out)
-  +padding(10px 20px)
-  flex-grow: 1
-  flex-shrink: 1
-  text-overflow: ellipsis
-  white-space: nowrap
-  overflow: hidden
-  color: #fff
-  opacity: .6
-  font-size: 1em
-  font-weight: 400
-  cursor: pointer
-  
-  &:hover 
-    opacity: 1
-
-main
-  +size(100%)
-  +display('box>', top left)
-  align-items: stretch
-  
-button
-  +size(100px auto)
-  +transition(background color, .2s, ease-out)
-  background: #222
-  color: #fff
-  font-weight: 400
-  font-size: .6em
-  text-transform: uppercase
-  letter-spacing: 1px
-
-  &:hover
-    color: #111
-    background: #fff
