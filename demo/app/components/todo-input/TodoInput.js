@@ -1,13 +1,8 @@
 import { Element, DirtyType, h } from 'meno';
-// import createVTree from 'vdom/createVTree';
+import createVTree from 'vdom/createVTree';
 
 class TodoInput extends Element('todo-input') {
-  get template() { 
-    // return createVTree(require('./todo-input.sass')(this.data));
-    return h('template', [
-      h('input', { type: 'textfield', placeholder: 'What to do?', name: 'textfield' })
-    ]);
-  }
+  get template() { return createVTree(require('./todo-input.pug')(this.data)); }
 
   get styles() {
     return require('./todo-input.sass').toString();
@@ -40,9 +35,6 @@ class TodoInput extends Element('todo-input') {
 
     if (~keyCodes.indexOf(13)) {
       this.dispatchEvent(new Event('insert'));
-      this.clear();
-    }
-    else if (~keyCodes.indexOf(27)) {
       this.clear();
     }
   }

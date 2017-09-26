@@ -1,10 +1,16 @@
-import { Element } from 'meno';
+import { Element, DirtyType } from 'meno';
 import createVTree from 'vdom/createVTree';
 
 class TodoApp extends Element('todo-app') {
   get template() { return createVTree(require('./todo-app.pug')(this.data)); }
 
   get styles() { return require('./todo-app.sass').toString(); }
+
+  get responsiveness() {
+    return {
+      keyup: 10.0
+    }
+  }
 
   defaults() {
     return {
@@ -13,6 +19,20 @@ class TodoApp extends Element('todo-app') {
       total: () => (this.data.items.length),
       totalActive: () => (this.data.items.reduce((total, item) => (total + (item.completed ? 0 : 1)), 0)),
       totalCompleted: () => (this.data.items.reduce((total, item) => (total + (item.completed ? 1 : 0)), 0)),
+    }
+  }
+
+  update(info) {
+    if (this.isDirty(DirtyType.INPUT)) {
+      this.handleKeyCodes(info[DirtyType.INPUT] && info[DirtyType.INPUT].keyUp);
+    }
+  }
+
+  handleKeyCodes(keyCodes) {
+    if (!keyCodes || keyCodes.length <= 0) return;
+
+    if (~keyCodes.indexOf(27)) {
+      this.data.items = [];
     }
   }
 
