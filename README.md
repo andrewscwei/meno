@@ -1,6 +1,6 @@
 # Meno [![Circle CI](https://circleci.com/gh/andrewscwei/meno/tree/master.svg?style=svg)](https://circleci.com/gh/andrewscwei/meno/tree/master) [![npm version](https://badge.fury.io/js/meno.svg)](https://badge.fury.io/js/meno)
 
-Meno is a lean (`~8kb`), [WebComponents](http://webcomponents.org/)-based (namely custom elements and shadow DOM) UI library. It is an experimental project and is not meant for production use. It utilizes/supports the following modern tech methodologies:
+Meno is a lean (`~8kb`), [Web Components](http://webcomponents.org/)-based (namely custom elements and shadow DOM) UI library. It is an experimental project and is not meant for production use. It utilizes/supports the following modern tech methodologies:
 
 1. The MVVM pattern.
 2. Webpack as a build tool, therefore the entry files are Javascript rather than HTML (Meno has yet to adopt HTML imports for the sole reason of keeping Webpack so it can leverage its many cool features such as hot module reloading).
