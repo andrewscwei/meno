@@ -15,8 +15,6 @@ import Directive from 'enums/Directive';
 import DirtyType from 'enums/DirtyType';
 import NodeState from 'enums/NodeState';
 
-import 'document-register-element';
-
 if (process.env.NODE_ENV === 'development') {
   var assert = require('assert');
   var debug = require('debug')('meno');

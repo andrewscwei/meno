@@ -1,0 +1,15 @@
+@import '~minuet'
+
++reset(true)
+
+body
+  +display('boxv', top center)
+  background: #111
+  font-family: 'Roboto', sans-serif
+  font-size: 1.6em
+
++element('todo-logo')
+  $_scale: .45
+  +align(top center)
+  +edge(100px _ _ _)
+  +size(236px*$_scale 136px*$_scale)

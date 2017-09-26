@@ -33,7 +33,7 @@ function getChild() {
   }
 
   const selectors = name.split('.').map(val => (`[${Directive.NAME}='${val}']`)).join(' ');
-  const results = (element || document).querySelectorAll(selectors);
+  const results = (element.shadowRoot || element || document).querySelectorAll(selectors);
 
   if (results === null || results === undefined) return null;
   if (results.length === 0) return null;

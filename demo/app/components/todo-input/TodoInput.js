@@ -1,12 +1,25 @@
 import { Element, DirtyType, h } from 'meno';
 
-class TodoInput extends Element(HTMLInputElement, 'todo-input') {
-  static get extends() { return 'input'; }
+class TodoInput extends Element('todo-input') {
+  get template() { 
+    // return require('./todo-input.sass')(this.data);
+    return h('template', [
+      h('input', { type: 'textfield', placeholder: 'What to do?', name: 'textfield' })
+    ]);
+  }
+
+  get styles() {
+    return require('./todo-input.sass').toString();
+  }
 
   get responsiveness() {
     return {
       keyup: 10.0
     }
+  }
+
+  get value() {
+    return this.$('textfield').value
   }
 
   update(info) {
@@ -16,7 +29,7 @@ class TodoInput extends Element(HTMLInputElement, 'todo-input') {
   }
 
   clear() {
-    this.value = '';
+    this.$('textfield').value = '';
   }
 
   handleKeyCodes(keyCodes) {

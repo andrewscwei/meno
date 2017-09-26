@@ -5,10 +5,11 @@
 const path = require('path');
 const webpack = require('webpack');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
-const baseDir = path.resolve(__dirname, '../../');
-const version = require(path.join(baseDir, 'package.json')).version;
-const sourceDir = path.join(__dirname, '../app');
-const buildDir = path.join(__dirname, '../public');
+const libRoot = path.resolve(__dirname, '../../');
+const baseDir = path.resolve(__dirname, '../');
+const sourceDir = path.join(baseDir, 'app');
+const buildDir = path.join(baseDir, 'public');
+const version = require(path.join(libRoot, 'package.json')).version;
 
 module.exports = {
   devtool: false,
@@ -35,20 +36,20 @@ module.exports = {
           presets: ['env']
         }
       }, {
-        loader: `pug-loader?root=${sourceDir}`
+        loader: `pug-loader`,
+        options: {
+          root: sourceDir
+        }
       }]
     }, {
       test: /\.sass$/,
       use: [{
-        loader: 'style-loader'
-      }, {
         loader: 'css-loader'
       }, {
         loader: 'sass-loader',
         options: {
-          includePaths: [`${path.join(sourceDir, 'stylesheets')}`],
           outputStyle: 'compressed',
-          sourceMap: true
+          sourceMap: false
         }
       }]
     }]
@@ -57,24 +58,23 @@ module.exports = {
     extensions: ['.js', '.sass', '.pug'],
     modules: [
       path.join(sourceDir),
-      path.join(baseDir, 'src'),
-      path.join(__dirname, '../node_modules'),
-      path.join(baseDir, 'node_modules')
+      path.join(baseDir, 'node_modules'),
+      path.join(libRoot, 'src'),
+      path.join(libRoot, 'node_modules')
     ]
   },
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
-        BUNDLE_VERSION: JSON.stringify(version),
         NODE_ENV: JSON.stringify('production')
       }
     }),
     new HTMLWebpackPlugin({
       filename: path.join(buildDir, 'index.html'),
-      template: path.join(sourceDir, 'templates', 'index.pug'),
+      template: path.join(sourceDir, 'index.pug'),
       inject: true
     }),
-    new webpack.NormalModuleReplacementPlugin(/^meno$/, path.join(baseDir, 'dist/meno.min.js')),
+    new webpack.NormalModuleReplacementPlugin(/^meno$/, path.join(libRoot, 'dist/meno.min.js')),
     new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } })
   ]
 };

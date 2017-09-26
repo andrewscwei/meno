@@ -1,0 +1,17 @@
+template
+  main
+    todo-input(name='input', on:insert='onInsert')
+    .categories
+      button(class=filter === 'all' ? 'active' : '', name='button-all', on:click='onSelectAll')= `All (${total})`
+      button(class=filter === 'active' ? 'active' : '', name='button-active', on:click='onSelectActive')= `Active (${totalActive})`
+      button(class=filter === 'completed' ? 'active' : '', name='button-completed', on:click='onSelectCompleted')= `Completed (${totalCompleted})`
+    .list
+      - for (var i = 0; i < items.length; i++)
+        todo-item.item(
+          class=items[i].completed ? 'completed' : '', 
+          name='item', 
+          data:completed=items[i].completed, 
+          data:text=items[i].text, 
+          hidden=!((filter === 'all') || (filter === 'active' && !items[i].completed) || (filter === 'completed' && items[i].completed)), 
+          on:toggle='onToggle', 
+          on:delete='onDelete')

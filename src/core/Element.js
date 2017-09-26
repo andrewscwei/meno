@@ -248,11 +248,29 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   /**
    * The VNode template of this element.
    *
-   * @return {VNode} The VNode representing this element's DOM tree.
+   * @type {VNode}
    * 
    * @alias module:meno~core.Element#template
    */
   get template() { return null; }
+
+  /**
+   * The internal styles, expressed in string.
+   * 
+   * @type {string}
+   * 
+   * @alias module:meno~core.Element#styles
+   */
+  get styles() { return null; }
+
+  constructor() {
+    super();
+
+    if (document.head.createShadowRoot || document.head.attachShadow) {
+      if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Attached shadow DOM`);
+      this.attachShadow({ mode: 'open' });
+    }
+  }
 
   /** 
    * Lifecycle callback invoked whenever this element is inserted into the DOM.
@@ -696,6 +714,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   __render__() {
     // If this element doesn't use a vtree, skip it.
     const vtree = this.template;
+    const rootNode = this.shadowRoot || this;
 
     if (!vtree) {
       this.__sync_child_events__();
@@ -713,6 +732,13 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     }
 
     this.set('vtree', patch(this, vtree, this.get('vtree')));
+
+    // Apply styles.
+    if (this.styles && this.shadowRoot) {
+      const element = document.createElement('style');
+      element.appendChild(document.createTextNode(this.styles));
+      this.shadowRoot.appendChild(element);
+    }
 
     if (this.render) this.render();
 
@@ -943,15 +969,15 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    */
   __sync_child_events__(parent=this) {
     if (parent === this) {
-      if (process.env.NODE_ENV === 'development')  debug(`<${this.constructor.name}> Syncing child events...`);
+      if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Syncing child events...`);
       this.__unregister_child_event__();
     }
 
-    const n = parent.childNodes.length;
+    const rootNode = parent.shadowRoot || parent;
+    const n = rootNode.childNodes.length;
     
     for (let i = 0; i < n; i++) {
-      const child = parent.childNodes[i];
-
+      const child = rootNode.childNodes[i];
       this.__register_all_child_events__(child);
     }
   }

@@ -3,7 +3,6 @@
 'use strict';
 
 import DirtyType from 'enums/DirtyType';
-import NodeState from 'enums/NodeState';
 import debounce from 'helpers/debounce';
 
 if (process.env.NODE_ENV === 'development') {
@@ -360,7 +359,7 @@ class ElementUpdateDelegate {
     this.update = () => {
       _cancelAnimationFrame(this._pendingAnimationFrame);
 
-      if (this.delegate && this.delegate.update && this.delegate.nodeState <= NodeState.INITIALIZED) {
+      if (this.delegate && this.delegate.update) {
         this.delegate.update.call(this.delegate, mDirtyInfo);
       }
 

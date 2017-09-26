@@ -27,8 +27,8 @@ function isCustomElement(element) {
   const is = getAttribute(element, Directive.IS);
   const tag = element.tagName;
 
-  if (is && (customElements.get(is) !== undefined)) return true;
-  if (tag && (customElements.get(tag) !== undefined)) return true;
+  if (is && (customElements.get(is.toLowerCase()) !== undefined)) return true;
+  if (tag && (customElements.get(tag.toLowerCase()) !== undefined)) return true;
   return false;
 }
 

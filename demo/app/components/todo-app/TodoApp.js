@@ -1,9 +1,10 @@
 import { Element } from 'meno';
 import createVTree from 'vdom/createVTree';
-import template from 'templates/components/todo-app';
 
 class TodoApp extends Element('todo-app') {
-  get template() { return createVTree(template(this.data)); }
+  get template() { return createVTree(require('./todo-app.pug')(this.data)); }
+
+  get styles() { return require('./todo-app.sass').toString(); }
 
   defaults() {
     return {
@@ -41,7 +42,7 @@ class TodoApp extends Element('todo-app') {
     const item = event.currentTarget;
     const items = this.$('item') ? [].concat(this.$('item')) : [];
     const idx = items.indexOf(item);
-
+    
     let tmp = [].concat(this.data.items);
     tmp[idx].completed = !tmp[idx].completed;
     this.data.items = tmp;

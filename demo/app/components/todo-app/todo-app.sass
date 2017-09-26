@@ -1,0 +1,37 @@
+@import '~minuet'
+
+\:host
+  +reset()
+  +max-size(800px _)
+  +padding(250px 50px 100px)
+
+main
+  +display('boxv', top center)
+  +size(100%)
+
+.categories
+  +margin(80px auto 20px)
+  +display('box>', center)
+
+  button
+    +space-between(10px, '>')
+    +size(auto 40px)
+    +padding(0 20px)
+    +transition(background color, .2s, ease-out)
+    background: #222
+    color: #fff
+    text-transform: uppercase
+    letter-spacing: 1px
+    font-size: .6em
+
+    &:hover, &.active
+      background: #fff
+      color: #111
+
+    &.active
+      pointer-events: none
+
+.list
+  +size(100% auto)
+  +display('box^')
+  +padding(_ _ 100px _)
