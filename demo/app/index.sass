@@ -1,9 +1,10 @@
 @import '~minuet'
 
++reset(true)
+
+// Firefox, Edge...
 =for-browsers-without-shadowdom()
   @content
-
-+reset(true)
 
 body
   +display('boxv', top center)
@@ -50,7 +51,7 @@ body
 
     .list
       +size(100% auto)
-      +display('box^')
+      +display('boxv')
       +padding(_ _ 100px _)
 
 +element('todo-input')
