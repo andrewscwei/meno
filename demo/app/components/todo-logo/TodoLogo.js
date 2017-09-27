@@ -1,4 +1,4 @@
-import { Element } from 'meno';
+import { Element, register } from 'meno';
 import createVTree from 'vdom/createVTree';
 
 class TodoLogo extends Element('todo-logo') {
@@ -7,4 +7,4 @@ class TodoLogo extends Element('todo-logo') {
   get styles() { return require('./todo-logo.sass'); }
 }
 
-export default TodoLogo;
+register(TodoLogo);

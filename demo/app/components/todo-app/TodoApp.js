@@ -1,4 +1,4 @@
-import { Element, DirtyType } from 'meno';
+import { Element, DirtyType, register } from 'meno';
 import createVTree from 'vdom/createVTree';
 
 class TodoApp extends Element('todo-app') {
@@ -81,4 +81,4 @@ class TodoApp extends Element('todo-app') {
   }
 }
 
-export default TodoApp;
+register(TodoApp);

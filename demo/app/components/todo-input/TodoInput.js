@@ -1,4 +1,4 @@
-import { Element, DirtyType, h } from 'meno';
+import { Element, DirtyType, h, register } from 'meno';
 import createVTree from 'vdom/createVTree';
 
 class TodoInput extends Element('todo-input') {
@@ -40,4 +40,4 @@ class TodoInput extends Element('todo-input') {
   }
 }
 
-export default TodoInput;
+register(TodoInput);

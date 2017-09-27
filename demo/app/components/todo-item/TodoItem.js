@@ -1,4 +1,4 @@
-import { Element, h } from 'meno';
+import { Element, h, register } from 'meno';
 // import createVTree from 'vdom/createVTree';
 
 class TodoItem extends Element('todo-item') {
@@ -31,4 +31,4 @@ class TodoItem extends Element('todo-item') {
   }
 }
 
-export default TodoItem;
+register(TodoItem);
