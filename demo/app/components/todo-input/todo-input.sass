@@ -2,11 +2,11 @@
 
 \:host
   +reset()
-  +size(100% 100px)
+  +size(100% auto)
 
   input 
     +transition(border color, .2s, ease-out)
-    +size(100%)
+    +size(100% 100px)
     font-weight: 300
     font-size: 2.4em
     color: rgba(#fff, .6)
@@ -20,4 +20,12 @@
       border-bottom: 2px solid #fff
 
   p
-    color: #666
+    +margin(20px 0 0)
+    +size(100% auto)
+    +padding(0 20px)
+    color: #444
+    text-align: center
+    font-size: .7em
+
+    em
+      font-style: normal

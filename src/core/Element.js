@@ -268,7 +268,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   constructor() {
     super();
 
-    if (process.env.SHADOW_DOM_ENABLED && document.head.attachShadow) {
+    if (process.env.SHADOW_DOM_ENABLED && document.head.attachShadow && !this.shadowRoot) {
       if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Attached shadow DOM`);
       this.attachShadow({ mode: 'open' });
     }
