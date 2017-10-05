@@ -2,7 +2,7 @@
 
 'use strict';
 
-import getViewportRect from 'utils/getViewportRect';
+import getViewportRect from './getViewportRect';
 
 /**
  * Gets the rect of a given element or the overall rect of an array of elements.

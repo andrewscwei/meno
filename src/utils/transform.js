@@ -2,7 +2,7 @@
 
 'use strict';
 
-import getRect from 'utils/getRect';
+import getRect from './getRect';
 
 /**
  * Transforms a DOM element.

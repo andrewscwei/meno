@@ -2,8 +2,8 @@
 
 'use strict';
 
-import getIntersectRect from 'utils/getIntersectRect';
-import getRect from 'utils/getRect';
+import getIntersectRect from './getIntersectRect';
+import getRect from './getRect';
 
 /**
  * Hit tests a vector or element against other elements.

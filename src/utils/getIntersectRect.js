@@ -2,7 +2,7 @@
 
 'use strict';
 
-import getRect from 'utils/getRect';
+import getRect from './getRect';
 
 /**
  * Computes the intersecting rect of 2 given elements. If only 1 element is
