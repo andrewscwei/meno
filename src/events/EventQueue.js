@@ -2,7 +2,7 @@
 
 'use strict';
 
-import EventDispatcher from 'events/EventDispatcher';
+import EventDispatcher from './EventDispatcher';
 
 if (process.env.NODE_ENV === 'development') {
   var assert = require('assert');
@@ -94,7 +94,7 @@ class EventQueue extends EventDispatcher {
 
   /**
    * Starts waiting for queued up events.
-   * 
+   *
    * @event 'complete' - Dispatched when every queued event is triggered.
    */
   start() {

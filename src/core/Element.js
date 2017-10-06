@@ -2,45 +2,45 @@
 
 'use strict';
 
-import ElementUpdateDelegate from 'core/ElementUpdateDelegate';
-import getChild from 'dom/getChild';
-import hasChild from 'dom/hasChild';
-import getAttribute from 'dom/getAttribute';
-import getStyle from 'dom/getStyle';
-import setStyle from 'dom/setStyle';
-import register from 'dom/register';
-import patch from 'vdom/patch';
-import Directive from 'enums/Directive';
-import DirtyType from 'enums/DirtyType';
-import NodeState from 'enums/NodeState';
-import EventQueue from 'events/EventQueue';
-import getDirectCustomChildren from 'dom/getDirectCustomChildren';
-import isCustomElement from 'dom/isCustomElement';
+import ElementUpdateDelegate from './ElementUpdateDelegate';
+import getChild from '../dom/getChild';
+import hasChild from '../dom/hasChild';
+import getAttribute from '../dom/getAttribute';
+import getStyle from '../dom/getStyle';
+import setStyle from '../dom/setStyle';
+import register from '../dom/register';
+import getDirectCustomChildren from '../dom/getDirectCustomChildren';
+import isCustomElement from '../dom/isCustomElement';
+import Directive from '../enums/Directive';
+import DirtyType from '../enums/DirtyType';
+import NodeState from '../enums/NodeState';
+import EventQueue from '../events/EventQueue';
+import patch from '../vdom/patch';
 
 if (process.env.NODE_ENV === 'development') {
   var assert = require('assert');
-  var assertType = require('debug/assertType');
+  var assertType = require('../debug/assertType');
   var debug = require('debug')('meno:Element');
 }
 
 /**
  * @class
  *
- * Returns a custom Element constructor with extended features. Specify the 
+ * Returns a custom Element constructor with extended features. Specify the
  * `base` Element class to inherit from (defaults to HTMLElement) and provide
  * the HTML `tag` to extend from.
- * 
+ *
  * @param {string|Function} [base=HTMLElement] - Base Node constructor for the
  *                                               returned constructor to inherit
- *                                               from. If this param is a 
+ *                                               from. If this param is a
  *                                               string, it will be used as the
  *                                               `tag` param instead, hence
  *                                               leaving the base constructor as
  *                                               HTMLElement.
- * @param {string} [tag] - The HTML tag to extend from. This follows the W3C 
+ * @param {string} [tag] - The HTML tag to extend from. This follows the W3C
  *                         custom element specs. Defaults to `div` if a base
  *                         is specified and this is left unefined.
- * 
+ *
  * @return {Node} - Constructor for an Element that inherits the specified base
  *                  constructor.
  *
@@ -57,7 +57,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * `document.registerElement()`.
    *
    * @return {string} The tag name.
-   * 
+   *
    * @alias module:meno~core.Element.tag
    */
   static get tag() { return (typeof base === 'string') && base || tag || undefined; }
@@ -67,7 +67,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * value is used in the `options` for `document.registerElement()`.
    *
    * @return {string} The tag of the native element.
-   * 
+   *
    * @alias module:meno~core.Element.extends
    */
   static get extends() { return null; }
@@ -76,7 +76,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * Creates a new DOM element from this Element class.
    *
    * @return {Node}
-   * 
+   *
    * @alias module:meno~core.Element.factory
    */
   static factory() { return new (register(this))(); }
@@ -85,25 +85,25 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * Override this method to define the responsive behavior of this element.
    * This method should return an object, where each key is a supported event
    * type and each value can either be a number representing the refresh delay
-   * or an object literal with `delay` and/or `conductor`, indicating the 
+   * or an object literal with `delay` and/or `conductor`, indicating the
    * refresh delay and element to respond to, respectively.
-   * 
+   *
    * @type {Object}
-   * 
+   *
    * @alias module:meno~core.Element#responsiveness
-   * 
+   *
    * @see ElementUpdateDelegate#initResponsiveness
    */
   get responsiveness() { return {}; }
 
   /**
    * Data object.
-   * 
+   *
    * @type {Object}
-   * 
+   *
    * @alias module:meno~core.Element.data
    */
-  get data() { 
+  get data() {
     let isInitial = false;
 
     if (!this.__private__ || !this.__private__.hasOwnProperty('data')) {
@@ -115,7 +115,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     if (isInitial) {
       // Check if this Element has default data.
       const defaults = this.defaults();
-    
+
       if (defaults) {
         // Go through each key/value pair and add it to this element's data.
         for (let key in defaults) {
@@ -148,40 +148,40 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   }
 
   /**
-   * This registry is for bookkeeping external event listeners added to this 
+   * This registry is for bookkeeping external event listeners added to this
    * element instance. This is for auto garbage cleaning listeners when this
    * element instance is removed from DOM.
-   * 
+   *
    * @type {Object}
-   * 
+   *
    * @private
-   */ 
+   */
   get listenerRegistry() { return this.get('listenerRegistry', {}); }
 
   /**
-   * This registry is for bookkeeping registered event listeners for child nodes 
+   * This registry is for bookkeeping registered event listeners for child nodes
    * with custom event directives.
-   * 
+   *
    * @type {Object}
-   * 
+   *
    * @private
    */
   get eventRegistry() { return this.get('eventRegistry', {}); }
 
   /**
    * This delegate object is for managing dirty updates.
-   * 
+   *
    * @type {ElementUpdateDelegate}
-   * 
+   *
    * @private
-   */ 
+   */
   get updateDelegate() { return this.get('updateDelegate', new ElementUpdateDelegate(this)); }
 
   /**
    * Instance name of this Element instance. Once set, it cannot be changed.
    *
    * @type {string}
-   * 
+   *
    * @alias module:meno~core.Element#name
    */
   get name() {
@@ -198,7 +198,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * Current node state of this Element instance.
    *
    * @type {NodeState}
-   * 
+   *
    * @alias module:meno~core.Element#nodeState
    */
   get nodeState() { return this.get('nodeState', NodeState.IDLE); }
@@ -207,7 +207,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * Indicates whether this Element instance is disabled.
    *
    * @type {boolean}
-   * 
+   *
    * @alias module:meno~core.Element#disabled
    */
   get disabled() { return this.hasAttribute('disabled') ? this.getAttribute('disabled') : false; }
@@ -215,9 +215,9 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
 
   /**
    * Indiciates whether this Element is invisible.
-   * 
+   *
    * @type {boolean}
-   * 
+   *
    * @alias module:meno~core.Element#invisible
    */
   get invisible() { return this.get('invisible', false); }
@@ -238,7 +238,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * Opacity of this Element instance.
    *
    * @type {number}
-   * 
+   *
    * @alias module:meno~core.Element#opacity
    */
   get opacity() { return this.getStyle('opacity', true); }
@@ -248,16 +248,16 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * The VNode template of this element.
    *
    * @type {VNode}
-   * 
+   *
    * @alias module:meno~core.Element#template
    */
   get template() { return null; }
 
   /**
    * The internal styles, expressed in string.
-   * 
+   *
    * @type {string}
-   * 
+   *
    * @alias module:meno~core.Element#styles
    */
   get styles() { return null; }
@@ -274,10 +274,10 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     }
   }
 
-  /** 
+  /**
    * Lifecycle callback invoked whenever this element is inserted into the DOM.
-   * 
-   * @inheritdoc 
+   *
+   * @inheritdoc
    * @ignore
    */
   connectedCallback() {
@@ -307,10 +307,10 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     this.__awaitInit__();
   }
 
-  /** 
+  /**
    * Lifecycle callback invoked whenever this element is removed from the DOM.
-   * 
-   * @inheritdoc 
+   *
+   * @inheritdoc
    * @ignore
    */
   disconnectedCallback() {
@@ -325,7 +325,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   /**
    * Lifecycle callback invoked whenever an attribute is added, removed or
    * updated.
-   * 
+   *
    * @inheritdoc
    * @ignore
    */
@@ -336,14 +336,14 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   }
 
   /**
-   * Define default data here. This method returns an object, where each 
+   * Define default data here. This method returns an object, where each
    * key/value pair represents a data in this element. The key is the name of
    * the data and the value is the default/initial value. You can express the
    * value as an object to provide additional configuration for Element#__set_data__.
    * In this case, the value key of the object is the initial value. When the
    * initial value is a function, this data is inferred as computed data, hence
    * there are no setters.
-   * 
+   *
    * @return {Object} Default data.
    */
   defaults() {
@@ -352,12 +352,12 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
 
   /**
    * Lifecycle hook: This method is invoked after this element is
-   * added to the DOM, BEFORE the initial render starts, and RIGHT BEFORE 
-   * the node state changes to NodeState.INITIALIZED. This is a good place to 
-   * perform initial set up for this element. Note that if you want to set up 
-   * the children of this element, there is a better hook for that. See 
+   * added to the DOM, BEFORE the initial render starts, and RIGHT BEFORE
+   * the node state changes to NodeState.INITIALIZED. This is a good place to
+   * perform initial set up for this element. Note that if you want to set up
+   * the children of this element, there is a better hook for that. See
    * Element#render. At this point, the children may not be rendered yet.
-   * 
+   *
    * @alias module:meno~core.Element#init
    */
   init() {}
@@ -365,16 +365,16 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   /**
    * Lifecycle hook: This method is invoked right after this element is removed
    * from the DOM. This is a good place to clean things up.
-   * 
+   *
    * @alias module:meno~core.Element#destroy
    */
   destroy() {}
 
   /**
    * Lifecycle hook: This method is invoked right after every render. On the
-   * initial render, this hook is fired before Element#init. This is a good 
+   * initial render, this hook is fired before Element#init. This is a good
    * place to set up new children on every render.
-   * 
+   *
    * @alias module:meno~core.Element#render
    */
   render() {}
@@ -383,7 +383,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * Lifecycle hook: This method is invoked whenever a dirty update occurs. When
    * this element is first added to the DOM, this hook is invoked BEFORE
    * Element#init, AFTER Element#render.
-   * 
+   *
    * @alias module:meno~core.Element#update
    */
   update() {}
@@ -393,20 +393,20 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    */
   $() { return this.getChild.apply(this, arguments); }
 
-  /** 
-   * @see module:meno~dom.getChild 
+  /**
+   * @see module:meno~dom.getChild
    * @alias module:meno~core.Element#getChild
    */
   getChild(name, recursive) { return getChild(this, name, recursive); }
 
-  /** 
-   * @see module:meno~dom.hasChild 
+  /**
+   * @see module:meno~dom.hasChild
    * @alias module:meno~core.Element#hasChild
    */
   hasChild(child) { return hasChild(child, this); }
 
-  /** 
-   * @inheritdoc 
+  /**
+   * @inheritdoc
    * @ignore
    */
   getAttribute(name) {
@@ -421,8 +421,8 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     }
   }
 
-  /** 
-   * @inheritdoc 
+  /**
+   * @inheritdoc
    * @ignore
    */
   setAttribute(name, value) {
@@ -442,20 +442,20 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     }
   }
 
-  /** 
-   * @see module:meno~dom.getStyle 
+  /**
+   * @see module:meno~dom.getStyle
    * @alias module:meno~core.Element#getStyle
    */
   getStyle(key, isComputed, isolateUnits) { return getStyle(this, key, isComputed, isolateUnits); }
 
-  /** 
-   * @see module:meno~dom.setStyle 
+  /**
+   * @see module:meno~dom.setStyle
    * @alias module:meno~core.Element#setStyle
    */
   setStyle(key, value) { return setStyle(this, key, value); }
 
-  /** 
-   * @inheritdoc 
+  /**
+   * @inheritdoc
    * @ignore
    */
   addEventListener() {
@@ -510,7 +510,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @param {Function} listener - Listener function.
    *
    * @return {boolean}
-   * 
+   *
    * @alias module:meno~core.Element#hasEventListener
    */
   hasEventListener(event, listener) {
@@ -533,8 +533,8 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     }
   }
 
-  /** 
-   * @inheritdoc 
+  /**
+   * @inheritdoc
    * @ignore
    */
   removeEventListener() {
@@ -585,7 +585,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
 
   /**
    * Removes all cached event listeners from this Element instance.
-   * 
+   *
    * @alias module:meno~core.Element#removeAllEventListeners
    */
   removeAllEventListeners() {
@@ -594,14 +594,14 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     }
   }
 
-  /** 
-   * @see ElementUpdateDelegate#isDirty 
+  /**
+   * @see ElementUpdateDelegate#isDirty
    * @alias module:meno~core.Element#isDirty
    */
   isDirty() { return this.updateDelegate.isDirty.apply(this.updateDelegate, arguments); }
 
-  /** 
-   * @see ElementUpdateDelegate#setDirty 
+  /**
+   * @see ElementUpdateDelegate#setDirty
    * @alias module:meno~core.Element#setDirty
    */
   setDirty() { return this.updateDelegate.setDirty.apply(this.updateDelegate, arguments); }
@@ -615,7 +615,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    *                                   exist.
    *
    * @return {*} Value of private property.
-   * 
+   *
    * @alias module:meno~core.Element#get
    */
   get(propertyName, defaultInitializer) {
@@ -632,7 +632,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    *
    * @param {string} propertyName - Name of private property.
    * @param {*} value - Value of private property to be set.
-   * 
+   *
    * @alias module:meno~core.Element#set
    */
   set(propertyName, value) {
@@ -645,54 +645,27 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
 
   /**
    * Method invoked when this element is added to the DOM.
-   * 
-   * @private 
+   *
+   * @private
    */
   __init__() {
-    // Initialize responsive behaviors.
-    const responsiveness = this.responsiveness;
-
-    if (process.env.NODE_ENV === 'development') {
-      assertType(responsiveness, Object, true, `The static property 'responsiveness' must be an Object`);
-    }
-
-    if (responsiveness) {
-      for (let key in responsiveness) {
-        let value = responsiveness[key];
-
-        if (typeof value === 'number') {
-          this.updateDelegate.initResponsiveness.apply(this.updateDelegate, [value, key]);
-        }
-        else if (typeof value === 'object') {
-          let args = [];
-          if (value.conductor) args.push(value.conductor);
-          if (value.delay) args.push(value.delay);
-          args.push(key);
-          this.updateDelegate.initResponsiveness.apply(this.updateDelegate, args);
-        }
-        else {
-          this.updateDelegate.initResponsiveness.apply(this.updateDelegate, [key]);
-        }
-      }
-    }
-
     if (this.init) this.init();
 
     if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Initialized`);
-    
+
     // Update the node state to `initialized`.
     this.__set_node_state__(NodeState.INITIALIZED);
 
     // Invoke update delegate.
-    this.updateDelegate.init();
-    
+    this.updateDelegate.init(this.responsiveness);
+
     // Now that the initial update is complete, unhide the element.
     this.setStyle('visibility', this.invisible ? 'hidden' : null);
   }
 
   /**
    * Method invoked every time this element is removed from the DOM.
-   * 
+   *
    * @private
    */
   __destroy__() {
@@ -703,7 +676,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
 
   /**
    * Renders the template of this element instance.
-   * 
+   *
    * @private
    */
   __render__() {
@@ -720,7 +693,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
 
     if (!this.get('vtree')) {
       isPatching = false;
-      
+
       while (this.lastChild) {
         this.removeChild(this.lastChild);
       }
@@ -752,7 +725,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   /**
    * Waits for all custom children to be initialized before initializing this
    * element.
-   * 
+   *
    * @private
    */
   __awaitInit__() {
@@ -762,7 +735,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     const n = customChildren.length;
 
     if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Waiting for ${n} custom child node(s) to initialize...`);
-    
+
     // Reset internal event queue.
     const eventQueue = this.get('eventQueue');
 
@@ -780,7 +753,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
           eq.enqueue(child, 'nodeinitialize');
         }
       }
-      
+
       eq.addEventListener('complete', this.__init__.bind(this));
       eq.start();
 
@@ -795,7 +768,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * Sets the Element's node state.
    *
    * @param {NodeState} nodeState - Node state.
-   * 
+   *
    * @event 'nodeinitialize' - Dispatched when node state is set to
    *                           NodeState.INITIALIZED.
    * @event 'nodeupdate' - Dispatched when node state is set to NodeState.UPDATE.
@@ -827,24 +800,24 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    *
    * @param {string} key - Name of the data to be defined or updated.
    * @param {*} value - The value to update or to set as the initial value.
-   * @param {Object} options - An object literal that defines the behavior of 
-   *                           this data. This object literal inherits that of 
+   * @param {Object} options - An object literal that defines the behavior of
+   *                           this data. This object literal inherits that of
    *                           the descriptor param in Object#defineProperty.
    * @param {boolean} [options.unique=true] - Specifies that the on change hooks
-   *                                          are only triggered if the new 
-   *                                          value is different from the old 
+   *                                          are only triggered if the new
+   *                                          value is different from the old
    *                                          value.
-   * @param {DirtyType} [options.dirtyType=DirtyType.DATA] - Specifies the flag 
-   *                                                         to mark as dirty 
-   *                                                         when a new value is 
+   * @param {DirtyType} [options.dirtyType=DirtyType.DATA] - Specifies the flag
+   *                                                         to mark as dirty
+   *                                                         when a new value is
    *                                                         set.
-   * @param {String} [options.eventType] - Specifies the event type to dispatch 
+   * @param {String} [options.eventType] - Specifies the event type to dispatch
    *                                       whenever a new value is set.
    * @param {boolean} [options.renderOnChange=true] - Specifies whether this
-   *                                                  element rerenders when a 
+   *                                                  element rerenders when a
    *                                                  new value is set.
-   * @param {boolean} [options.attributed] - Specifies whether a corresponding 
-   *                                         DOM attribute will update whenever 
+   * @param {boolean} [options.attributed] - Specifies whether a corresponding
+   *                                         DOM attribute will update whenever
    *                                         a new value is set.
    * @param {Function} [options.onChange] - Method invoked when the data changes.
    *
@@ -870,21 +843,21 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
       assertType(options.attributed, 'boolean', true, 'Optional attributed must be a boolean');
       assertType(options.onChange, 'function', true, 'Optional change handler must be a function');
     }
-  
+
     const dirtyType = options.dirtyType === undefined ? DirtyType.DATA : options.dirtyType;
     const renderOnChange = typeof options.renderOnChange === 'boolean' ? options.renderOnChange : true;
     const attributed = typeof options.attributed === 'boolean' ? options.attributed : false;
     const attributeName = Directive.getDataAttributeName(key);
     const eventType = options.eventType;
     const unique = (typeof unique === 'boolean') ? options.unique : true;
-  
+
     // Set the default value if its is not a computed value.
     if (value !== undefined && typeof value !== 'function') {
       Object.defineProperty(this.data.__private__, key, { value: value, writable: true });
     }
-  
+
     let descriptor = {};
-  
+
     descriptor.get = (typeof value === 'function') ? value : () => (this.data.__private__[key]);
 
     if (typeof value !== 'function') {
@@ -894,14 +867,14 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
         // Early exit if new value is the same as old value, and that unique
         // values are required.
         if (unique && (oldVal === val)) return;
-  
+
         if (oldVal === undefined) {
           Object.defineProperty(this.data.__private__, key, { value: val, writable: true });
         }
         else {
           this.data.__private__[key] = val;
         }
-  
+
         // If change callback is specified, trigger it.
         if (options.onChange !== undefined) options.onChange(oldVal, val);
 
@@ -917,7 +890,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
         if (options.renderOnChange) {
           this.__render__();
         }
-  
+
         // If there is an event associated with this data, dispatch it.
         if (eventType) {
           const event = new CustomEvent(eventType, {
@@ -927,12 +900,12 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
               newValue: val
             }
           });
-  
+
           this.dispatchEvent(event);
         }
       }
     }
-  
+
     Object.defineProperty(this.data, key, descriptor);
 
     // Trigger hooks when this method is first called.
@@ -955,9 +928,9 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   /**
    * Automatically sync event listeners with child events specified in their
    * custom event attributes.
-   * 
+   *
    * @param {Node} [parent] - The parent node to listen for child events.
-   * 
+   *
    * @private
    */
   __sync_child_events__(parent=this) {
@@ -968,7 +941,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
 
     const rootNode = parent.shadowRoot || parent;
     const n = rootNode.childNodes.length;
-    
+
     for (let i = 0; i < n; i++) {
       const child = rootNode.childNodes[i];
       this.__register_all_child_events__(child);
@@ -977,9 +950,9 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
 
   /**
    * Registers all events with a child node.
-   * 
+   *
    * @param {Node} child - The child node dispatching the events.
-   * 
+   *
    * @private
    */
   __register_all_child_events__(child) {
@@ -988,9 +961,9 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     }
 
     const regex = new RegExp('^' + Directive.EVENT, 'i');
-    
+
     if (!child.attributes) return;
-    
+
     for (let i = 0; i < child.attributes.length; i++) {
       const attribute = child.attributes[i];
       if (!regex.test(attribute.name)) continue;
@@ -1006,11 +979,11 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
 
   /**
    * Registers an event with a child node.
-   * 
+   *
    * @param {Node} child - The child node dispatching the event.
    * @param {string} eventType - Name of the event to listen to.
    * @param {string} handlerName - Name of the listener handler.
-   * 
+   *
    * @private
    */
   __register_child_event__(child, eventType, handlerName) {
@@ -1025,28 +998,28 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
       if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Failed to register for event "${eventType}", this element does not have a method named "${handlerName}"`);
       return;
     }
-    
+
     // If the same event is already registered, early exit.
     let entries = this.eventRegistry[eventType] || [];
     let n = entries.length;
-    
+
     for (let i = 0; i < n; i++) {
       const entry = entries[i];
-      
+
       if (entry.dispatcher === child) {
         if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Failed to register for event "${eventType}" with handler "${handlerName}", the same event for this child is already registered`);
         return;
       }
     }
-    
+
     // Proceed to registering for the child event.
     const handler = function(event) { this[handlerName](event); }.bind(this);
-  
+
     entries.push({
       dispatcher: child,
       handler: handler
     });
-  
+
     child.addEventListener(eventType, handler);
 
     this.eventRegistry[eventType] = entries;
@@ -1056,7 +1029,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
 
   /**
    * Unregisters an event or multiple events from a child (or all children).
-   * 
+   *
    * @param {Node} [child] - The child that dispatched the event. If unspecified,
    *                         all child events will be unregistered from this
    *                         element, regardless of child nodes.
@@ -1116,7 +1089,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
 
       for (let i = 0; i < n; i++) {
         const entry = entries[i];
-        
+
         if (entry.dispatcher === child) {
           entry.dispatcher.removeEventListener(eventType, entry.handler);
           entries.splice(i, 1);

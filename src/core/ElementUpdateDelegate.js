@@ -2,8 +2,7 @@
 
 'use strict';
 
-import DirtyType from 'enums/DirtyType';
-import debounce from 'helpers/debounce';
+import DirtyType from '../enums/DirtyType';
 
 if (process.env.NODE_ENV === 'development') {
   var assert = require('assert');
@@ -18,6 +17,45 @@ if (process.env.NODE_ENV === 'development') {
  * @default
  */
 const DEFAULT_REFRESH_RATE = 0.0;
+
+/**
+ * Returns a function that, as long as it continues to be invoked, will not be
+ * triggered. The function will be called after it stops being called for N
+ * milliseconds. If 'leading' is passed, the function will be triggered on the
+ * leading edge instead of the trailing.
+ *
+ * @param {Function} method - Method to be debounced.
+ * @param {number} [delay=0] - Debounce rate in milliseconds.
+ * @param {boolean} [leading=false] - Indicates whether the method is triggered
+ *                                    on the leading edge instead of the
+ *                                    trailing.
+ *
+ * @return {Function} The debounced method.
+ *
+ * @alias module:meno~helpers.debounce
+ */
+function debounce(method, delay, leading) {
+  if (delay === undefined) delay = 0;
+  if (leading === undefined) leading = false;
+
+  let timeout;
+
+  return function() {
+    let context = this;
+    let args = arguments;
+
+    let later = function() {
+      timeout = null;
+      if (!leading) method.apply(context, args);
+    };
+
+    let callNow = leading && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, delay);
+
+    if (callNow) method.apply(context, args);
+  };
+}
 
 /**
  * @class
@@ -297,7 +335,27 @@ class ElementUpdateDelegate {
     /**
      * Initializes this ElementUpdateDelegate instance. Must manually invoke.
      */
-    this.init = () => {
+    this.init = (responsiveness) => {
+      if (responsiveness) {
+        for (let key in responsiveness) {
+          const value = responsiveness[key];
+
+          if (typeof value === 'number') {
+            this.initResponsiveness.apply(this, [value, key]);
+          }
+          else if (typeof value === 'object') {
+            let args = [];
+            if (value.conductor) args.push(value.conductor);
+            if (value.delay) args.push(value.delay);
+            args.push(key);
+            this.initResponsiveness.apply(this, args);
+          }
+          else {
+            this.initResponsiveness.apply(this, [key]);
+          }
+        }
+      }
+
       this.setDirty(DirtyType.ALL, true);
     };
 

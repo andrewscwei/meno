@@ -2,7 +2,7 @@
 
 'use strict';
 
-import Directive from 'enums/Directive';
+import Directive from '../enums/Directive';
 
 if (process.env.NODE_ENV === 'development') {
   var assert = require('assert');
@@ -12,9 +12,9 @@ if (process.env.NODE_ENV === 'development') {
  * Gets the a child from the global display tree consisting of all sightread
  * Element instances.
  *
- * @param {Element} [element] - Specifies the parent element instance to fetch 
+ * @param {Element} [element] - Specifies the parent element instance to fetch
  *                              the child from.
- * @param {string} name - Name of the child, depth separated by '.' (i.e. 
+ * @param {string} name - Name of the child, depth separated by '.' (i.e.
  *                        'foo.bar').
  *
  * @return {Node|Array|Object}

@@ -2,18 +2,18 @@
 
 'use strict';
 
-import Element from 'core/Element';
-import getChild from 'dom/getChild';
-import hasChild from 'dom/hasChild';
-import getAttribute from 'dom/getAttribute';
-import setAttribute from 'dom/setAttribute';
-import getStyle from 'dom/getStyle';
-import setStyle from 'dom/setStyle';
-import register from 'dom/register';
-import vnode from 'vdom/vnode';
-import Directive from 'enums/Directive';
-import DirtyType from 'enums/DirtyType';
-import NodeState from 'enums/NodeState';
+import Element from './core/Element';
+import getChild from './dom/getChild';
+import hasChild from './dom/hasChild';
+import getAttribute from './dom/getAttribute';
+import setAttribute from './dom/setAttribute';
+import getStyle from './dom/getStyle';
+import setStyle from './dom/setStyle';
+import register from './dom/register';
+import vnode from './vdom/vnode';
+import Directive from './enums/Directive';
+import DirtyType from './enums/DirtyType';
+import NodeState from './enums/NodeState';
 
 if (process.env.NODE_ENV === 'development') {
   var assert = require('assert');

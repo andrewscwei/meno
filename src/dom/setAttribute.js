@@ -2,11 +2,11 @@
 
 'use strict';
 
-import Directive from 'enums/Directive';
-import DirtyType from 'enums/DirtyType';
+import Directive from '../enums/Directive';
+import DirtyType from '../enums/DirtyType';
 
 if (process.env.NODE_ENV === 'development') {
-  var assertType = require('debug/assertType');
+  var assertType = require('../debug/assertType');
 }
 
 /**

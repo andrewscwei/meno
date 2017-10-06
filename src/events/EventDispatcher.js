@@ -4,7 +4,7 @@
 
 if (process.env.NODE_ENV === 'development') {
   var assert = require('assert');
-  var assertType = require( 'debug/assertType');
+  var assertType = require( '../debug/assertType');
 }
 
 /**

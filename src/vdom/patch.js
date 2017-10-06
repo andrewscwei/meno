@@ -2,10 +2,10 @@
 
 'use strict';
 
-import Directive from 'enums/Directive';
-import createElement from 'vdom/createElement';
-import setAttribute from 'dom/setAttribute';
-import vnode from 'vdom/vnode';
+import Directive from '../enums/Directive';
+import setAttribute from '../dom/setAttribute';
+import createElement from './createElement';
+import vnode from './vnode';
 
 if (process.env.NODE_ENV === 'development') {
   var assert = require('assert');
@@ -13,18 +13,18 @@ if (process.env.NODE_ENV === 'development') {
 
 /**
  * Patches a DOM element based on the virtual tree provided.
- * 
+ *
  * @param {Node} rootNode - The DOM element to patch.
  * @param {VNode} newVTree - The new vtree.
  * @param {VNode} oldVTree - The old vtree to diff from.
- * 
+ *
  * @alias module:meno~vdom.patch
  */
 function patch(rootNode, newVTree, oldVTree) {
   // If there is no old tree, the entire tree is inserted.
   if (!oldVTree) {
     const nNewChildren = newVTree.children.length;
-  
+
     for (let i = 0; i < nNewChildren; i++) {
       const child = createElement(newVTree.children[i], isSVGElement(rootNode));
       getTreeRoot(rootNode).appendChild(child);
@@ -32,13 +32,13 @@ function patch(rootNode, newVTree, oldVTree) {
 
     if (rootNode.__sync_child_events__) rootNode.__sync_child_events__();
   }
-  // Otherwise walk through both old and new trees and patch changes based on 
+  // Otherwise walk through both old and new trees and patch changes based on
   // the diff results for every child node, recursively.
   else {
     const nNewChildren = newVTree.children.length;
     const nOldChildren = oldVTree.children.length;
     let idx = 0;
-  
+
     for (let i = 0; i < nNewChildren || i < nOldChildren; i++) {
       const d = updateNodeAt(idx, rootNode, rootNode, newVTree.children[i], oldVTree.children[i], isSVGElement(rootNode));
       idx += 1 + d;
@@ -51,7 +51,7 @@ function patch(rootNode, newVTree, oldVTree) {
 /**
  * Applies updates to a DOM node as specified by its root node, immediate parent
  * and child index.
- * 
+ *
  * @param {number} [index=0] - The child index of the node to update.
  * @param {Node} parentNode - The immediate parent of the node to update.
  * @param {Node} rootNode - The root element.
@@ -59,8 +59,8 @@ function patch(rootNode, newVTree, oldVTree) {
  * @param {VNode} oldVNode - The old VNode instance to diff from.
  * @param {boolean} [isSVG=false] - Specifies the node to update is part of an
  *                                  SVG element.
- * 
- * @return {number} Indicates how many child nodes are added/removed from the 
+ *
+ * @return {number} Indicates how many child nodes are added/removed from the
  *                  parent as a result of this operation.
  */
 function updateNodeAt(index = 0, parentNode, rootNode, newVNode, oldVNode, isSVG = false) {
@@ -70,7 +70,7 @@ function updateNodeAt(index = 0, parentNode, rootNode, newVNode, oldVNode, isSVG
     const element = createElement(newVNode, isSVGElement(parentNode));
     getTreeRoot(parentNode).appendChild(element);
     if (rootNode.__register_all_child_events__ && element instanceof Element) rootNode.__register_all_child_events__(element);
-    
+
     return 0;
   }
 
@@ -111,9 +111,9 @@ function updateNodeAt(index = 0, parentNode, rootNode, newVNode, oldVNode, isSVG
 }
 
 /**
- * Updates all the attributes of an element and does so precisly by comparing 
+ * Updates all the attributes of an element and does so precisly by comparing
  * with its old attributes.
- * 
+ *
  * @param {Node} rootNode - The root element.
  * @param {Node} node - The element instance to modify.
  * @param {Object} newAttributes - New attributes to apply.
@@ -167,10 +167,10 @@ function updateAttributes(rootNode, node, newAttributes, oldAttributes, isSVG) {
 
 /**
  * Checks if two vnodes are different.
- * 
+ *
  * @param {VNode} vnode1 - The first vnode to compare.
  * @param {VNode} vnode2 - The second vnode to compare.
- * 
+ *
  * @return {boolean} `true` if the vnodes are different, `false` otherwise.
  */
 function isDifferent(vnode1, vnode2) {
@@ -191,9 +191,9 @@ function isDifferent(vnode1, vnode2) {
 
 /**
  * Checks if a DOM element is an SVG element.
- * 
+ *
  * @param {Element} element - The DOM element to check.
- * 
+ *
  * @return {boolean} `true` if it's an SVG element, `false` otherwise.
  */
 function isSVGElement(element) {
@@ -203,9 +203,9 @@ function isSVGElement(element) {
 /**
  * Gets the root node of the element to append children to. If the element has
  * a shadow it will return its shadow root.
- * 
+ *
  * @param {Element} element - The target DOM element.
- * 
+ *
  * @return {Element} The root node.
  */
 function getTreeRoot(element) {

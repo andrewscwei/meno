@@ -3,7 +3,7 @@
 'use strict';
 
 var assert = require('assert');
-var checkType = require('debug/checkType');
+var checkType = require('./checkType');
 
 /**
  * Asserts the specified condition and throws a warning if assertion fails.

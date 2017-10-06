@@ -2,7 +2,7 @@
 
 'use strict';
 
-import isCustomElement from 'dom/isCustomElement';
+import isCustomElement from './isCustomElement';
 
 /**
  * Gets all the direct custom children of an element, flattened to a single

@@ -2,9 +2,9 @@
 
 'use strict';
 
-import setAttribute from 'dom/setAttribute';
-import Directive from 'enums/Directive';
-import vnode from 'vdom/vnode';
+import setAttribute from '../dom/setAttribute';
+import Directive from '../enums/Directive';
+import vnode from './vnode';
 
 if (process.env.NODE_ENV === 'development') {
   var assert = require('assert');
@@ -12,11 +12,11 @@ if (process.env.NODE_ENV === 'development') {
 
 /**
  * Creates a DOM element from a VNode.
- * 
+ *
  * @param {VNode} vnode - Target VNode instance.
  * @param {boolean} [isSVG=false] - Specifies whether the element is an SVG
  *                                  element or its child node.
- * 
+ *
  * @alias module:meno~vdom.createElement
  */
 function createElement(vnode, isSVG=false) {
@@ -30,7 +30,7 @@ function createElement(vnode, isSVG=false) {
 
   // Create the DOM element, account for custom and SVG elements.
   const element = isSVG ? document.createElementNS('http://www.w3.org/2000/svg', vnode.tag) : document.createElement(vnode.tag, { is: vnode.attributes[Directive.IS] });
-  
+
   // Set attributes.
   for (let key in vnode.attributes) {
     if (key === Directive.IS) continue;

@@ -3,7 +3,7 @@
 'use strict';
 
 if (process.env.NODE_ENV === 'development') {
-  var assertType = require('debug/assertType');
+  var assertType = require('../debug/assertType');
 }
 
 /**
@@ -26,7 +26,7 @@ function getStyle(element, key, isComputed, isolateUnits) {
   if (process.env.NODE_ENV === 'development') {
     assertType(element, Node, false, 'Invalid element specified');
   }
-  
+
   if (typeof isComputed !== 'boolean') isComputed = false;
   if (typeof isolateUnits !== 'boolean') isolateUnits = false;
 

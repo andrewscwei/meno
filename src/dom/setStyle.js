@@ -3,7 +3,7 @@
 'use strict';
 
 if (process.env.NODE_ENV === 'development') {
-  var assertType = require('debug/assertType');
+  var assertType = require('../debug/assertType');
 }
 
 /**
@@ -22,7 +22,7 @@ function setStyle(element, key, value) {
   if (process.env.NODE_ENV === 'development') {
     assertType(element, Node, false, 'Invalid element specified');
   }
-  
+
   if (typeof value === 'number') value = String(value);
   if (value === null || value === undefined) value = '';
 

@@ -2,12 +2,12 @@
 
 'use strict';
 
-import getChild from 'dom/getChild';
-import noval from 'helpers/noval';
+import getChild from './getChild';
+import noval from '../helpers/noval';
 
 if (process.env.NODE_ENV === 'development') {
   var assert = require('assert');
-  var assertType = require('debug/assertType');
+  var assertType = require('../debug/assertType');
 }
 
 /**

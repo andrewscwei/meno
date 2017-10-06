@@ -3,7 +3,7 @@
 'use strict';
 
 import htmlParser from 'htmlparser2';
-import vnode from 'vdom/vnode';
+import vnode from './vnode';
 
 if (process.env.NODE_ENV === 'development') {
   var assert = require('assert');
@@ -13,7 +13,7 @@ if (process.env.NODE_ENV === 'development') {
  * Creates a virtual tree from an HTML string. A virtual tree is just a VNode
  * instance, which is the root node of a tree of VNodes.
  *
- * @param {string} htmlString - HTML string. Expects there to be exactly one 
+ * @param {string} htmlString - HTML string. Expects there to be exactly one
  *                              root node.
  *
  * @return {VNode} - The virtual tree.
@@ -26,7 +26,7 @@ function createVTree(htmlString) {
   }
 
   let nodeStack = [];
-  
+
   const parser = new htmlParser.Parser({
     onopentag: (name, attrs) => {
       const parentNode = nodeStack.length > 0 ? nodeStack[nodeStack.length - 1] : undefined;

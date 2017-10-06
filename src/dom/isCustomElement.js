@@ -2,11 +2,11 @@
 
 'use strict';
 
-import getAttribute from 'dom/getAttribute';
-import Directive from 'enums/Directive';
+import getAttribute from './getAttribute';
+import Directive from '../enums/Directive';
 
 if (process.env.NODE_ENV === 'development') {
-  var assertType = require('debug/assertType');
+  var assertType = require('../debug/assertType');
 }
 
 /**
