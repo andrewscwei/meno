@@ -156,7 +156,8 @@ class ElementUpdateDelegate {
      */
     let _onWindowResize = (event) => {
       if (!mDirtyInfo[DirtyType.SIZE]) mDirtyInfo[DirtyType.SIZE] = {};
-      mDirtyInfo[DirtyType.SIZE].conductorRect = getRect(event.currentTarget);
+      mDirtyInfo[DirtyType.SIZE].conductorRect = getRect(event.currentTarget || window);
+      mDirtyInfo[DirtyType.SIZE].rect = getRect(this.delegate);
       this.setDirty(DirtyType.SIZE);
     };
 
@@ -169,7 +170,7 @@ class ElementUpdateDelegate {
      */
     let _onWindowScroll = (event) => {
       if (!mDirtyInfo[DirtyType.POSITION]) mDirtyInfo[DirtyType.POSITION] = {};
-      mDirtyInfo[DirtyType.POSITION].conductorRect = getRect(event.currentTarget);
+      mDirtyInfo[DirtyType.POSITION].conductorRect = getRect(event.currentTarget || window);
       mDirtyInfo[DirtyType.POSITION].rect = getRect(this.delegate);
       this.setDirty(DirtyType.POSITION);
     };

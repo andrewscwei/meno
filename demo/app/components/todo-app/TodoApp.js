@@ -74,7 +74,7 @@ class TodoApp extends Element('todo-app') {
     const idx = items.indexOf(item);
 
     if (!~idx) return;
-    
+
     let tmp = [].concat(this.data.items);
     tmp.splice(idx, 1);
     this.data.items = tmp;
