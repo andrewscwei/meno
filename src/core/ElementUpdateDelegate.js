@@ -3,6 +3,7 @@
 'use strict';
 
 import DirtyType from '../enums/DirtyType';
+import getRect from '../utils/getRect';
 
 if (process.env.NODE_ENV === 'development') {
   var assert = require('assert');
@@ -153,7 +154,11 @@ class ElementUpdateDelegate {
      *
      * @private
      */
-    let _onWindowResize = (event) => this.setDirty(DirtyType.SIZE);
+    let _onWindowResize = (event) => {
+      if (!mDirtyInfo[DirtyType.SIZE]) mDirtyInfo[DirtyType.SIZE] = {};
+      mDirtyInfo[DirtyType.SIZE].conductorRect = getRect(event.currentTarget);
+      this.setDirty(DirtyType.SIZE);
+    };
 
     /**
      * Handler invoked when the window scrolls.
@@ -162,7 +167,12 @@ class ElementUpdateDelegate {
      *
      * @private
      */
-    let _onWindowScroll = (event) => this.setDirty(DirtyType.POSITION);
+    let _onWindowScroll = (event) => {
+      if (!mDirtyInfo[DirtyType.POSITION]) mDirtyInfo[DirtyType.POSITION] = {};
+      mDirtyInfo[DirtyType.POSITION].conductorRect = getRect(event.currentTarget);
+      mDirtyInfo[DirtyType.POSITION].rect = getRect(this.delegate);
+      this.setDirty(DirtyType.POSITION);
+    };
 
     /**
      * Handler invoked when mouse moves in the window.
