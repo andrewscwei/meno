@@ -211,7 +211,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    * @alias module:meno~core.Element#disabled
    */
   get disabled() { return this.hasAttribute('disabled') ? this.getAttribute('disabled') : false; }
-  set disabled(val) { this.setAttribute('disabled', (value ? true : false)); }
+  set disabled(val) { this.setAttribute('disabled', (val ? true : false)); }
 
   /**
    * Indiciates whether this Element is invisible.
