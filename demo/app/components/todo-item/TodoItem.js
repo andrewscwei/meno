@@ -2,7 +2,7 @@ import { Element, h, register } from 'meno';
 // import createVTree from 'vdom/createVTree';
 
 class TodoItem extends Element('todo-item') {
-  get template() { 
+  get template() {
     // return createVTree(require('./todo-item.pug')(this.data));
     return h('template', [
       h('main', [
@@ -16,7 +16,7 @@ class TodoItem extends Element('todo-item') {
     return require('./todo-item.sass').toString();
   }
 
-  defaults() {
+  get defaults() {
     return {
       text: ''
     }

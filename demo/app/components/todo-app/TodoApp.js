@@ -12,7 +12,7 @@ class TodoApp extends Element('todo-app') {
     }
   }
 
-  defaults() {
+  get defaults() {
     return {
       items: [],
       filter: 'all',

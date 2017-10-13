@@ -97,6 +97,21 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
   get responsiveness() { return {}; }
 
   /**
+   * Define default data here. This method returns an object, where each
+   * key/value pair represents a data in this element. The key is the name of
+   * the data and the value is the default/initial value. You can express the
+   * value as an object to provide additional configuration for Element#__set_data__.
+   * In this case, the value key of the object is the initial value. When the
+   * initial value is a function, this data is inferred as computed data, hence
+   * there are no setters.
+   *
+   * @return {Object} Default data.
+   */
+  get defaults() {
+    return null;
+  }
+
+  /**
    * Data object.
    *
    * @type {Object}
@@ -245,7 +260,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     this.setStyle('visibility', 'hidden');
 
     // Check if this Element has default data.
-    const defaults = this.defaults();
+    const defaults = this.defaults;
 
     if (defaults) {
       // Go through each key/value pair and add it to this element's data.
@@ -321,21 +336,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     if (process.env.NODE_ENV === 'development') {
       debug(`<${this.constructor.name}> attributeChangedCallback(${attrName}, ${oldVal}, ${newVal})`);
     }
-  }
-
-  /**
-   * Define default data here. This method returns an object, where each
-   * key/value pair represents a data in this element. The key is the name of
-   * the data and the value is the default/initial value. You can express the
-   * value as an object to provide additional configuration for Element#__set_data__.
-   * In this case, the value key of the object is the initial value. When the
-   * initial value is a function, this data is inferred as computed data, hence
-   * there are no setters.
-   *
-   * @return {Object} Default data.
-   */
-  defaults() {
-    return null;
   }
 
   /**
