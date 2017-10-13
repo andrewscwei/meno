@@ -107,9 +107,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    *
    * @return {Object} Default data.
    */
-  get defaults() {
-    return null;
-  }
+  get defaults() { return null; }
 
   /**
    * Data object.
@@ -629,6 +627,22 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
     }
     if (!this.__private__) this.__private__ = {};
     this.__private__[propertyName] = value;
+  }
+
+  /**
+   * Sets a private property only if the value has changed and optionally
+   * invalidates a dirty type.
+   *
+   * @param {string} propertyName - Name of private property.
+   * @param {*} value - Value of private property to be set.
+   * @param {DirtyType} [dirtyType] - Dirty type to invalidate.
+   *
+   * @alias module:meno~core.Element#setNeedsUpdate
+   */
+  setNeedsUpdate(propertyName, value, dirtyType) {
+    if (value === this.get(propertyName)) return;
+    this.set(propertyName, value);
+    if (dirtyType) this.setDirty(dirtyType);
   }
 
   /**
