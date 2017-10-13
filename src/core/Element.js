@@ -773,7 +773,6 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    *
    * @event 'nodeinitialize' - Dispatched when node state is set to
    *                           NodeState.INITIALIZED.
-   * @event 'nodeupdate' - Dispatched when node state is set to NodeState.UPDATE.
    * @event 'nodedestroy' - Dispatched when node state is set to
    *                        NodeState.DESTROYED.
    * @event 'nodestate' - Dispatched whenever the note state is changed.

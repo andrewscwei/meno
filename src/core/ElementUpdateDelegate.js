@@ -388,7 +388,7 @@ class ElementUpdateDelegate {
 
       if (mMouseWheelHandler) {
         let conductor = mConductorTable.mouseWheel || window;
-        conductor.removeEventListener('mousewheel', mMouseWheelHandler);
+        conductor.removeEventListener('wheel', mMouseWheelHandler);
       }
 
       if (mMouseMoveHandler) {
@@ -443,7 +443,7 @@ class ElementUpdateDelegate {
      * event types support a custom conductor; the rest uses window as the
      * conductor:
      *   1. 'scroll'
-     *   2. 'mousewheel'
+     *   2. 'wheel'
      *   3. 'mousemove'
      *
      * @param {Object|Number|...args} - This could be the conductor (defaults to
@@ -491,14 +491,14 @@ class ElementUpdateDelegate {
         conductor.addEventListener('scroll', mScrollHandler);
       }
 
-      if (universal || args.indexOf('mousewheel') > -1) {
+      if (universal || args.indexOf('wheel') > -1) {
         if (mMouseWheelHandler) {
           let c = mConductorTable.mouseWheel || window;
-          c.removeEventListener('mousewheel', mMouseWheelHandler);
+          c.removeEventListener('wheel', mMouseWheelHandler);
         }
         mMouseWheelHandler = (delay === 0.0) ? _onWindowMouseWheel.bind(this) : debounce(_onWindowMouseWheel.bind(this), delay);
         mConductorTable.mouseWheel = conductor;
-        conductor.addEventListener('mousewheel', mMouseWheelHandler);
+        conductor.addEventListener('wheel', mMouseWheelHandler);
       }
 
       if (universal || args.indexOf('mousemove') > -1) {
