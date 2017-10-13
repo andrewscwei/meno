@@ -103,49 +103,7 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
    *
    * @alias module:meno~core.Element.data
    */
-  get data() {
-    let isInitial = false;
-
-    if (!this.__private__ || !this.__private__.hasOwnProperty('data')) {
-      isInitial = true;
-    }
-
-    const o = this.get('data', {});
-
-    if (isInitial) {
-      // Check if this Element has default data.
-      const defaults = this.defaults();
-
-      if (defaults) {
-        // Go through each key/value pair and add it to this element's data.
-        for (let key in defaults) {
-          let descriptor = defaults[key];
-          let value = undefined;
-          let options = {};
-
-          // Default data can be expressed in object literals. This allows for
-          // additional config options.
-          if (typeof descriptor === 'object' && descriptor.hasOwnProperty('value')) {
-              value = descriptor.value;
-              options = descriptor;
-              delete options.value;
-          }
-          else {
-            value = descriptor;
-          }
-
-          // All default data should affect rendering by default unless otherwise specified.
-          if (typeof options.renderOnChange !== 'boolean') options.renderOnChange = true;
-
-          this.__set_data__(key, value, options);
-
-          if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Registered default data "${key}"`);
-        }
-      }
-    }
-
-    return o;
-  }
+  get data() { return this.get('data', {}); }
 
   /**
    * This registry is for bookkeeping external event listeners added to this
@@ -285,6 +243,36 @@ const Element = (base, tag) => (class extends (typeof base !== 'string' && base 
 
     // Make element invisible until its first update.
     this.setStyle('visibility', 'hidden');
+
+    // Check if this Element has default data.
+    const defaults = this.defaults();
+
+    if (defaults) {
+      // Go through each key/value pair and add it to this element's data.
+      for (let key in defaults) {
+        let descriptor = defaults[key];
+        let value = undefined;
+        let options = {};
+
+        // Default data can be expressed in object literals. This allows for
+        // additional config options.
+        if (typeof descriptor === 'object' && descriptor.hasOwnProperty('value')) {
+            value = descriptor.value;
+            options = descriptor;
+            delete options.value;
+        }
+        else {
+          value = descriptor;
+        }
+
+        // All default data should affect rendering by default unless otherwise specified.
+        if (typeof options.renderOnChange !== 'boolean') options.renderOnChange = true;
+
+        this.__set_data__(key, value, options);
+
+        if (process.env.NODE_ENV === 'development') debug(`<${this.constructor.name}> Registered default data "${key}"`);
+      }
+    }
 
     // Scan for internal DOM element attributes prefixed with Directive.DATA
     // and generate data properties from them.
