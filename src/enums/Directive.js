@@ -26,7 +26,7 @@ const Directive = {
    * Use this directive as an attribute prefix to map any attribute to the
    * data registry of the custom element.
    */
-  DATA: 'data:',
+  DATA: 'data-',
 
   /**
    * Use this directive as an attribute prefix to map any attribute to the
