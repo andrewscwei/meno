@@ -481,6 +481,7 @@ class ElementUpdateDelegate {
         window.addEventListener('orientationchange', mResizeHandler);
 
         // Populate update info for initial update.
+        if (!mDirtyInfo[DirtyType.SIZE]) mDirtyInfo[DirtyType.SIZE] = {};
         mDirtyInfo[DirtyType.SIZE].conductorRect = getRect(window);
         mDirtyInfo[DirtyType.SIZE].rect = getRect(this.delegate);
       }
@@ -495,6 +496,7 @@ class ElementUpdateDelegate {
         conductor.addEventListener('scroll', mScrollHandler);
 
         // Populate update info for initial update.
+        if (!mDirtyInfo[DirtyType.POSITION]) mDirtyInfo[DirtyType.POSITION] = {};
         mDirtyInfo[DirtyType.POSITION].conductorRect = getRect(conductor);
         mDirtyInfo[DirtyType.POSITION].rect = getRect(this.delegate);
       }
