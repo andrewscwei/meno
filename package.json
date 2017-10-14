@@ -1,8 +1,8 @@
 {
   "name": "meno",
-  "version": "0.25.1",
+  "version": "0.26.0",
   "description": "An experimental JavaScript UI library",
-  "main": "dist/meno.js",
+  "main": "dist/meno.min.js",
   "unpkg": "dist/meno.min.js",
   "homepage": "http://andrewscwei.github.io/meno",
   "scripts": {

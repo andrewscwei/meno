@@ -18,8 +18,9 @@ import NodeState from './enums/NodeState';
 if (process.env.NODE_ENV === 'development') {
   var assert = require('assert');
   var debug = require('debug')('meno');
-  debug(`v${process.env.BUNDLE_VERSION}, debug mode`);
+  var version = require('../package.json').version;
   assert(window && document, 'Meno is a front-end web framework where \'window\' and \'document\' must be defined');
+  console.log(`Meno v${version} is running in debug mode`);
 }
 
 /**
@@ -29,7 +30,6 @@ function meno() {
   register.apply(null, arguments);
 }
 
-meno.version = process.env.BUNDLE_VERSION;
 meno.Element = Element;
 meno.Directive = Directive;
 meno.DirtyType = DirtyType;

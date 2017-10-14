@@ -9,7 +9,6 @@ const CompressionPlugin = require('compression-webpack-plugin');
 const debug = (process.env.NODE_ENV === 'development');
 const useAnalyzer = (process.env.USE_ANALYZER === 'true');
 const baseDir = path.resolve(__dirname, '..');
-const version = require(path.join(baseDir, 'package.json')).version;
 
 console.log(`Building bundle, debug=${debug}`);
 
@@ -42,7 +41,6 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
-        BUNDLE_VERSION: JSON.stringify(version),
         NODE_ENV: JSON.stringify(debug ? 'development' : 'production'),
         SHADOW_DOM_ENABLED: JSON.stringify(false)
       }
@@ -51,7 +49,7 @@ module.exports = {
   .concat(debug ? [] : [
     new webpack.optimize.UglifyJsPlugin({
       sourceMap: true,
-      compress: { 
+      compress: {
         warnings: false,
         drop_console: true
       }

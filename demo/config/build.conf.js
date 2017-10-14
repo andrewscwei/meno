@@ -9,7 +9,6 @@ const libRoot = path.resolve(__dirname, '../../');
 const baseDir = path.resolve(__dirname, '../');
 const sourceDir = path.join(baseDir, 'app');
 const buildDir = path.join(baseDir, 'public');
-const version = require(path.join(libRoot, 'package.json')).version;
 
 module.exports = {
   devtool: false,

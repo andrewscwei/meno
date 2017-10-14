@@ -9,7 +9,6 @@ const libRoot = path.resolve(__dirname, '../../');
 const baseDir = path.resolve(__dirname, '../');
 const sourceDir = path.join(baseDir, 'app');
 const buildDir = path.join(baseDir, 'public');
-const version = require(path.join(libRoot, 'package.json')).version;
 
 module.exports = {
   devtool: 'cheap-module-eval-source-map',
@@ -67,7 +66,6 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
-        BUNDLE_VERSION: JSON.stringify(version),
         NODE_ENV: JSON.stringify('development'),
         SHADOW_DOM_ENABLED: JSON.stringify(false)
       }
