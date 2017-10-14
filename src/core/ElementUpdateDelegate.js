@@ -479,6 +479,10 @@ class ElementUpdateDelegate {
         mResizeHandler = (delay === 0.0) ? _onWindowResize.bind(this) : debounce(_onWindowResize.bind(this), delay);
         window.addEventListener('resize', mResizeHandler);
         window.addEventListener('orientationchange', mResizeHandler);
+
+        // Populate update info for initial update.
+        mDirtyInfo[DirtyType.SIZE].conductorRect = getRect(window);
+        mDirtyInfo[DirtyType.SIZE].rect = getRect(this.delegate);
       }
 
       if (universal || args.indexOf('scroll') > -1) {
@@ -489,6 +493,10 @@ class ElementUpdateDelegate {
         mScrollHandler = (delay === 0.0) ? _onWindowScroll.bind(this) : debounce(_onWindowScroll.bind(this), delay);
         mConductorTable.scroll = conductor;
         conductor.addEventListener('scroll', mScrollHandler);
+
+        // Populate update info for initial update.
+        mDirtyInfo[DirtyType.POSITION].conductorRect = getRect(conductor);
+        mDirtyInfo[DirtyType.POSITION].rect = getRect(this.delegate);
       }
 
       if (universal || args.indexOf('wheel') > -1) {
