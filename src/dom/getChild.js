@@ -1,7 +1,5 @@
 // © Andrew Wei
 
-'use strict';
-
 import Directive from '../enums/Directive';
 
 if (process.env.NODE_ENV === 'development') {

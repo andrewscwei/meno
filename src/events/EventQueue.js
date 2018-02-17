@@ -1,7 +1,5 @@
 // © Andrew Wei
 
-'use strict';
-
 import EventDispatcher from './EventDispatcher';
 
 if (process.env.NODE_ENV === 'development') {

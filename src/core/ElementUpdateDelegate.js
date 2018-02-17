@@ -1,7 +1,5 @@
 // © Andrew Wei
 
-'use strict';
-
 import DirtyType from '../enums/DirtyType';
 import getRect from '../utils/getRect';
 

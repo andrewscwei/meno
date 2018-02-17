@@ -1,7 +1,5 @@
 // © Andrew Wei
 
-'use strict';
-
 import Directive from '../enums/Directive';
 import setAttribute from '../dom/setAttribute';
 import createElement from './createElement';

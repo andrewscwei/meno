@@ -1,7 +1,5 @@
 // © Andrew Wei
 
-'use strict';
-
 import getRect from './getRect';
 
 /**
@@ -16,7 +14,7 @@ import getRect from './getRect';
  */
 function getIntersectRect() {
   let n = arguments.length;
-  
+
   if (n <= 0) throw new Error('This method requires at least 1 argument specified.');
 
   let rect = {};

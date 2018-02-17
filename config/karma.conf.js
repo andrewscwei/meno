@@ -1,7 +1,5 @@
 // © Andrew Wei
 
-'use strict';
-
 const path = require('path');
 const baseDir = path.resolve(__dirname, '../');
 
@@ -14,7 +12,7 @@ module.exports = function(config) {
       'tests/**/*.js': ['webpack']
     },
     reporters: ['spec'],
-    port: 9876, 
+    port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
     browsers: ['ChromeHeadless'],

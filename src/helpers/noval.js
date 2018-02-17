@@ -1,7 +1,5 @@
 // © Andrew Wei
 
-'use strict';
-
 /**
  * Checks if a given value is equal to null. Option to specify recursion, which
  * would further evaluate inner elements, such as when an Array or Object is
@@ -21,7 +19,7 @@ function noval(value, recursive) {
 
   if (value === undefined || value === null) return true;
   if (typeof value === 'string') return (value === '');
-  
+
   if (recursive && (value instanceof Array)) {
     const n = value.length;
     for (let i = 0; i < n; i++) {

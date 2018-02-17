@@ -1,7 +1,5 @@
 /*! Meno, © Andrew Wei, @license MIT */
 
-'use strict';
-
 import Element from './core/Element';
 import getChild from './dom/getChild';
 import hasChild from './dom/hasChild';

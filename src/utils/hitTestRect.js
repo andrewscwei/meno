@@ -1,7 +1,5 @@
 // © Andrew Wei
 
-'use strict';
-
 import getIntersectRect from './getIntersectRect';
 
 /**

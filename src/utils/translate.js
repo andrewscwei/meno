@@ -1,7 +1,5 @@
 // © Andrew Wei
 
-'use strict';
-
 /**
  * Translates a DOM element.
  *

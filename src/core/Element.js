@@ -1,7 +1,5 @@
 // © Andrew Wei
 
-'use strict';
-
 import ElementUpdateDelegate from './ElementUpdateDelegate';
 import getChild from '../dom/getChild';
 import hasChild from '../dom/hasChild';

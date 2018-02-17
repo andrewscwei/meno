@@ -1,7 +1,5 @@
 // © Andrew Wei
 
-'use strict';
-
 /**
  * Enum for all node states.
  *

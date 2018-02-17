@@ -1,17 +1,15 @@
 // © Andrew Wei
 
-'use strict';
-
 /**
- * 
+ *
  * Creates a new VNode instance.
- * 
+ *
  * @param {string} tag - The element tag.
  * @param {Object} [attributes={}] - Attributes of the element.
  * @param {VNode[]} [children=[]] - Child vnodes of the element.
- * 
+ *
  * @return {VNode} - Virtual node.
- * 
+ *
  * @alias module:meno~vdom.vnode
  */
 function vnode() {

@@ -1,7 +1,5 @@
 // © Andrew Wei
 
-'use strict';
-
 import getChild from './getChild';
 import noval from '../helpers/noval';
 

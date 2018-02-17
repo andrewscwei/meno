@@ -1,7 +1,5 @@
 // © Andrew Wei
 
-'use strict';
-
 import htmlParser from 'htmlparser2';
 import vnode from './vnode';
 

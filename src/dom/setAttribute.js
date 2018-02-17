@@ -1,7 +1,5 @@
 // © Andrew Wei
 
-'use strict';
-
 import Directive from '../enums/Directive';
 import DirtyType from '../enums/DirtyType';
 

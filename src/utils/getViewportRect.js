@@ -1,7 +1,5 @@
 // © Andrew Wei
 
-'use strict';
-
 /**
  * Gets the rect of the viewport (FOV).
  *

@@ -1,7 +1,5 @@
 // © Andrew Wei
 
-'use strict';
-
 if (process.env.NODE_ENV === 'development') {
   var debug = require('debug')('meno:register');
   var assert = require('assert');

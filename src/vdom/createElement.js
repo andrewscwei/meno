@@ -1,7 +1,5 @@
 // © Andrew Wei
 
-'use strict';
-
 import setAttribute from '../dom/setAttribute';
 import Directive from '../enums/Directive';
 import vnode from './vnode';

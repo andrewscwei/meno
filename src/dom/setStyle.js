@@ -1,7 +1,5 @@
 // © Andrew Wei
 
-'use strict';
-
 if (process.env.NODE_ENV === 'development') {
   var assertType = require('../debug/assertType');
 }

@@ -1,7 +1,5 @@
 // © Andrew Wei
 
-'use strict';
-
 /**
  * Verifies that a given is of the given type.
  *

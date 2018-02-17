@@ -1,7 +1,5 @@
 // © Andrew Wei
 
-'use strict';
-
 /**
  * Enum for custom UI dirty types. Dirty types help identify what needs to be
  * redrawn/updated in the UI.

@@ -1,7 +1,5 @@
 // © Andrew Wei
 
-'use strict';
-
 /**
  * Checks if an object literal has the specified value in one of its keys.
  *

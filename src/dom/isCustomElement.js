@@ -1,7 +1,5 @@
 // © Andrew Wei
 
-'use strict';
-
 import getAttribute from './getAttribute';
 import Directive from '../enums/Directive';
 
