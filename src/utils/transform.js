@@ -30,24 +30,24 @@ function transform(element, properties, constraints) {
   let n = elements.length;
 
   if (properties) {
-    if (!((properties.width === undefined) || !isNaN(properties.width))) throw new Error('Width property must be a number.');
-    if (!((properties.height === undefined) || !isNaN(properties.height))) throw new Error('Height property must be a number.');
-    if (!((properties.aspectRatio === undefined) || !isNaN(properties.aspectRatio))) throw new Error('Aspect ratio property must be a number.');
+    if (!((properties.width === undefined) || !isNaN(properties.width))) throw new Error(`Width property must be a number.`);
+    if (!((properties.height === undefined) || !isNaN(properties.height))) throw new Error(`Height property must be a number.`);
+    if (!((properties.aspectRatio === undefined) || !isNaN(properties.aspectRatio))) throw new Error(`Aspect ratio property must be a number.`);
 
     let rect = getRect(element);
-    let units = properties.units || 'px';
+    let units = properties.units || `px`;
     let aspectRatio = (properties.aspectRatio !== undefined) ? Number(properties.aspectRatio) : rect.width / rect.height;
     let maxW = properties.width;
     let maxH = properties.height;
     let minW = properties.width;
     let minH = properties.height;
-    let type = properties.type || 'default';
+    let type = properties.type || `default`;
 
-    if (constraints && type !== 'default') {
-      if (!((constraints.width === undefined) || !isNaN(constraints.width))) throw new Error('Width constraint must be a number.');
-      if (!((constraints.height === undefined) || !isNaN(constraints.height))) throw new Error('Height constraint must be a number.');
+    if (constraints && type !== `default`) {
+      if (!((constraints.width === undefined) || !isNaN(constraints.width))) throw new Error(`Width constraint must be a number.`);
+      if (!((constraints.height === undefined) || !isNaN(constraints.height))) throw new Error(`Height constraint must be a number.`);
 
-      if (type && type === 'cover') {
+      if (type && type === `cover`) {
         if (constraints.width !== undefined) minW = Math.min(constraints.width, minW);
         if (constraints.width !== undefined) minH = Math.min(constraints.height, minH);
       }
@@ -59,7 +59,7 @@ function transform(element, properties, constraints) {
 
     let w, h;
 
-    if (type === 'contain') {
+    if (type === `contain`) {
       w = (maxW > maxH) ? maxH * aspectRatio : maxW;
       h = (maxW > maxH) ? maxH : maxW / aspectRatio;
 
@@ -72,7 +72,7 @@ function transform(element, properties, constraints) {
         w = h * aspectRatio;
       }
     }
-    else if (type === 'cover') {
+    else if (type === `cover`) {
       w = (minW > minH) ? minH * aspectRatio : minW;
       h = (minW > minH) ? minH : minW / aspectRatio;
 
@@ -106,13 +106,13 @@ function transform(element, properties, constraints) {
   }
   else {
     for (let j = 0; j < n; j++) {
-      elements[j].style.width = 'initial';
-      elements[j].style.height = 'initial';
+      elements[j].style.width = `initial`;
+      elements[j].style.height = `initial`;
     }
 
     return {
-      width: 'initial',
-      height: 'initial'
+      width: `initial`,
+      height: `initial`
     };
   }
 }

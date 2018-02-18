@@ -2,8 +2,8 @@
 
 import Directive from '../enums/Directive';
 
-if (process.env.NODE_ENV === 'development') {
-  var assert = require('assert');
+if (process.env.NODE_ENV === `development`) {
+  var assert = require(`assert`);
 }
 
 /**
@@ -22,15 +22,15 @@ if (process.env.NODE_ENV === 'development') {
 function getChild() {
   let args = Array.prototype.slice.call(arguments);
 
-  const element = (typeof args[0] !== 'string') && args.shift() || document;
+  const element = (typeof args[0] !== `string`) && args.shift() || document;
   const name = args.shift();
 
-  if (process.env.NODE_ENV === 'development') {
-    assert((element === window) || (element === document) || (element instanceof Element), 'Invalid element specified');
-    assert(typeof name === 'string', 'Child name must be string');
+  if (process.env.NODE_ENV === `development`) {
+    assert((element === window) || (element === document) || (element instanceof Element), `Invalid element specified`);
+    assert(typeof name === `string`, `Child name must be string`);
   }
 
-  const selectors = name.split('.').map(val => (`[${Directive.NAME}='${val}']`)).join(' ');
+  const selectors = name.split(`.`).map(val => (`[${Directive.NAME}='${val}']`)).join(` `);
   const results = (element.shadowRoot || element || document).querySelectorAll(selectors);
 
   if (results === null || results === undefined) return null;

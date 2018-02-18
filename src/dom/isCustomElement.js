@@ -3,8 +3,8 @@
 import getAttribute from './getAttribute';
 import Directive from '../enums/Directive';
 
-if (process.env.NODE_ENV === 'development') {
-  var assertType = require('../debug/assertType');
+if (process.env.NODE_ENV === `development`) {
+  var assertType = require(`../debug/assertType`);
 }
 
 /**
@@ -18,8 +18,8 @@ if (process.env.NODE_ENV === 'development') {
  * @alias module:meno~helpers.isCustomElement
  */
 function isCustomElement(element) {
-  if (process.env.NODE_ENV === 'development') {
-    assertType(element, Node, false, 'Invalid element specified');
+  if (process.env.NODE_ENV === `development`) {
+    assertType(element, Node, false, `Invalid element specified`);
   }
 
   const is = getAttribute(element, Directive.IS);

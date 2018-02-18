@@ -1,10 +1,9 @@
 // © Andrew Wei
 
-import Directive from '../enums/Directive';
 import DirtyType from '../enums/DirtyType';
 
-if (process.env.NODE_ENV === 'development') {
-  var assertType = require('../debug/assertType');
+if (process.env.NODE_ENV === `development`) {
+  var assertType = require(`../debug/assertType`);
 }
 
 /**
@@ -19,11 +18,11 @@ if (process.env.NODE_ENV === 'development') {
  * @alias module:meno~dom.setAttribute
  */
 function setAttribute(element, name, value, isSVG=false) {
-  if (process.env.NODE_ENV === 'development') {
-    assertType(element, Node, false, 'Invalid element specified');
+  if (process.env.NODE_ENV === `development`) {
+    assertType(element, Node, false, `Invalid element specified`);
   }
 
-  isSVG = isSVG || element.tagName === 'svg';
+  isSVG = isSVG || element.tagName === `svg`;
 
   if (value === undefined || value === null || value === false) {
     if (isSVG) {
@@ -34,15 +33,15 @@ function setAttribute(element, name, value, isSVG=false) {
     }
   }
   else if (value === true) {
-    if (isSVG && !name.startsWith('xmlns')) {
-      element.setAttributeNS(null, name, '');
+    if (isSVG && !name.startsWith(`xmlns`)) {
+      element.setAttributeNS(null, name, ``);
     }
     else {
-      element.setAttribute(name, '');
+      element.setAttribute(name, ``);
     }
   }
   else {
-    if (isSVG && !name.startsWith('xmlns')) {
+    if (isSVG && !name.startsWith(`xmlns`)) {
       element.setAttributeNS(null, name, value);
     }
     else {
@@ -50,7 +49,7 @@ function setAttribute(element, name, value, isSVG=false) {
     }
   }
 
-  if (name === 'disabled' && element.setDirty) {
+  if (name === `disabled` && element.setDirty) {
     element.setDirty(DirtyType.STATE);
   }
 }

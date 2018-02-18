@@ -13,12 +13,11 @@ import Directive from './enums/Directive';
 import DirtyType from './enums/DirtyType';
 import NodeState from './enums/NodeState';
 
-if (process.env.NODE_ENV === 'development') {
-  var assert = require('assert');
-  var debug = require('debug')('meno');
-  var version = require('../package.json').version;
-  assert(window && document, 'Meno is a front-end web framework where \'window\' and \'document\' must be defined');
-  console.log(`Meno v${version} is running in debug mode`);
+if (process.env.NODE_ENV === `development`) {
+  var assert = require(`assert`);
+  var version = require(`../package.json`).version;
+  assert(window && document, `Meno is a front-end web framework where 'window' and 'document' must be defined`);
+  console.log(`Meno v${version} is running in debug mode`); // eslint-disable-line no-console
 }
 
 /**

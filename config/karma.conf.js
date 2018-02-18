@@ -1,41 +1,42 @@
 // © Andrew Wei
 
-const path = require('path');
-const baseDir = path.resolve(__dirname, '../');
+const path = require(`path`);
+
+const BASE_DIR = path.resolve(__dirname, `../`);
 
 module.exports = function(config) {
   config.set({
-    basePath: baseDir,
-    frameworks: ['mocha'],
-    files: ['tests/**/*.js'],
+    basePath: BASE_DIR,
+    frameworks: [`mocha`],
+    files: [`tests/**/*.js`],
     preprocessors: {
-      'tests/**/*.js': ['webpack']
+      'tests/**/*.js': [`webpack`]
     },
-    reporters: ['spec'],
+    reporters: [`spec`],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
-    browsers: ['ChromeHeadless'],
+    browsers: [`ChromeHeadless`],
     autoWatch: false,
     webpack: {
       module: {
         rules: [{
           test: /\.js$/,
-          loader: 'babel-loader'
+          loader: `babel-loader`
         }]
       },
       resolve: {
-        extensions: ['.js'],
+        extensions: [`.js`],
         modules: [
-          path.join(baseDir, 'src'),
-          path.join(baseDir, 'node_modules')
+          path.join(BASE_DIR, `src`),
+          path.join(BASE_DIR, `node_modules`)
         ]
       }
     },
     webpackMiddleware: {
-      stats: 'errors-only'
+      stats: `errors-only`
     },
     singleRun: false,
     concurrency: Infinity
-  })
-}
+  });
+};

@@ -1,25 +1,25 @@
 import { Element, DirtyType, register } from 'meno';
 import createVTree from 'vdom/createVTree';
 
-class TodoApp extends Element('todo-app') {
-  get template() { return createVTree(require('./todo-app.pug')(this.data)); }
+class TodoApp extends Element(`todo-app`) {
+  get template() { return createVTree(require(`./todo-app.pug`)(this.data)); }
 
-  get styles() { return require('./todo-app.sass').toString(); }
+  get styles() { return require(`./todo-app.sass`).toString(); }
 
   get responsiveness() {
     return {
       keyup: 10.0
-    }
+    };
   }
 
   get defaults() {
     return {
       items: [],
-      filter: 'all',
+      filter: `all`,
       total: () => (this.data.items.length),
       totalActive: () => (this.data.items.reduce((total, item) => (total + (item.completed ? 0 : 1)), 0)),
       totalCompleted: () => (this.data.items.reduce((total, item) => (total + (item.completed ? 1 : 0)), 0)),
-    }
+    };
   }
 
   update(info) {
@@ -37,20 +37,20 @@ class TodoApp extends Element('todo-app') {
   }
 
   onSelectAll(event) {
-    this.data.filter = 'all';
+    this.data.filter = `all`;
   }
 
   onSelectActive(event) {
-    this.data.filter = 'active';
+    this.data.filter = `active`;
   }
 
   onSelectCompleted(event) {
-    this.data.filter = 'completed';
+    this.data.filter = `completed`;
   }
 
   onInsert(event) {
     const input = event.currentTarget;
-    const value = input.value === '' ? null : input.value;
+    const value = input.value === `` ? null : input.value;
 
     this.data.items = this.data.items.concat([{
       text: value,
@@ -60,7 +60,7 @@ class TodoApp extends Element('todo-app') {
 
   onToggle(event) {
     const item = event.currentTarget;
-    const items = this.$('item') ? [].concat(this.$('item')) : [];
+    const items = this.$(`item`) ? [].concat(this.$(`item`)) : [];
     const idx = items.indexOf(item);
 
     let tmp = [].concat(this.data.items);
@@ -70,7 +70,7 @@ class TodoApp extends Element('todo-app') {
 
   onDelete(event) {
     const item = event.currentTarget;
-    const items = this.$('item') ? [].concat(this.$('item')) : [];
+    const items = this.$(`item`) ? [].concat(this.$(`item`)) : [];
     const idx = items.indexOf(item);
 
     if (!~idx) return;

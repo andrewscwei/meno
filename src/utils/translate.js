@@ -24,30 +24,30 @@ function translate(element, properties, constraints) {
   let n = elements.length;
 
   if (properties) {
-    if (!((properties.x === undefined || !isNaN(properties.x)))) throw new Error('X property must be a number.');
-    if (!((properties.y === undefined || !isNaN(properties.y)))) throw new Error('Y property must be a number.');
-    if (!((properties.z === undefined || !isNaN(properties.z)))) throw new Error('Z property must be a number.');
+    if (!((properties.x === undefined || !isNaN(properties.x)))) throw new Error(`X property must be a number.`);
+    if (!((properties.y === undefined || !isNaN(properties.y)))) throw new Error(`Y property must be a number.`);
+    if (!((properties.z === undefined || !isNaN(properties.z)))) throw new Error(`Z property must be a number.`);
 
-    let units = properties.units || 'px';
+    let units = properties.units || `px`;
 
     if (constraints) {
-      if (!((constraints.x === undefined || !isNaN(constraints.x)))) throw new Error('X constraint must be a number.');
-      if (!((constraints.y === undefined || !isNaN(constraints.y)))) throw new Error('Y constraint must be a number.');
-      if (!((constraints.z === undefined || !isNaN(constraints.z)))) throw new Error('Z constraint must be a number.');
+      if (!((constraints.x === undefined || !isNaN(constraints.x)))) throw new Error(`X constraint must be a number.`);
+      if (!((constraints.y === undefined || !isNaN(constraints.y)))) throw new Error(`Y constraint must be a number.`);
+      if (!((constraints.z === undefined || !isNaN(constraints.z)))) throw new Error(`Z constraint must be a number.`);
     }
 
     let x = (constraints && (constraints.x !== undefined)) ? Math.min(properties.x, constraints.x) : properties.x;
     let y = (constraints && (constraints.y !== undefined)) ? Math.min(properties.y, constraints.y) : properties.y;
     let z = (constraints && (constraints.z !== undefined)) ? Math.min(properties.z, constraints.z) : properties.z;
 
-    let translateX = (properties.x !== undefined) ? 'translateX(' + x + units + ')' : null;
-    let translateY = (properties.y !== undefined) ? 'translateY(' + y + units + ')' : null;
-    let translateZ = (properties.z !== undefined) ? 'translateZ(' + z + units + ')' : null;
-    let transforms = '';
+    let translateX = (properties.x !== undefined) ? `translateX(` + x + units + `)` : null;
+    let translateY = (properties.y !== undefined) ? `translateY(` + y + units + `)` : null;
+    let translateZ = (properties.z !== undefined) ? `translateZ(` + z + units + `)` : null;
+    let transforms = ``;
 
-    if (translateX) transforms += (transforms === '') ? translateX : ' ' + translateX;
-    if (translateY) transforms += (transforms === '') ? translateY : ' ' + translateY;
-    if (translateZ) transforms += (transforms === '') ? translateZ : ' ' + translateZ;
+    if (translateX) transforms += (transforms === ``) ? translateX : ` ` + translateX;
+    if (translateY) transforms += (transforms === ``) ? translateY : ` ` + translateY;
+    if (translateZ) transforms += (transforms === ``) ? translateZ : ` ` + translateZ;
 
     for (let i = 0; i < n; i++) {
       elements[i].style.transform = transforms;
@@ -63,7 +63,7 @@ function translate(element, properties, constraints) {
   }
   else {
     for (let j = 0; j < n; j++) {
-      elements[j].style.transform = 'translateX(0) translateY(0) translateZ(0)';
+      elements[j].style.transform = `translateX(0) translateY(0) translateZ(0)`;
     }
 
     return {

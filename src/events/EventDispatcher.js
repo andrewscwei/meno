@@ -1,8 +1,8 @@
 // © Andrew Wei
 
-if (process.env.NODE_ENV === 'development') {
-  var assert = require('assert');
-  var assertType = require( '../debug/assertType');
+if (process.env.NODE_ENV === `development`) {
+  var assert = require(`assert`);
+  var assertType = require( `../debug/assertType`);
 }
 
 /**
@@ -29,9 +29,9 @@ class EventDispatcher {
    * @param {Function} listener
    */
   addEventListener(type, listener) {
-    if (process.env.NODE_ENV === 'development') {
-      assertType(type, 'string', false, 'Invalid parameter: type');
-      assertType(listener, 'function', false, 'Invalid parameter: listener');
+    if (process.env.NODE_ENV === `development`) {
+      assertType(type, `string`, false, `Invalid parameter: type`);
+      assertType(listener, `function`, false, `Invalid parameter: listener`);
     }
 
     if (!this.__private__.listenerRegistry[type]) {
@@ -50,11 +50,11 @@ class EventDispatcher {
    * @param {Function} listener:undefined
    */
   removeEventListener(type, listener) {
-    if (process.env.NODE_ENV === 'development') {
-      assertType(type, 'string', false, 'Invalid parameter: type');
-      assertType(listener, 'function', true, 'Invalid parameter: listener');
-      assert(this.__private__.listenerRegistry, 'Listener map is null.');
-      assert(this.__private__.listenerRegistry[type], 'There are no listeners registered for event type: ' + type);
+    if (process.env.NODE_ENV === `development`) {
+      assertType(type, `string`, false, `Invalid parameter: type`);
+      assertType(listener, `function`, true, `Invalid parameter: listener`);
+      assert(this.__private__.listenerRegistry, `Listener map is null.`);
+      assert(this.__private__.listenerRegistry[type], `There are no listeners registered for event type: ` + type);
     }
 
     if (listener) {
@@ -90,11 +90,11 @@ class EventDispatcher {
    * @return {boolean}
    */
   hasEventListener(type, listener) {
-    if (process.env.NODE_ENV === 'development') {
-      assertType(type, 'string', false, 'Invalid parameter: type');
-      assertType(listener, 'function', true, 'Invalid parameter: listener');
-      assert(this.__private__.listenerRegistry, 'Listener map is null.');
-      assert(this.__private__.listenerRegistry[type], 'There are no listeners registered for event type: ' + type);
+    if (process.env.NODE_ENV === `development`) {
+      assertType(type, `string`, false, `Invalid parameter: type`);
+      assertType(listener, `function`, true, `Invalid parameter: listener`);
+      assert(this.__private__.listenerRegistry, `Listener map is null.`);
+      assert(this.__private__.listenerRegistry[type], `There are no listeners registered for event type: ` + type);
     }
 
     if (listener) {
@@ -112,9 +112,9 @@ class EventDispatcher {
    * @param {Event} event
    */
   dispatchEvent(event) {
-    if (process.env.NODE_ENV === 'development') {
-      assertType(event, Event, false, 'Event must be specified.');
-      assert(this.__private__.listenerRegistry, 'Listener map is null.');
+    if (process.env.NODE_ENV === `development`) {
+      assertType(event, Event, false, `Event must be specified.`);
+      assert(this.__private__.listenerRegistry, `Listener map is null.`);
     }
 
     if (!this.__private__.listenerRegistry[event.type]) return;
@@ -135,7 +135,7 @@ class EventDispatcher {
   __defineProperties__() {
     if (!this.__private__) this.__private__ = {};
 
-    Object.defineProperty(this.__private__, 'listenerRegistry', {
+    Object.defineProperty(this.__private__, `listenerRegistry`, {
       value: {},
       writable: true
     });

@@ -33,10 +33,10 @@ const NodeState = {
    */
   toString: (nodeState) => {
     switch (nodeState) {
-      case NodeState.IDLE: return 'IDLE';
-      case NodeState.INITIALIZED: return 'INITIALIZED';
-      case NodeState.DESTROYED: return 'DESTROYED';
-      default: return 'UNKNOWN';
+    case NodeState.IDLE: return `IDLE`;
+    case NodeState.INITIALIZED: return `INITIALIZED`;
+    case NodeState.DESTROYED: return `DESTROYED`;
+    default: return `UNKNOWN`;
     }
   }
 };

@@ -1,12 +1,12 @@
 // © Andrew Wei
 
 import Directive from '../enums/Directive';
+import getAttribute from '../dom/getAttribute';
 import setAttribute from '../dom/setAttribute';
 import createElement from './createElement';
-import vnode from './vnode';
 
-if (process.env.NODE_ENV === 'development') {
-  var assert = require('assert');
+if (process.env.NODE_ENV === `development`) {
+  var assert = require(`assert`);
 }
 
 /**
@@ -137,9 +137,9 @@ function updateAttributes(rootNode, node, newAttributes, oldAttributes, isSVG) {
         if (propertyName) node.__set_data__(propertyName, undefined);
       }
 
-      const regex = new RegExp('^' + Directive.EVENT, 'i');
+      const regex = new RegExp(`^` + Directive.EVENT, `i`);
       if (regex.test(key)) {
-        const eventType = key.replace(Directive.EVENT, '');
+        const eventType = key.replace(Directive.EVENT, ``);
         if (rootNode.__unregister_child_event__ && node instanceof Element) rootNode.__unregister_child_event__(node, eventType);
       }
     }
@@ -152,9 +152,9 @@ function updateAttributes(rootNode, node, newAttributes, oldAttributes, isSVG) {
         if (propertyName) node.__set_data__(propertyName, newVal, { attributed: true });
       }
 
-      const regex = new RegExp('^' + Directive.EVENT, 'i');
+      const regex = new RegExp(`^` + Directive.EVENT, `i`);
       if (regex.test(key)) {
-        const eventType = attribute.name.replace(Directive.EVENT, '');
+        const eventType = key.replace(Directive.EVENT, ``);
         const handlerName = getAttribute(node, key);
         if (rootNode.__unregister_child_event__ && node instanceof Element) rootNode.__unregister_child_event__(node, eventType);
         if (rootNode.__register_child_event__ && node instanceof Element) rootNode.__register_child_event__(node, eventType, handlerName);
@@ -172,9 +172,9 @@ function updateAttributes(rootNode, node, newAttributes, oldAttributes, isSVG) {
  * @return {boolean} `true` if the vnodes are different, `false` otherwise.
  */
 function isDifferent(vnode1, vnode2) {
-  if (process.env.NODE_ENV === 'development') {
-    assert(typeof vnode1 === 'string' || typeof vnode1.tag === 'string', `Invalid vnode for param 'vnode1'`);
-    assert(typeof vnode2 === 'string' || typeof vnode2.tag === 'string', `Invalid vnode for param 'vnode2'`);
+  if (process.env.NODE_ENV === `development`) {
+    assert(typeof vnode1 === `string` || typeof vnode1.tag === `string`, `Invalid vnode for param 'vnode1'`);
+    assert(typeof vnode2 === `string` || typeof vnode2.tag === `string`, `Invalid vnode for param 'vnode2'`);
   }
 
   if (typeof vnode1 !== typeof vnode2) return true;
@@ -182,7 +182,7 @@ function isDifferent(vnode1, vnode2) {
   if (vnode1.tag !== vnode2.tag) return true;
   if ((vnode1.attributes && vnode1.attributes[Directive.IS]) !== (vnode2.attributes && vnode2.attributes[Directive.IS])) return true;
   if ((vnode1.attributes && vnode1.attributes[Directive.NAME]) !== (vnode2.attributes && vnode2.attributes[Directive.NAME])) return true;
-  if ((typeof vnode1 === 'string') && (typeof vnode2 === 'string') && (vnode1 !== vnode2)) return true;
+  if ((typeof vnode1 === `string`) && (typeof vnode2 === `string`) && (vnode1 !== vnode2)) return true;
 
   return false;
 }
@@ -195,7 +195,7 @@ function isDifferent(vnode1, vnode2) {
  * @return {boolean} `true` if it's an SVG element, `false` otherwise.
  */
 function isSVGElement(element) {
-  return element && element.tagName && element.tagName.toLowerCase() === 'svg';
+  return element && element.tagName && element.tagName.toLowerCase() === `svg`;
 }
 
 /**

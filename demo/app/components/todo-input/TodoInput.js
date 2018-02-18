@@ -1,21 +1,21 @@
-import { Element, DirtyType, h, register } from 'meno';
+import { Element, DirtyType, register } from 'meno';
 import createVTree from 'vdom/createVTree';
 
-class TodoInput extends Element('todo-input') {
-  get template() { return createVTree(require('./todo-input.pug')(this.data)); }
+class TodoInput extends Element(`todo-input`) {
+  get template() { return createVTree(require(`./todo-input.pug`)(this.data)); }
 
   get styles() {
-    return require('./todo-input.sass').toString();
+    return require(`./todo-input.sass`).toString();
   }
 
   get responsiveness() {
     return {
       keyup: 10.0
-    }
+    };
   }
 
   get value() {
-    return this.$('textfield').value
+    return this.$(`textfield`).value;
   }
 
   update(info) {
@@ -25,7 +25,7 @@ class TodoInput extends Element('todo-input') {
   }
 
   clear() {
-    this.$('textfield').value = '';
+    this.$(`textfield`).value = ``;
   }
 
   handleKeyCodes(keyCodes) {
@@ -34,7 +34,7 @@ class TodoInput extends Element('todo-input') {
     this.focus();
 
     if (~keyCodes.indexOf(13)) {
-      this.dispatchEvent(new Event('insert'));
+      this.dispatchEvent(new Event(`insert`));
       this.clear();
     }
   }

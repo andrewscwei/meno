@@ -1,84 +1,88 @@
 // © Andrew Wei
 
-const path = require('path');
-const webpack = require('webpack');
-const HTMLWebpackPlugin = require('html-webpack-plugin');
-const libRoot = path.resolve(__dirname, '../../');
-const baseDir = path.resolve(__dirname, '../');
-const sourceDir = path.join(baseDir, 'app');
-const buildDir = path.join(baseDir, 'public');
+const path = require(`path`);
+const webpack = require(`webpack`);
+const HTMLWebpackPlugin = require(`html-webpack-plugin`);
+
+const BASE_DIR = path.resolve(__dirname, `../`);
+const BUILD_DIR = path.join(BASE_DIR, `public`);
+const LIB_ROOT = path.resolve(__dirname, `../../`);
+const SOURCE_DIR = path.join(BASE_DIR, `app`);
 
 module.exports = {
-  devtool: 'cheap-module-eval-source-map',
-  context: sourceDir,
-  entry: './index.js',
+  devtool: `cheap-module-eval-source-map`,
+  context: SOURCE_DIR,
+  entry: `./index.js`,
   output: {
-    path: buildDir,
-    filename: '[name].js',
-    chunkFilename: '[chunkhash].js',
-    sourceMapFilename: '[name].map'
+    path: BUILD_DIR,
+    filename: `[name].js`,
+    chunkFilename: `[chunkhash].js`,
+    sourceMapFilename: `[name].map`
   },
   module: {
     rules: [{
       test: /\.js$/,
-      loader: 'babel-loader',
+      loader: `babel-loader`,
       options: {
-        presets: ['env']
+        sourceMaps: true,
+        retainLines: true,
+        presets: [`env`],
+        plugins: [require(`babel-plugin-transform-decorators-legacy`).default]
       }
     }, {
       test: /\.pug$/,
       use: [{
-        loader: 'babel-loader',
+        loader: `babel-loader`,
         options: {
-          presets: ['env']
+          presets: [`env`]
         }
       }, {
         loader: `pug-loader`,
         options: {
-          root: sourceDir
+          root: SOURCE_DIR
         }
       }]
     }, {
       test: /\.sass$/,
       use: [{
-        loader: 'css-loader'
+        loader: `css-loader`
       }, {
-        loader: 'sass-loader',
+        loader: `sass-loader`,
         options: {
-          outputStyle: 'expanded',
+          outputStyle: `expanded`,
           sourceMap: true,
-          includePaths: [path.join(sourceDir, 'stylesheets')]
+          includePaths: [path.join(SOURCE_DIR, `stylesheets`)]
         }
       }]
     }]
   },
   resolve: {
-    extensions: ['.js', '.sass', '.pug'],
+    extensions: [`.js`, `.sass`, `.pug`],
     modules: [
-      path.join(sourceDir),
-      path.join(baseDir, 'node_modules'),
-      path.join(libRoot, 'src'),
-      path.join(libRoot, 'node_modules')
+      path.join(BASE_DIR, `node_modules`),
+      path.join(LIB_ROOT, `node_modules`),
+      path.join(SOURCE_DIR),
+      path.join(LIB_ROOT, `src`)
     ]
   },
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: JSON.stringify('development'),
+        NODE_ENV: JSON.stringify(`development`),
         SHADOW_DOM_ENABLED: JSON.stringify(false)
       }
     }),
     // @see https://github.com/webcomponents/webcomponentsjs/issues/794
     new webpack.IgnorePlugin(/vertx/),
     new webpack.WatchIgnorePlugin([
-      path.join(libRoot, 'dist'),
-      path.join(libRoot, 'lib')
+      path.join(LIB_ROOT, `dist`),
+      path.join(LIB_ROOT, `lib`)
     ]),
     new HTMLWebpackPlugin({
-      filename: path.join(buildDir, 'index.html'),
-      template: path.join(sourceDir, 'index.pug'),
+      filename: path.join(BUILD_DIR, `index.html`),
+      template: path.join(SOURCE_DIR, `index.pug`),
       inject: true
     }),
-    new webpack.NormalModuleReplacementPlugin(/^meno$/, path.join(libRoot, 'src/meno.js'))
+    new webpack.NormalModuleReplacementPlugin(/^meno$/, path.join(LIB_ROOT, `src/meno.js`))
   ]
 };

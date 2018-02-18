@@ -2,8 +2,8 @@
 
 import EventDispatcher from './EventDispatcher';
 
-if (process.env.NODE_ENV === 'development') {
-  var assert = require('assert');
+if (process.env.NODE_ENV === `development`) {
+  var assert = require(`assert`);
 }
 
 /**
@@ -46,9 +46,9 @@ class EventQueue extends EventDispatcher {
    * @param  {string} eventType - Name of the event to register.
    */
   enqueue(eventDispatcher, eventType) {
-    if (process.env.NODE_ENV === 'development') {
-      assert((typeof eventDispatcher.dispatchEvent === 'function') && (typeof eventDispatcher.addEventListener === 'function'), `Not a valid event dispatcher instance`);
-      assert(!this.isWaiting, 'Cannot enqueue when EventQueue instance is already waiting for events');
+    if (process.env.NODE_ENV === `development`) {
+      assert((typeof eventDispatcher.dispatchEvent === `function`) && (typeof eventDispatcher.addEventListener === `function`), `Not a valid event dispatcher instance`);
+      assert(!this.isWaiting, `Cannot enqueue when EventQueue instance is already waiting for events`);
     }
     if (this.eventPool[eventType] === undefined) this.eventPool[eventType] = [];
 
@@ -72,8 +72,8 @@ class EventQueue extends EventDispatcher {
    *                              registered with.
    */
   dequeue(eventDispatcher, eventType) {
-    if (process.env.NODE_ENV === 'development') {
-      assert(!this.isWaiting, 'Cannot dequeue when EventQueue instance is already waiting for events');
+    if (process.env.NODE_ENV === `development`) {
+      assert(!this.isWaiting, `Cannot dequeue when EventQueue instance is already waiting for events`);
     }
 
     let pool = this.eventPool[eventType];
@@ -81,7 +81,7 @@ class EventQueue extends EventDispatcher {
     let n = pool.length;
     let t = -1;
     for (let i = 0; i < n; i++) {
-      if (pool[i].dispatcher === dispatcher) {
+      if (pool[i].dispatcher === eventDispatcher) {
         t = i;
         break;
       }
@@ -99,7 +99,7 @@ class EventQueue extends EventDispatcher {
     for (let eventType in this.eventPool) {
       let pool = this.eventPool[eventType];
       pool.forEach((eventPair) => {
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === `development`) {
           assert(eventPair.handler === undefined, `Handler not supposed to be defined at this point`);
         }
 
@@ -123,7 +123,7 @@ class EventQueue extends EventDispatcher {
 
           if (allDone) {
             this.kill();
-            this.dispatchEvent(new Event('complete'));
+            this.dispatchEvent(new Event(`complete`));
           }
         };
 
@@ -134,7 +134,7 @@ class EventQueue extends EventDispatcher {
 
     if (!this.__private__.isWaiting) {
       this.kill();
-      this.dispatchEvent(new Event('complete'));
+      this.dispatchEvent(new Event(`complete`));
     }
   }
 

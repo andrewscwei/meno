@@ -11,20 +11,20 @@
  * @alias module:meno~helpers.checkType
  */
 function checkType(value, type) {
-  if (typeof type === 'string') {
+  if (typeof type === `string`) {
     switch (type) {
-      case 'string':
-      case 'object':
-      case 'number':
-      case 'boolean':
-      case 'function':
-        return typeof value === type;
-      case 'class':
-        return typeof value === 'function';
-      case 'array':
-        return value.constructor === Array;
-      default:
-        return false;
+    case `string`:
+    case `object`:
+    case `number`:
+    case `boolean`:
+    case `function`:
+      return typeof value === type;
+    case `class`:
+      return typeof value === `function`;
+    case `array`:
+      return value.constructor === Array;
+    default:
+      return false;
     }
   }
   else {
