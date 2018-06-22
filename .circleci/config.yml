@@ -8,9 +8,7 @@ jobs:
       - checkout
       - run:
           name: Install APT packages
-          command: |
-            apt-get update -y
-            apt-get install jq zip -y
+          command: apt-get update -y && apt-get install jq -y
       - restore_cache:
           keys:
             - dependency-cache-{{ checksum "yarn.lock" }}
@@ -45,9 +43,7 @@ jobs:
       - checkout
       - run:
           name: Install APT packages
-          command: |
-            apt-get update -y
-            apt-get install jq zip -y
+          command: apt-get update -y && apt-get install jq -y
       - restore_cache:
           keys:
             - dependency-cache-{{ checksum "yarn.lock" }}
