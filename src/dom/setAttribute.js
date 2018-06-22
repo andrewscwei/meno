@@ -40,13 +40,11 @@ function setAttribute(element, name, value, isSVG=false) {
       element.setAttribute(name, ``);
     }
   }
+  else if (isSVG && !name.startsWith(`xmlns`)) {
+    element.setAttributeNS(null, name, value);
+  }
   else {
-    if (isSVG && !name.startsWith(`xmlns`)) {
-      element.setAttributeNS(null, name, value);
-    }
-    else {
-      element.setAttribute(name, value);
-    }
+    element.setAttribute(name, value);
   }
 
   if (name === `disabled` && element.setDirty) {

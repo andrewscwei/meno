@@ -1,4 +1,4 @@
-/*! Meno, © Andrew Wei, @license MIT */
+/* ! Meno, © Andrew Wei, @license MIT */
 
 import Element from './core/Element';
 import getChild from './dom/getChild';

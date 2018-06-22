@@ -63,7 +63,8 @@ class EventDispatcher {
       if (index > -1) {
         this.__private__.listenerRegistry[type].splice(index, 1);
       }
-    } else {
+    }
+    else {
       delete this.__private__.listenerRegistry[type];
     }
   }
@@ -101,7 +102,8 @@ class EventDispatcher {
       let index = this.__private__.listenerRegistry[type].indexOf(listener);
 
       return (index > -1);
-    } else {
+    }
+    else {
       return true;
     }
   }

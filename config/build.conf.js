@@ -12,6 +12,7 @@ const BASE_DIR = path.resolve(__dirname, `..`);
 console.log(`Building bundle, debug=${DEBUG}`);
 
 module.exports = {
+  mode: DEBUG ? `development` : `production`,
   context: path.join(BASE_DIR, `src`),
   devtool: DEBUG ? `cheap-module-eval-source-map` : false,
   entry: {
@@ -46,13 +47,6 @@ module.exports = {
     })
   ]
     .concat(DEBUG ? [] : [
-      new webpack.optimize.UglifyJsPlugin({
-        sourceMap: true,
-        compress: {
-          warnings: false,
-          drop_console: true
-        }
-      }),
       new CompressionPlugin({
         asset: `[path].gz[query]`,
         algorithm: `gzip`,
@@ -62,6 +56,6 @@ module.exports = {
       })
     ])
     .concat(USE_ANALYZER ? [
-      new BundleAnalyzerPlugin
+      new BundleAnalyzerPlugin()
     ] : [])
 };

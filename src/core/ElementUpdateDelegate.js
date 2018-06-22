@@ -395,10 +395,8 @@ class ElementUpdateDelegate {
       }
 
       if (mOrientationChangeHandler) {
-        if (window.DeviceOrientationEvent)
-          window.removeEventListener(`deviceorientation`, mOrientationChangeHandler);
-        else if (window.DeviceMotionEvent)
-          window.removeEventListener(`devicemotion`, mOrientationChangeHandler);
+        if (window.DeviceOrientationEvent) window.removeEventListener(`deviceorientation`, mOrientationChangeHandler);
+        else if (window.DeviceMotionEvent) window.removeEventListener(`devicemotion`, mOrientationChangeHandler);
       }
 
       if (mKeyDownHandler) window.removeEventListener(`keydown`, mKeyDownHandler);
@@ -521,16 +519,12 @@ class ElementUpdateDelegate {
 
       if (universal || args.indexOf(`deviceorientation`) > -1 || args.indexOf(`devicemotion`) > -1 || args.indexOf(`deviceorientation`) > -1) {
         if (mOrientationChangeHandler) {
-          if (window.DeviceOrientationEvent)
-            window.removeEventListener(`deviceorientation`, mOrientationChangeHandler);
-          else if (window.DeviceMotionEvent)
-            window.removeEventListener(`devicemotion`, mOrientationChangeHandler);
+          if (window.DeviceOrientationEvent) window.removeEventListener(`deviceorientation`, mOrientationChangeHandler);
+          else if (window.DeviceMotionEvent) window.removeEventListener(`devicemotion`, mOrientationChangeHandler);
         }
         mOrientationChangeHandler = (delay === 0.0) ? _onWindowOrientationChange.bind(this) : debounce(_onWindowOrientationChange.bind(this), delay);
-        if (window.DeviceOrientationEvent)
-          window.addEventListener(`deviceorientation`, mOrientationChangeHandler);
-        else if (window.DeviceMotionEvent)
-          window.addEventListener(`devicemotion`, mOrientationChangeHandler);
+        if (window.DeviceOrientationEvent) window.addEventListener(`deviceorientation`, mOrientationChangeHandler);
+        else if (window.DeviceMotionEvent) window.addEventListener(`devicemotion`, mOrientationChangeHandler);
       }
 
       if (universal || args.indexOf(`keydown`) > -1) {

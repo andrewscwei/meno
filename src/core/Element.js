@@ -415,14 +415,10 @@ const Element = (base, tag) => (class extends (typeof base !== `string` && base 
       this.name = value;
       break;
     default:
-      if (value === undefined || value === null || value === false)
-        this.removeAttribute(name);
-      else if (value === true)
-        super.setAttribute(name, ``);
-      else
-        super.setAttribute(name, value);
-      if (name === `disabled`)
-        this.setDirty(DirtyType.STATE);
+      if (value === undefined || value === null || value === false) this.removeAttribute(name);
+      else if (value === true) super.setAttribute(name, ``);
+      else super.setAttribute(name, value);
+      if (name === `disabled`) this.setDirty(DirtyType.STATE);
     }
   }
 
