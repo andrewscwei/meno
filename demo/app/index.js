@@ -1,6 +1,5 @@
 import 'style-loader!./index.sass';
 
-// import 'document-register-element';
 import '@webcomponents/webcomponentsjs';
 
 // Order matters. Since TodoList contains TodoItem, TodoItem needs to be

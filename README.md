@@ -12,10 +12,9 @@ Meno is a lean (`~8kb`), [Web Components](http://webcomponents.org/)-based (name
 
 ## Dependencies
 
-This library requires Web Components to work, namely custom elements and shadow DOM. Shadow DOM is optional, it will not be used if the browser doesn't support it, though in this case you won't be able to use shadow CSS. At the very least you need to polyfill custom elements. The following two packages are recommended:
+This library requires Web Components to work, namely custom elements and shadow DOM. Shadow DOM is optional, it will not be used if the browser doesn't support it, though in this case you won't be able to use shadow CSS. At the very least you need to polyfill custom elements. The following package are recommended:
 
-1. [`document-register-element`](https://www.npmjs.com/package/document-register-element)
-2. [`@webcomponents/webcomponentsjs`](https://www.npmjs.com/package/@webcomponents/webcomponentsjs)
+- [`@webcomponents/webcomponentsjs`](https://www.npmjs.com/package/@webcomponents/webcomponentsjs)
 
 See the todo list demo for a working example of how Meno is used along with these polyfills.
 
