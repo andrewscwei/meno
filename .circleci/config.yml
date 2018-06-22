@@ -31,9 +31,6 @@ jobs:
           command: .circleci/pack.sh
       - store_artifacts:
           path: ~/repo/package
-      - deploy:
-          name: Deploy demo to GitHub Pages
-          command: .circleci/deploy_to_gh_pages.sh
 
   build_test_and_deploy:
     working_directory: ~/repo
@@ -66,6 +63,9 @@ jobs:
           command: .circleci/pack.sh
       - store_artifacts:
           path: ~/repo/package
+      - deploy:
+          name: Deploy demo to GitHub Pages
+          command: .circleci/deploy_to_gh_pages.sh
       - deploy:
           name: Deploy to NPM
           command: .circleci/deploy_to_npm.sh
