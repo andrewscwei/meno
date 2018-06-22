@@ -10,6 +10,7 @@ const LIB_ROOT = path.resolve(__dirname, `../../`);
 const SOURCE_DIR = path.join(BASE_DIR, `app`);
 
 module.exports = {
+  mode: `development`,
   devtool: `cheap-module-eval-source-map`,
   context: SOURCE_DIR,
   entry: `./index.js`,

@@ -10,6 +10,7 @@ const LIB_ROOT = path.resolve(__dirname, `../../`);
 const SOURCE_DIR = path.join(BASE_DIR, `app`);
 
 module.exports = {
+  mode: `production`,
   devtool: false,
   context: SOURCE_DIR,
   entry: `./index.js`,
@@ -79,7 +80,6 @@ module.exports = {
     }),
     // @see https://github.com/webcomponents/webcomponentsjs/issues/794
     new webpack.IgnorePlugin(/vertx/),
-    new webpack.NormalModuleReplacementPlugin(/^meno$/, path.join(LIB_ROOT, `dist/meno.min.js`)),
-    new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } })
+    new webpack.NormalModuleReplacementPlugin(/^meno$/, path.join(LIB_ROOT, `dist/meno.min.js`))
   ]
 };

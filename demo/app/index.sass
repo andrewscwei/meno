@@ -1,6 +1,9 @@
 @import '~minuet'
 
-+reset(true)
++normalize()
+
+html
+  font-size: 16px
 
 body
   +display('boxv', top center)
@@ -83,7 +86,7 @@ footer
 +element('todo-input')
   +size(100% auto)
 
-  input 
+  input
     +transition(border color, .2s, ease-out)
     +size(100% 100px)
     font-weight: 300
@@ -98,7 +101,7 @@ footer
     &:focus
       color: rgba(#fff, 1)
       border-bottom: 2px solid #fff
-  
+
   p
     +margin(20px 0 0)
     +size(100% auto)
@@ -128,15 +131,15 @@ footer
     font-size: 1em
     font-weight: 400
     cursor: pointer
-    
-    &:hover 
+
+    &:hover
       opacity: 1
 
   > main
     +size(100%)
     +display('box>', top left)
     align-items: stretch
-    
+
   button
     +size(100px auto)
     +transition(background color, .2s, ease-out)
