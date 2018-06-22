@@ -1,62 +1,93 @@
-# (c) Andrew Wei
-
 version: 2
 jobs:
-  build:
-    working_directory: ~/meno
+  build_and_test:
+    working_directory: ~/repo
     docker:
-      - image: node:latest
+      - image: node:8.9.4
     steps:
       - checkout
-      - run: 
-          name: Install dependencies
+      - run:
+          name: Install APT packages
+          command: |
+            apt-get update -y
+            apt-get install jq zip -y
+      - restore_cache:
+          keys:
+            - dependency-cache-{{ checksum "yarn.lock" }}
+            - dependency-cache-
+      - run:
+          name: Install NPM dependencies
           command: yarn
+      - save_cache:
+          key: dependency-cache-{{ checksum "yarn.lock" }}
+          paths:
+            - "node_modules"
       - run:
           name: Build
           command: npm run build
       - run:
-          name: Run tests
+          name: Test
           command: npm test
+      - run:
+          name: Pack
+          command: .circleci/pack.sh
+      - store_artifacts:
+          path: ~/repo/package
       - deploy:
-          name: Publish to NPM
+          name: Deploy demo to GitHub Pages
+          command: .circleci/deploy_to_gh_pages.sh
+
+  build_test_and_deploy:
+    working_directory: ~/repo
+    docker:
+      - image: node:8.9.4
+    steps:
+      - checkout
+      - run:
+          name: Install APT packages
           command: |
-            if [[ $(git describe --tags) =~ ^v[0-9]+(\.[0-9]+)+(-rc[0-9]+)?(-alpha[0-9]+)?$ ]]; then
-              echo "//registry.npmjs.org/:_authToken=$NPM_AUTH" >> ~/.npmrc
-              npm publish
-              echo "Successfully published to NPM"
-            else
-              echo "Skipping publish because this is not a release"
-            fi
+            apt-get update -y
+            apt-get install jq zip -y
+      - restore_cache:
+          keys:
+            - dependency-cache-{{ checksum "yarn.lock" }}
+            - dependency-cache-
+      - run:
+          name: Install NPM dependencies
+          command: yarn
+      - save_cache:
+          key: dependency-cache-{{ checksum "yarn.lock" }}
+          paths:
+            - "node_modules"
+      - run:
+          name: Build
+          command: npm run build
+      - run:
+          name: Test
+          command: npm test
+      - run:
+          name: Pack
+          command: .circleci/pack.sh
+      - store_artifacts:
+          path: ~/repo/package
       - deploy:
-          name: Publish demo to GitHub pages
-          command: |
-            if [[ $(git describe --tags) =~ ^v[0-9]+(\.[0-9]+)+(-rc[0-9]+)?(-alpha[0-9]+)?$ ]]; then
-              if [ `git branch | grep gh-pages` ]
-              then
-                git branch -D gh-pages
-              fi
-              git checkout -b gh-pages
+          name: Deploy to NPM
+          command: .circleci/deploy_to_npm.sh
 
-              cd demo
-              yarn
-              cd ..
-              npm run demo:build
-
-              # Move generated demo to root and delete everything else.
-              find . -maxdepth 1 ! -name '.' ! -name '..' ! -name 'demo' ! -name '.git' ! -name '.gitignore' -exec rm -rf {} \;
-              mv demo/public/* .
-              rm -R demo/
-
-              # Push to gh-pages.
-              ORIGIN_URL=`git config --get remote.origin.url`
-
-              git config user.name "$GITHUB_USERNAME"
-              git config user.email "$GITHUB_EMAIL"
-              git add -fA
-              git commit --allow-empty -m "$(git log -1 --pretty=%B) [ci skip]"
-              git push -f $ORIGIN_URL gh-pages
-
-              echo "Successfully published demo to GitHub pages"
-            else
-              echo "Skipping publish because this is not a release"
-            fi
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build_and_test:
+          filters:
+            tags:
+              ignore: /^v.*/
+  build_test_and_deploy:
+    jobs:
+      - build_test_and_deploy:
+          context: npm_deployment
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
