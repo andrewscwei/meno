@@ -64,11 +64,11 @@ jobs:
       - store_artifacts:
           path: ~/repo/package
       - deploy:
-          name: Deploy demo to GitHub Pages
-          command: .circleci/deploy_to_gh_pages.sh
-      - deploy:
           name: Deploy to NPM
           command: .circleci/deploy_to_npm.sh
+      - deploy:
+          name: Deploy demo to GitHub Pages
+          command: .circleci/deploy_to_gh_pages.sh
 
 workflows:
   version: 2
