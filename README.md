@@ -59,7 +59,3 @@ When extending another DOM tag (i.e. specifying the `extends` static property of
 <!-- Don't do this -->
 <my-button></my-button>
 ```
-
-## License
-
-This software is released under the [MIT License](http://opensource.org/licenses/MIT).
