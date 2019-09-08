@@ -27,16 +27,11 @@ module.exports = {
       options: {
         sourceMaps: true,
         retainLines: true,
-        presets: [`env`],
-        plugins: [require(`babel-plugin-transform-decorators-legacy`).default]
       }
     }, {
       test: /\.pug$/,
       use: [{
-        loader: `babel-loader`,
-        options: {
-          presets: [`env`]
-        }
+        loader: `babel-loader`
       }, {
         loader: `pug-loader`,
         options: {
@@ -50,9 +45,11 @@ module.exports = {
       }, {
         loader: `sass-loader`,
         options: {
-          outputStyle: `expanded`,
+          sassOptions: {
+            outputStyle: `expanded`,
+            includePaths: [path.join(SOURCE_DIR, `stylesheets`)]
+          },
           sourceMap: true,
-          includePaths: [path.join(SOURCE_DIR, `stylesheets`)]
         }
       }]
     }]
@@ -60,11 +57,14 @@ module.exports = {
   resolve: {
     extensions: [`.js`, `.sass`, `.pug`],
     modules: [
+      path.join(SOURCE_DIR),
       path.join(BASE_DIR, `node_modules`),
       path.join(LIB_ROOT, `node_modules`),
-      path.join(SOURCE_DIR),
       path.join(LIB_ROOT, `src`)
     ]
+  },
+  optimization: {
+    minimize: false,
   },
   plugins: [
     new webpack.DefinePlugin({

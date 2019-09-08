@@ -6,36 +6,26 @@ if (process.env.NODE_ENV === `development`) {
 }
 
 /**
- * Wraps the native Document.registerElement() and registers a custom element
- * with the DOM while storing it in the registry.
+ * Wraps the native `window.customElements.define` and registers a custom
+ * element with the DOM while storing it in the registry.
  *
- * @param {string} tagOrClass - <the-tag> of the registered element class or the
- *                              class itself (in this case the second param is
- *                              not needed).
- * @param {Function|Object} options - Either a class to base the element on or
- *                                    an object literal containing additional
- *                                    options of the registration.
- * @param {Class} [options.prototype] - Element class prototype to base the
- *                                      custom element on.
- * @param {Class} [options.class] - Element class to base the custom element on,
- *                                  takes priority over prototype.
- * @param {string} [options.extends] - Existing tag to extend.
+ * @param {Class} CustomElementClass - The Element class to register.
  *
  * @return {Class} The registered class.
  *
- * @see Document.registerElement()
+ * @see window.customElements.define
  *
  * @alias module:meno~dom.register
  */
-function register(ElementClass) {
+function register(CustomElementClass) {
   if (process.env.NODE_ENV === `development`) {
-    assert(typeof ElementClass === `function`, `Invalid element class specified`);
-    assert(typeof ElementClass.tag === `string`, `Element class must have a tag`);
-    assert(!ElementClass.extends || (typeof ElementClass.extends === `string`), `The 'extends' property of the element class, if specified, must be a string`);
+    assert(typeof CustomElementClass === `function`, `Invalid element class specified`);
+    assert(typeof CustomElementClass.tag === `string`, `Element class must have a tag`);
+    assert(!CustomElementClass.extends || (typeof CustomElementClass.extends === `string`), `The 'extends' property of the element class, if specified, must be a string`);
   }
 
-  const tag = ElementClass.tag;
-  const ext = ElementClass.extends;
+  const tag = CustomElementClass.tag;
+  const ext = CustomElementClass.extends;
 
   if (process.env.NODE_ENV === `development`) {
     if (ext) {
@@ -46,7 +36,7 @@ function register(ElementClass) {
     }
   }
 
-  customElements.define(tag, ElementClass, ext ? { extends: ext } : undefined);
+  customElements.define(tag, CustomElementClass, ext ? { extends: ext } : undefined);
 
   return customElements.get(tag);
 }

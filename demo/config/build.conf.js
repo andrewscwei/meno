@@ -27,16 +27,11 @@ module.exports = {
       options: {
         sourceMaps: true,
         retainLines: true,
-        presets: [`env`],
-        plugins: [require(`babel-plugin-transform-decorators-legacy`).default]
       }
     }, {
       test: /\.pug$/,
       use: [{
         loader: `babel-loader`,
-        options: {
-          presets: [`env`]
-        }
       }, {
         loader: `pug-loader`,
         options: {
@@ -50,9 +45,11 @@ module.exports = {
       }, {
         loader: `sass-loader`,
         options: {
-          outputStyle: `compressed`,
+          sassOptions: {
+            outputStyle: `compressed`,
+            includePaths: [path.join(SOURCE_DIR, `stylesheets`)]
+          },
           sourceMap: false,
-          includePaths: [path.join(SOURCE_DIR, `stylesheets`)]
         }
       }]
     }]
@@ -62,8 +59,8 @@ module.exports = {
     modules: [
       path.join(SOURCE_DIR),
       path.join(BASE_DIR, `node_modules`),
-      path.join(LIB_ROOT, `src`),
-      path.join(LIB_ROOT, `node_modules`)
+      path.join(LIB_ROOT, `node_modules`),
+      path.join(LIB_ROOT, `src`)
     ]
   },
   plugins: [

@@ -1,9 +1,11 @@
 import { Element, register } from 'meno';
 import createVTree from 'vdom/createVTree';
 
-class TodoLogo extends Element(`todo-logo`) {
+const FooBar = Element('todo-logo');
+
+class TodoLogo extends FooBar {
   get template() { return createVTree(require(`./todo-logo.pug`)(this.data)); }
-  
+
   get styles() { return require(`./todo-logo.sass`); }
 }
 

@@ -1,17 +1,17 @@
 /* ! Meno, © Andrew Wei, @license MIT */
 
 import Element from './core/Element';
-import getChild from './dom/getChild';
-import hasChild from './dom/hasChild';
 import getAttribute from './dom/getAttribute';
-import setAttribute from './dom/setAttribute';
+import getChild from './dom/getChild';
 import getStyle from './dom/getStyle';
-import setStyle from './dom/setStyle';
+import hasChild from './dom/hasChild';
 import register from './dom/register';
-import vnode from './vdom/vnode';
+import setAttribute from './dom/setAttribute';
+import setStyle from './dom/setStyle';
 import Directive from './enums/Directive';
 import DirtyType from './enums/DirtyType';
 import NodeState from './enums/NodeState';
+import vnode from './vdom/vnode';
 
 if (process.env.NODE_ENV === `development`) {
   var assert = require(`assert`);
@@ -27,13 +27,9 @@ function meno() {
   register.apply(null, arguments);
 }
 
-meno.Element = Element;
-meno.Directive = Directive;
-meno.DirtyType = DirtyType;
-meno.NodeState = NodeState;
-meno.register = register;
-meno.h = vnode;
-meno.dom = {
+export { Element, Directive, DirtyType, NodeState, register, vnode as h };
+
+export const dom = {
   getChild: getChild,
   hasChild: hasChild,
   getAttribute: getAttribute,
@@ -42,4 +38,4 @@ meno.dom = {
   setStyle: setStyle
 };
 
-module.exports = meno;
+export default meno;

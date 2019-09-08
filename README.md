@@ -30,18 +30,18 @@ Check out the [todo list demo](http://andrewscwei.github.io/meno), or clone this
 
 ```sh
 # Install dependencies for Meno
-yarn
+npm install
 
 # Install dependencies for the demo
 cd demo
-yarn
+npm install
 cd ..
 
 # Run the demo in development
-yarn run demo:dev
+npm run demo:dev
 
 # Run the demo in production
-yarn run demo
+npm run demo
 ```
 
 ## Disclaimer

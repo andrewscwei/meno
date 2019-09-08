@@ -1,19 +1,19 @@
 // © Andrew Wei
 
-import ElementUpdateDelegate from './ElementUpdateDelegate';
-import getChild from '../dom/getChild';
-import hasChild from '../dom/hasChild';
 import getAttribute from '../dom/getAttribute';
-import getStyle from '../dom/getStyle';
-import setStyle from '../dom/setStyle';
-import register from '../dom/register';
+import getChild from '../dom/getChild';
 import getDirectCustomChildren from '../dom/getDirectCustomChildren';
+import getStyle from '../dom/getStyle';
+import hasChild from '../dom/hasChild';
 import isCustomElement from '../dom/isCustomElement';
+import register from '../dom/register';
+import setStyle from '../dom/setStyle';
 import Directive from '../enums/Directive';
 import DirtyType from '../enums/DirtyType';
 import NodeState from '../enums/NodeState';
 import EventQueue from '../events/EventQueue';
 import patch from '../vdom/patch';
+import UpdateDelegate from './UpdateDelegate';
 
 if (process.env.NODE_ENV === `development`) {
   var assert = require(`assert`);
@@ -24,9 +24,9 @@ if (process.env.NODE_ENV === `development`) {
 /**
  * @class
  *
- * Returns a custom Element constructor with extended features. Specify the
- * `base` Element class to inherit from (defaults to HTMLElement) and provide
- * the HTML `tag` to extend from.
+ * Returns a custom Element constructor with extended features. Specify
+ * the `base` Element class to inherit from (defaults to HTMLElement) and
+ * provide the HTML `tag` to extend from.
  *
  * @param {string|Function} [base=HTMLElement] - Base Node constructor for the
  *                                               returned constructor to inherit
@@ -39,8 +39,8 @@ if (process.env.NODE_ENV === `development`) {
  *                         custom element specs. Defaults to `div` if a base
  *                         is specified and this is left unefined.
  *
- * @return {Node} - Constructor for an Element that inherits the specified base
- *                  constructor.
+ * @return {Node} - Constructor for a Element that inherits the specified
+ *                  base constructor.
  *
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes}
  *
@@ -52,7 +52,7 @@ const Element = (base, tag) => (class extends (typeof base !== `string` && base 
    * overridden by sub-classes because this class merely provides the foundation
    * functionality of a custom element, hence this class does not register
    * directly with the element registry. This tag name is used by
-   * `document.registerElement()`.
+   * `window.customElements.define`.
    *
    * @return {string} The tag name.
    *
@@ -62,7 +62,7 @@ const Element = (base, tag) => (class extends (typeof base !== `string` && base 
 
   /**
    * Gets the existing native element which this custom element extends. This
-   * value is used in the `options` for `document.registerElement()`.
+   * value is used in the `options` for `window.customElements.define`.
    *
    * @return {string} The tag of the native element.
    *
@@ -90,7 +90,7 @@ const Element = (base, tag) => (class extends (typeof base !== `string` && base 
    *
    * @alias module:meno~core.Element#responsiveness
    *
-   * @see ElementUpdateDelegate#initResponsiveness
+   * @see UpdateDelegate#initResponsiveness
    */
   get responsiveness() { return {}; }
 
@@ -98,10 +98,10 @@ const Element = (base, tag) => (class extends (typeof base !== `string` && base 
    * Define default data here. This method returns an object, where each
    * key/value pair represents a data in this element. The key is the name of
    * the data and the value is the default/initial value. You can express the
-   * value as an object to provide additional configuration for Element#__set_data__.
-   * In this case, the value key of the object is the initial value. When the
-   * initial value is a function, this data is inferred as computed data, hence
-   * there are no setters.
+   * value as an object to provide additional configuration for
+   * Element#__set_data__. In this case, the value key of the object is the
+   * initial value. When the initial value is a function, this data is inferred
+   * as computed data, hence there are no setters.
    *
    * @return {Object} Default data.
    */
@@ -140,14 +140,15 @@ const Element = (base, tag) => (class extends (typeof base !== `string` && base 
   /**
    * This delegate object is for managing dirty updates.
    *
-   * @type {ElementUpdateDelegate}
+   * @type {UpdateDelegate}
    *
    * @private
    */
-  get updateDelegate() { return this.get(`updateDelegate`, new ElementUpdateDelegate(this)); }
+  get updateDelegate() { return this.get(`updateDelegate`, new UpdateDelegate(this)); }
 
   /**
-   * Instance name of this Element instance. Once set, it cannot be changed.
+   * Instance name of this Element instance. Once set, it cannot be
+   * changed.
    *
    * @type {string}
    *
@@ -183,7 +184,7 @@ const Element = (base, tag) => (class extends (typeof base !== `string` && base 
   set disabled(val) { this.setAttribute(`disabled`, (val ? true : false)); }
 
   /**
-   * Indiciates whether this Element is invisible.
+   * Indicates whether this Element is invisible.
    *
    * @type {boolean}
    *
@@ -276,7 +277,8 @@ const Element = (base, tag) => (class extends (typeof base !== `string` && base 
           value = descriptor;
         }
 
-        // All default data should affect rendering by default unless otherwise specified.
+        // All default data should affect rendering by default unless otherwise
+        // specified.
         if (typeof options.renderOnChange !== `boolean`) options.renderOnChange = true;
 
         this.__set_data__(key, value, options);
@@ -285,8 +287,8 @@ const Element = (base, tag) => (class extends (typeof base !== `string` && base 
       }
     }
 
-    // Scan for internal DOM element attributes prefixed with Directive.DATA
-    // and generate data properties from them.
+    // Scan for internal DOM element attributes prefixed with Directive.DATA and
+    // generate data properties from them.
     let attributes = this.attributes;
     let nAttributes = attributes.length;
 
@@ -335,12 +337,12 @@ const Element = (base, tag) => (class extends (typeof base !== `string` && base 
   }
 
   /**
-   * Lifecycle hook: This method is invoked after this element is
-   * added to the DOM, BEFORE the initial render starts, and RIGHT BEFORE
-   * the node state changes to NodeState.INITIALIZED. This is a good place to
-   * perform initial set up for this element. Note that if you want to set up
-   * the children of this element, there is a better hook for that. See
-   * Element#render. At this point, the children may not be rendered yet.
+   * Lifecycle hook: This method is invoked after this element is added to the
+   * DOM, BEFORE the initial render starts, and RIGHT BEFORE the node state
+   * changes to NodeState.INITIALIZED. This is a good place to perform initial
+   * set up for this element. Note that if you want to set up the children of
+   * this element, there is a better hook for that. See Element#render. At this
+   * point, the children may not be rendered yet.
    *
    * @alias module:meno~core.Element#init
    */
@@ -575,13 +577,13 @@ const Element = (base, tag) => (class extends (typeof base !== `string` && base 
   }
 
   /**
-   * @see ElementUpdateDelegate#isDirty
+   * @see UpdateDelegate#isDirty
    * @alias module:meno~core.Element#isDirty
    */
   isDirty() { return this.updateDelegate.isDirty.apply(this.updateDelegate, arguments); }
 
   /**
-   * @see ElementUpdateDelegate#setDirty
+   * @see UpdateDelegate#setDirty
    * @alias module:meno~core.Element#setDirty
    */
   setDirty() { return this.updateDelegate.setDirty.apply(this.updateDelegate, arguments); }
@@ -840,7 +842,7 @@ const Element = (base, tag) => (class extends (typeof base !== `string` && base 
     const attributed = typeof options.attributed === `boolean` ? options.attributed : false;
     const attributeName = Directive.getDataAttributeName(key);
     const eventType = options.eventType;
-    const unique = (typeof unique === `boolean`) ? options.unique : true;
+    const unique = (typeof options.unique === `boolean`) ? options.unique : true;
 
     // Set the default value if its is not a computed value.
     if (value !== undefined && typeof value !== `function`) {
@@ -1021,9 +1023,9 @@ const Element = (base, tag) => (class extends (typeof base !== `string` && base 
   /**
    * Unregisters an event or multiple events from a child (or all children).
    *
-   * @param {Node} [child] - The child that dispatched the event. If unspecified,
-   *                         all child events will be unregistered from this
-   *                         element, regardless of child nodes.
+   * @param {Node} [child] - The child that dispatched the event. If
+   *                         unspecified, all child events will be unregistered
+   *                         from this element, regardless of child nodes.
    * @param {string} [eventType] - The event type to unregister. If unspecified,
    *                               all event types for the given child node will
    *                               be unregistered.

@@ -11,7 +11,7 @@ if (process.env.NODE_ENV === `development`) {
  * Default refresh (debounce) rate in milliseconds.
  *
  * @const
- * @memberof module:meno~core.ElementUpdateDelegate
+ * @memberof module:meno~core.UpdateDelegate
  * @type {number}
  * @default
  */
@@ -61,22 +61,23 @@ function debounce(method, delay, leading) {
  *
  * Delegate for managing update calls of a Meno Element.
  *
- * @alias module:meno~core.ElementUpdateDelegate
+ * @alias module:meno~core.UpdateDelegate
  */
-class ElementUpdateDelegate {
+class UpdateDelegate {
   /**
    * @class
    *
-   * Creates a new ElementUpdateDelegate instance.
+   * Creates a new UpdateDelegate instance.
    *
-   * @param {Element} delegate - The Meno Element instance of which this
-   *                             ElementUpdateDelgate instance manages.
+   * @param {Element} delegate - The Meno Element instance of which
+   *                                   this ElementUpdateDelgate instance
+   *                                   manages.
    *
-   * @alias module:meno~core.ElementUpdateDelegate
+   * @alias module:meno~core.UpdateDelegate
    */
   constructor(delegate) {
     /**
-     * Stores mouse properties if this ElementUpdateDelegate responds to mouse
+     * Stores mouse properties if this UpdateDelegate responds to mouse
      * events.
      *
      * @property {Object}
@@ -84,7 +85,7 @@ class ElementUpdateDelegate {
     Object.defineProperty(this, `mouse`, { value: {}, writable: false });
 
     /**
-     * Stores orientation properties if this ElementUpdateDelgate responds to
+     * Stores orientation properties if this UpdateDelegate responds to
      * device orientations (i.e. device accelerometer).
      *
      * @property {Object}
@@ -92,7 +93,7 @@ class ElementUpdateDelegate {
     Object.defineProperty(this, `orientation`, { value: {}, writable: false });
 
     /**
-     * Stores pressed keycodes if this ElementUpdateDelegate responds to
+     * Stores pressed keycodes if this UpdateDelegate responds to
      * keyboard events.
      *
      * @property {Object}
@@ -100,7 +101,7 @@ class ElementUpdateDelegate {
     Object.defineProperty(this, `keyCode`, { value: {}, writable: false });
 
     /**
-     * Delegate of this ElementUpdateDelegate instance.
+     * Delegate of this UpdateDelegate instance.
      *
      * @property {Element}
      */
@@ -342,7 +343,7 @@ class ElementUpdateDelegate {
     };
 
     /**
-     * Initializes this ElementUpdateDelegate instance. Must manually invoke.
+     * Initializes this UpdateDelegate instance. Must manually invoke.
      */
     this.init = (responsiveness) => {
       if (responsiveness) {
@@ -369,7 +370,7 @@ class ElementUpdateDelegate {
     };
 
     /**
-     * Destroys this ElementUpdateDelegate instance.
+     * Destroys this UpdateDelegate instance.
      */
     this.destroy = () => {
       _cancelAnimationFrame(this._pendingAnimationFrame);
@@ -553,4 +554,4 @@ class ElementUpdateDelegate {
   }
 }
 
-export default ElementUpdateDelegate;
+export default UpdateDelegate;

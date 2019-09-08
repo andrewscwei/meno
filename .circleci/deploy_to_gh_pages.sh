@@ -14,7 +14,7 @@ fi
 git checkout -b gh-pages
 
 cd demo
-yarn
+npm install
 cd ..
 npm run demo:build
 

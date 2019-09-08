@@ -48,7 +48,7 @@ module.exports = {
   ]
     .concat(DEBUG ? [] : [
       new CompressionPlugin({
-        asset: `[path].gz[query]`,
+        filename: `[path].gz[query]`,
         algorithm: `gzip`,
         test: /\.js$/,
         threshold: 10240,
