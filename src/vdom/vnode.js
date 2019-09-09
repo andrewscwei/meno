@@ -15,7 +15,7 @@
 function vnode() {
   let args = Array.prototype.slice.call(arguments);
   let tag = args.shift();
-  let attributes = (typeof args[0] === `object` && !(args[0] instanceof Array)) ? args.shift() : {};
+  let attributes = (typeof args[0] === 'object' && !(args[0] instanceof Array)) ? args.shift() : {};
   let children = (args[0] instanceof Array) ? args.shift() : [];
   let text = args.length > 0 ? `${args.shift()}` : undefined;
 
@@ -24,7 +24,7 @@ function vnode() {
   return {
     tag: tag,
     attributes: attributes,
-    children: children
+    children: children,
   };
 }
 

@@ -3,8 +3,8 @@
 import { Parser } from 'htmlparser2';
 import vnode from './vnode';
 
-if (process.env.NODE_ENV === `development`) {
-  var assert = require(`assert`);
+if (process.env.NODE_ENV === 'development') {
+  var assert = require('assert');
 }
 
 /**
@@ -19,8 +19,8 @@ if (process.env.NODE_ENV === `development`) {
  * @alias module:meno~utils.createVTree
  */
 function createVTree(htmlString) {
-  if (process.env.NODE_ENV === `development`) {
-    assert(typeof htmlString === `string`, `Param must be a valid HTML string`);
+  if (process.env.NODE_ENV === 'development') {
+    assert(typeof htmlString === 'string', 'Param must be a valid HTML string');
   }
 
   let nodeStack = [];
@@ -39,15 +39,15 @@ function createVTree(htmlString) {
     },
     onclosetag: (tag) => {
       if (nodeStack.length > 1) nodeStack.pop();
-    }
+    },
   }, {
-    lowerCaseAttributeNames: false
+    lowerCaseAttributeNames: false,
   });
 
   parser.write(htmlString);
   parser.end();
 
-  if (process.env.NODE_ENV === `development`) {
+  if (process.env.NODE_ENV === 'development') {
     assert(nodeStack.length === 1, `The node stack is expected to have exactly 1 element, but it has ${nodeStack.length}. Make sure that the HTML string has exactly one root node.`);
   }
 

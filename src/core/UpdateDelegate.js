@@ -3,8 +3,8 @@
 import DirtyType from '../enums/DirtyType';
 import getRect from '../utils/getRect';
 
-if (process.env.NODE_ENV === `development`) {
-  var assert = require(`assert`);
+if (process.env.NODE_ENV === 'development') {
+  var assert = require('assert');
 }
 
 /**
@@ -82,7 +82,7 @@ class UpdateDelegate {
      *
      * @property {Object}
      */
-    Object.defineProperty(this, `mouse`, { value: {}, writable: false });
+    Object.defineProperty(this, 'mouse', { value: {}, writable: false });
 
     /**
      * Stores orientation properties if this UpdateDelegate responds to
@@ -90,7 +90,7 @@ class UpdateDelegate {
      *
      * @property {Object}
      */
-    Object.defineProperty(this, `orientation`, { value: {}, writable: false });
+    Object.defineProperty(this, 'orientation', { value: {}, writable: false });
 
     /**
      * Stores pressed keycodes if this UpdateDelegate responds to
@@ -98,14 +98,14 @@ class UpdateDelegate {
      *
      * @property {Object}
      */
-    Object.defineProperty(this, `keyCode`, { value: {}, writable: false });
+    Object.defineProperty(this, 'keyCode', { value: {}, writable: false });
 
     /**
      * Delegate of this UpdateDelegate instance.
      *
      * @property {Element}
      */
-    Object.defineProperty(this, `delegate`, { value: delegate, writable: false });
+    Object.defineProperty(this, 'delegate', { value: delegate, writable: false });
 
     let mDirtyTable = 0;
     let mDirtyInfo = {};
@@ -350,10 +350,10 @@ class UpdateDelegate {
         for (let key in responsiveness) {
           const value = responsiveness[key];
 
-          if (typeof value === `number`) {
+          if (typeof value === 'number') {
             this.initResponsiveness.apply(this, [value, key]);
           }
-          else if (typeof value === `object`) {
+          else if (typeof value === 'object') {
             let args = [];
             if (value.conductor) args.push(value.conductor);
             if (value.delay) args.push(value.delay);
@@ -376,33 +376,33 @@ class UpdateDelegate {
       _cancelAnimationFrame(this._pendingAnimationFrame);
 
       if (mResizeHandler) {
-        window.removeEventListener(`resize`, mResizeHandler);
-        window.removeEventListener(`orientationchange`, mResizeHandler);
+        window.removeEventListener('resize', mResizeHandler);
+        window.removeEventListener('orientationchange', mResizeHandler);
       }
 
       if (mScrollHandler) {
         let conductor = mConductorTable.scroll || window;
-        conductor.removeEventListener(`scroll`, mScrollHandler);
+        conductor.removeEventListener('scroll', mScrollHandler);
       }
 
       if (mMouseWheelHandler) {
         let conductor = mConductorTable.mouseWheel || window;
-        conductor.removeEventListener(`wheel`, mMouseWheelHandler);
+        conductor.removeEventListener('wheel', mMouseWheelHandler);
       }
 
       if (mMouseMoveHandler) {
         let conductor = mConductorTable.mouseMove || window;
-        conductor.removeEventListener(`mousemove`, mMouseMoveHandler);
+        conductor.removeEventListener('mousemove', mMouseMoveHandler);
       }
 
       if (mOrientationChangeHandler) {
-        if (window.DeviceOrientationEvent) window.removeEventListener(`deviceorientation`, mOrientationChangeHandler);
-        else if (window.DeviceMotionEvent) window.removeEventListener(`devicemotion`, mOrientationChangeHandler);
+        if (window.DeviceOrientationEvent) window.removeEventListener('deviceorientation', mOrientationChangeHandler);
+        else if (window.DeviceMotionEvent) window.removeEventListener('devicemotion', mOrientationChangeHandler);
       }
 
-      if (mKeyDownHandler) window.removeEventListener(`keydown`, mKeyDownHandler);
-      if (mKeyPressHandler) window.removeEventListener(`keypress`, mKeyPressHandler);
-      if (mKeyUpHandler) window.removeEventListener(`keyup`, mKeyUpHandler);
+      if (mKeyDownHandler) window.removeEventListener('keydown', mKeyDownHandler);
+      if (mKeyPressHandler) window.removeEventListener('keypress', mKeyPressHandler);
+      if (mKeyUpHandler) window.removeEventListener('keyup', mKeyUpHandler);
       if (mEnterFrameHandler) window.clearInterval(mEnterFrameHandler);
 
       this._pendingAnimationFrame = null;
@@ -456,26 +456,26 @@ class UpdateDelegate {
     this.initResponsiveness = function() {
       let args = Array.prototype.slice.call(arguments);
 
-      if (process.env.NODE_ENV === `development`) {
-        assert(args.length > 0, `Insufficient arguments provided`);
+      if (process.env.NODE_ENV === 'development') {
+        assert(args.length > 0, 'Insufficient arguments provided');
       }
 
-      let conductor = ((typeof args[0] !== `number`) && (typeof args[0] !== `string`)) ? args.shift() : window;
-      let delay = (typeof args[0] === `number`) ? args.shift() : DEFAULT_REFRESH_RATE;
+      let conductor = ((typeof args[0] !== 'number') && (typeof args[0] !== 'string')) ? args.shift() : window;
+      let delay = (typeof args[0] === 'number') ? args.shift() : DEFAULT_REFRESH_RATE;
       let universal = (args.length === 0);
 
-      if (process.env.NODE_ENV === `development`) {
-        assert(conductor && conductor.addEventListener, `Invalid conductor specified`);
+      if (process.env.NODE_ENV === 'development') {
+        assert(conductor && conductor.addEventListener, 'Invalid conductor specified');
       }
 
-      if (universal || args.indexOf(`resize`) > -1 || args.indexOf(`orientationchange`) > -1) {
+      if (universal || args.indexOf('resize') > -1 || args.indexOf('orientationchange') > -1) {
         if (mResizeHandler) {
-          window.removeEventListener(`resize`, mResizeHandler);
-          window.removeEventListener(`orientationchange`, mResizeHandler);
+          window.removeEventListener('resize', mResizeHandler);
+          window.removeEventListener('orientationchange', mResizeHandler);
         }
         mResizeHandler = (delay === 0.0) ? _onWindowResize.bind(this) : debounce(_onWindowResize.bind(this), delay);
-        window.addEventListener(`resize`, mResizeHandler);
-        window.addEventListener(`orientationchange`, mResizeHandler);
+        window.addEventListener('resize', mResizeHandler);
+        window.addEventListener('orientationchange', mResizeHandler);
 
         // Populate update info for initial update.
         if (!mDirtyInfo[DirtyType.SIZE]) mDirtyInfo[DirtyType.SIZE] = {};
@@ -483,14 +483,14 @@ class UpdateDelegate {
         mDirtyInfo[DirtyType.SIZE].rect = getRect(this.delegate);
       }
 
-      if (universal || args.indexOf(`scroll`) > -1) {
+      if (universal || args.indexOf('scroll') > -1) {
         if (mScrollHandler) {
           let c = mConductorTable.scroll || window;
-          c.removeEventListener(`scroll`, mScrollHandler);
+          c.removeEventListener('scroll', mScrollHandler);
         }
         mScrollHandler = (delay === 0.0) ? _onWindowScroll.bind(this) : debounce(_onWindowScroll.bind(this), delay);
         mConductorTable.scroll = conductor;
-        conductor.addEventListener(`scroll`, mScrollHandler);
+        conductor.addEventListener('scroll', mScrollHandler);
 
         // Populate update info for initial update.
         if (!mDirtyInfo[DirtyType.POSITION]) mDirtyInfo[DirtyType.POSITION] = {};
@@ -498,55 +498,55 @@ class UpdateDelegate {
         mDirtyInfo[DirtyType.POSITION].rect = getRect(this.delegate);
       }
 
-      if (universal || args.indexOf(`wheel`) > -1) {
+      if (universal || args.indexOf('wheel') > -1) {
         if (mMouseWheelHandler) {
           let c = mConductorTable.mouseWheel || window;
-          c.removeEventListener(`wheel`, mMouseWheelHandler);
+          c.removeEventListener('wheel', mMouseWheelHandler);
         }
         mMouseWheelHandler = (delay === 0.0) ? _onWindowMouseWheel.bind(this) : debounce(_onWindowMouseWheel.bind(this), delay);
         mConductorTable.mouseWheel = conductor;
-        conductor.addEventListener(`wheel`, mMouseWheelHandler);
+        conductor.addEventListener('wheel', mMouseWheelHandler);
       }
 
-      if (universal || args.indexOf(`mousemove`) > -1) {
+      if (universal || args.indexOf('mousemove') > -1) {
         if (mMouseMoveHandler) {
           let c = mConductorTable.mouseMove || window;
-          c.removeEventListener(`mousemove`, mMouseMoveHandler);
+          c.removeEventListener('mousemove', mMouseMoveHandler);
         }
         mMouseMoveHandler = (delay === 0.0) ? _onWindowMouseMove.bind(this) : debounce(_onWindowMouseMove.bind(this), delay);
         mConductorTable.mouseMove = conductor;
-        conductor.addEventListener(`mousemove`, mMouseMoveHandler);
+        conductor.addEventListener('mousemove', mMouseMoveHandler);
       }
 
-      if (universal || args.indexOf(`deviceorientation`) > -1 || args.indexOf(`devicemotion`) > -1 || args.indexOf(`deviceorientation`) > -1) {
+      if (universal || args.indexOf('deviceorientation') > -1 || args.indexOf('devicemotion') > -1 || args.indexOf('deviceorientation') > -1) {
         if (mOrientationChangeHandler) {
-          if (window.DeviceOrientationEvent) window.removeEventListener(`deviceorientation`, mOrientationChangeHandler);
-          else if (window.DeviceMotionEvent) window.removeEventListener(`devicemotion`, mOrientationChangeHandler);
+          if (window.DeviceOrientationEvent) window.removeEventListener('deviceorientation', mOrientationChangeHandler);
+          else if (window.DeviceMotionEvent) window.removeEventListener('devicemotion', mOrientationChangeHandler);
         }
         mOrientationChangeHandler = (delay === 0.0) ? _onWindowOrientationChange.bind(this) : debounce(_onWindowOrientationChange.bind(this), delay);
-        if (window.DeviceOrientationEvent) window.addEventListener(`deviceorientation`, mOrientationChangeHandler);
-        else if (window.DeviceMotionEvent) window.addEventListener(`devicemotion`, mOrientationChangeHandler);
+        if (window.DeviceOrientationEvent) window.addEventListener('deviceorientation', mOrientationChangeHandler);
+        else if (window.DeviceMotionEvent) window.addEventListener('devicemotion', mOrientationChangeHandler);
       }
 
-      if (universal || args.indexOf(`keydown`) > -1) {
-        if (mKeyDownHandler) window.removeEventListener(`keydown`, mKeyDownHandler);
+      if (universal || args.indexOf('keydown') > -1) {
+        if (mKeyDownHandler) window.removeEventListener('keydown', mKeyDownHandler);
         mKeyDownHandler = _onWindowKeyDown.bind(this);
-        window.addEventListener(`keydown`, mKeyDownHandler);
+        window.addEventListener('keydown', mKeyDownHandler);
       }
 
-      if (universal || args.indexOf(`keypress`) > -1) {
-        if (mKeyPressHandler) window.removeEventListener(`keypress`, mKeyPressHandler);
+      if (universal || args.indexOf('keypress') > -1) {
+        if (mKeyPressHandler) window.removeEventListener('keypress', mKeyPressHandler);
         mKeyPressHandler = _onWindowKeyPress.bind(this);
-        window.addEventListener(`keypress`, mKeyPressHandler);
+        window.addEventListener('keypress', mKeyPressHandler);
       }
 
-      if (universal || args.indexOf(`keyup`) > -1) {
-        if (mKeyUpHandler) window.removeEventListener(`keyup`, mKeyUpHandler);
+      if (universal || args.indexOf('keyup') > -1) {
+        if (mKeyUpHandler) window.removeEventListener('keyup', mKeyUpHandler);
         mKeyUpHandler = _onWindowKeyUp.bind(this);
-        window.addEventListener(`keyup`, mKeyUpHandler);
+        window.addEventListener('keyup', mKeyUpHandler);
       }
 
-      if (universal || args.indexOf(`enterframe`) > -1) {
+      if (universal || args.indexOf('enterframe') > -1) {
         if (mEnterFrameHandler) window.clearInterval(mEnterFrameHandler);
         mEnterFrameHandler = window.setInterval(_onEnterFrame.bind(this), delay);
       }

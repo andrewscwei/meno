@@ -17,7 +17,7 @@ import getRect from './getRect';
  */
 function hitTestElement(obj, elements) {
   let args = Array.prototype.slice.call(arguments);
-  let isVector = (typeof args[0] === `object`) && args[0].hasOwnProperty(`x`) && args[0].hasOwnProperty(`y`);
+  let isVector = (typeof args[0] === 'object') && (args[0]['x'] !== undefined) && (args[0]['y'] !== undefined);
 
   if (isVector) {
     let vector = args.shift();

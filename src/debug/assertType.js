@@ -1,7 +1,7 @@
 // © Andrew Wei
 
-var assert = require(`assert`);
-var checkType = require(`./checkType`);
+var assert = require('assert');
+var checkType = require('./checkType');
 
 /**
  * Asserts the specified condition and throws a warning if assertion fails.
@@ -23,9 +23,9 @@ var checkType = require(`./checkType`);
  * @alias module:meno~helpers.assertType
  */
 function assertType(value, type, allowUndefined, message) {
-  assert(type !== undefined, `Paremeter 'type' must be a string or a class`);
-  assert((allowUndefined === undefined) || (typeof allowUndefined === `boolean`), `Paremeter 'allowUndefined', if specified, must be a boolean`);
-  assert((message === undefined) || (typeof message === `string`), `Parameter 'message', if specified, must be a string`);
+  assert(type !== undefined, 'Paremeter \'type\' must be a string or a class');
+  assert((allowUndefined === undefined) || (typeof allowUndefined === 'boolean'), 'Paremeter \'allowUndefined\', if specified, must be a boolean');
+  assert((message === undefined) || (typeof message === 'string'), 'Parameter \'message\', if specified, must be a string');
 
   allowUndefined = (allowUndefined === undefined) ? false : allowUndefined;
 
@@ -38,12 +38,12 @@ function assertType(value, type, allowUndefined, message) {
       if (checkType(value, type[i])) return;
     }
 
-    throw new Error(message || `AssertType failed`);
+    throw new Error(message || 'AssertType failed');
   }
 
   if (checkType(value, type)) return;
 
-  throw new Error(message || `AssertType failed`);
+  throw new Error(message || 'AssertType failed');
 }
 
 module.exports = assertType;

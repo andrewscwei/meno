@@ -1,7 +1,7 @@
 // © Andrew Wei
 
-if (process.env.NODE_ENV === `development`) {
-  var assertType = require(`../debug/assertType`);
+if (process.env.NODE_ENV === 'development') {
+  var assertType = require('../debug/assertType');
 }
 
 /**
@@ -17,12 +17,12 @@ if (process.env.NODE_ENV === `development`) {
  * @alias module:meno~dom.setStyle
  */
 function setStyle(element, key, value) {
-  if (process.env.NODE_ENV === `development`) {
-    assertType(element, Node, false, `Invalid element specified`);
+  if (process.env.NODE_ENV === 'development') {
+    assertType(element, Node, false, 'Invalid element specified');
   }
 
-  if (typeof value === `number`) value = String(value);
-  if (value === null || value === undefined) value = ``;
+  if (typeof value === 'number') value = String(value);
+  if (value === null || value === undefined) value = '';
 
   element.style[key] = value;
 }

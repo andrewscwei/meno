@@ -1,7 +1,7 @@
 // © Andrew Wei
 
-if (process.env.NODE_ENV === `development`) {
-  var assertType = require(`../debug/assertType`);
+if (process.env.NODE_ENV === 'development') {
+  var assertType = require('../debug/assertType');
 }
 
 /**
@@ -21,22 +21,22 @@ if (process.env.NODE_ENV === `development`) {
  * @alias module:meno~dom.getStyle
  */
 function getStyle(element, key, isComputed, isolateUnits) {
-  if (process.env.NODE_ENV === `development`) {
-    assertType(element, Node, false, `Invalid element specified`);
+  if (process.env.NODE_ENV === 'development') {
+    assertType(element, Node, false, 'Invalid element specified');
   }
 
-  if (typeof isComputed !== `boolean`) isComputed = false;
-  if (typeof isolateUnits !== `boolean`) isolateUnits = false;
+  if (typeof isComputed !== 'boolean') isComputed = false;
+  if (typeof isolateUnits !== 'boolean') isolateUnits = false;
 
   let value = (isComputed) ? window.getComputedStyle(element, null).getPropertyValue(key) : element.style[key];
-  let regex = new RegExp(`^[+-]?[0-9]+.?([0-9]+)?(px|em|ex|%|in|cm|mm|pt|pc)$`, `i`);
+  let regex = new RegExp('^[+-]?[0-9]+.?([0-9]+)?(px|em|ex|%|in|cm|mm|pt|pc)$', 'i');
 
-  if (value === ``) return (isolateUnits ? { value: null, unit: null } : null);
+  if (value === '') return (isolateUnits ? { value: null, unit: null } : null);
   if (!isNaN(Number(value))) return (isolateUnits ? { value: Number(value), unit: null } : Number(value));
 
   if (regex.test(value)) {
     if (isolateUnits) {
-      if (value.charAt(value.length-1) === `%`) return { value: Number(value.substr(0, value.length-1)), unit: value.slice(-1) };
+      if (value.charAt(value.length-1) === '%') return { value: Number(value.substr(0, value.length-1)), unit: value.slice(-1) };
       return { value: Number(value.substr(0, value.length-2)), unit: value.slice(-2) };
     }
     else {

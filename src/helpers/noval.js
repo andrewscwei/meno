@@ -18,7 +18,7 @@ function noval(value, recursive) {
   if (recursive === undefined) recursive = false;
 
   if (value === undefined || value === null) return true;
-  if (typeof value === `string`) return (value === ``);
+  if (typeof value === 'string') return (value === '');
 
   if (recursive && (value instanceof Array)) {
     const n = value.length;
@@ -27,7 +27,7 @@ function noval(value, recursive) {
     }
     return true;
   }
-  else if (recursive && (typeof value === `object`) && (value.constructor === Object)) {
+  else if (recursive && (typeof value === 'object') && (value.constructor === Object)) {
     for (let p in value) {
       if (!noval(value[p], true)) return false;
     }

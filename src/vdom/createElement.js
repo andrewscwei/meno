@@ -3,8 +3,8 @@
 import setAttribute from '../dom/setAttribute';
 import Directive from '../enums/Directive';
 
-if (process.env.NODE_ENV === `development`) {
-  var assert = require(`assert`);
+if (process.env.NODE_ENV === 'development') {
+  var assert = require('assert');
 }
 
 /**
@@ -17,16 +17,16 @@ if (process.env.NODE_ENV === `development`) {
  * @alias module:meno~vdom.createElement
  */
 function createElement(vnode, isSVG=false) {
-  if (process.env.NODE_ENV === `development`) {
-    assert((typeof vnode === `string`) || (typeof vnode.tag === `string`), `Invalid vnode provided: ${vnode}`);
+  if (process.env.NODE_ENV === 'development') {
+    assert((typeof vnode === 'string') || (typeof vnode.tag === 'string'), `Invalid vnode provided: ${vnode}`);
   }
 
-  if (typeof vnode === `string`) return document.createTextNode(vnode);
+  if (typeof vnode === 'string') return document.createTextNode(vnode);
 
-  isSVG = isSVG || (vnode.tag === `svg`);
+  isSVG = isSVG || (vnode.tag === 'svg');
 
   // Create the DOM element, account for custom and SVG elements.
-  const element = isSVG ? document.createElementNS(`http://www.w3.org/2000/svg`, vnode.tag) : document.createElement(vnode.tag, { is: vnode.attributes[Directive.IS] });
+  const element = isSVG ? document.createElementNS('http://www.w3.org/2000/svg', vnode.tag) : document.createElement(vnode.tag, { is: vnode.attributes[Directive.IS] });
 
   // Set attributes.
   for (let key in vnode.attributes) {

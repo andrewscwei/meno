@@ -1,7 +1,7 @@
 // © Andrew Wei
 
-if (process.env.NODE_ENV === `development`) {
-  var assertType = require(`../debug/assertType`);
+if (process.env.NODE_ENV === 'development') {
+  var assertType = require('../debug/assertType');
 }
 
 /**
@@ -15,14 +15,14 @@ if (process.env.NODE_ENV === `development`) {
  * @alias module:meno~dom.getAttribute
  */
 function getAttribute(element, name) {
-  if (process.env.NODE_ENV === `development`) {
-    assertType(element, Node, false, `Invalid element specified`);
+  if (process.env.NODE_ENV === 'development') {
+    assertType(element, Node, false, 'Invalid element specified');
   }
 
   if (!element.getAttribute) return null;
 
   let value = element.getAttribute(name);
-  if (value === ``) return true;
+  if (value === '') return true;
   if (value === undefined || value === null) return null;
   try {
     return JSON.parse(value);

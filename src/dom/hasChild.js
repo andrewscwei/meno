@@ -3,9 +3,9 @@
 import getChild from './getChild';
 import noval from '../helpers/noval';
 
-if (process.env.NODE_ENV === `development`) {
-  var assert = require(`assert`);
-  var assertType = require(`../debug/assertType`);
+if (process.env.NODE_ENV === 'development') {
+  var assert = require('assert');
+  var assertType = require('../debug/assertType');
 }
 
 /**
@@ -21,12 +21,12 @@ if (process.env.NODE_ENV === `development`) {
  * @alias module:meno~dom.hasChild
  */
 function hasChild(child, element) {
-  if (process.env.NODE_ENV === `development`) {
-    assert(child !== undefined, `Child is undefined`);
-    assertType(element, Node, true, `Parameter 'element', if specified, must be a Node`);
+  if (process.env.NODE_ENV === 'development') {
+    assert(child !== undefined, 'Child is undefined');
+    assertType(element, Node, true, 'Parameter \'element\', if specified, must be a Node');
   }
 
-  if (typeof child === `string`) {
+  if (typeof child === 'string') {
     return !noval(getChild(element, child));
   }
   else {

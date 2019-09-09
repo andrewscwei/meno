@@ -13,24 +13,24 @@ const Directive = {
   /**
    * Custom element tag.
    */
-  IS: `is`,
+  IS: 'is',
 
   /**
    * Instance name.
    */
-  NAME: `name`,
+  NAME: 'name',
 
   /**
    * Use this directive as an attribute prefix to map any attribute to the
    * data registry of the custom element.
    */
-  DATA: `data-`,
+  DATA: 'data-',
 
   /**
    * Use this directive as an attribute prefix to map any attribute to the
    * event registry of the custom element.
    */
-  EVENT: `on:`,
+  EVENT: 'on:',
 
   /**
    * Gets the camel-cased property name from the kebab-cased attribute name.
@@ -40,12 +40,12 @@ const Directive = {
    * @return {string} The camel-cased property name.
    */
   getDataPropertyName(attributeName) {
-    const regex = new RegExp(`^` + Directive.DATA, `i`);
+    const regex = new RegExp('^' + Directive.DATA, 'i');
 
     if (hasOwnValue(Directive, attributeName) || !regex.test(attributeName)) return null;
 
     // Generate camel case property name from the attribute.
-    let propertyName = attributeName.replace(regex, ``).replace(/-([a-z])/g, (g) => (g[1].toUpperCase()));
+    let propertyName = attributeName.replace(regex, '').replace(/-([a-z])/g, (g) => (g[1].toUpperCase()));
 
     return propertyName;
   },
@@ -58,10 +58,10 @@ const Directive = {
    * @return {string} The kebab-cased attribute name.
    */
   getDataAttributeName(propertyName) {
-    const attributeName = Directive.DATA + propertyName.replace(/([A-Z])/g, ($1) => (`-`+$1.toLowerCase()));
+    const attributeName = Directive.DATA + propertyName.replace(/([A-Z])/g, ($1) => ('-'+$1.toLowerCase()));
     if (!attributeName || hasOwnValue(Directive, attributeName)) return null;
     return attributeName;
-  }
+  },
 };
 
 export default Directive;

@@ -1,8 +1,8 @@
 // © Andrew Wei
 
-if (process.env.NODE_ENV === `development`) {
-  var debug = require(`debug`)(`meno:register`);
-  var assert = require(`assert`);
+if (process.env.NODE_ENV === 'development') {
+  var debug = require('debug')('meno:register');
+  var assert = require('assert');
 }
 
 /**
@@ -18,16 +18,16 @@ if (process.env.NODE_ENV === `development`) {
  * @alias module:meno~dom.register
  */
 function register(CustomElementClass) {
-  if (process.env.NODE_ENV === `development`) {
-    assert(typeof CustomElementClass === `function`, `Invalid element class specified`);
-    assert(typeof CustomElementClass.tag === `string`, `Element class must have a tag`);
-    assert(!CustomElementClass.extends || (typeof CustomElementClass.extends === `string`), `The 'extends' property of the element class, if specified, must be a string`);
+  if (process.env.NODE_ENV === 'development') {
+    assert(typeof CustomElementClass === 'function', 'Invalid element class specified');
+    assert(typeof CustomElementClass.tag === 'string', 'Element class must have a tag');
+    assert(!CustomElementClass.extends || (typeof CustomElementClass.extends === 'string'), 'The \'extends\' property of the element class, if specified, must be a string');
   }
 
   const tag = CustomElementClass.tag;
   const ext = CustomElementClass.extends;
 
-  if (process.env.NODE_ENV === `development`) {
+  if (process.env.NODE_ENV === 'development') {
     if (ext) {
       debug(`Registering custom element with tag <${tag}> that extends <${ext}>`);
     }

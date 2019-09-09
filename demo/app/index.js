@@ -11,8 +11,8 @@ import 'components/todo-input/TodoInput';
 import 'components/todo-item/TodoItem';
 import 'components/todo-app/TodoApp';
 
-if (process.env.NODE_ENV === `development`) {
-  localStorage.debug = `meno*`;
+if (process.env.NODE_ENV === 'development') {
+  localStorage.debug = 'meno*';
 }
 
 if (module.hot) module.hot.accept();

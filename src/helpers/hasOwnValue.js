@@ -12,7 +12,7 @@
  */
 function hasOwnValue(object, value) {
   for (let k in object) {
-    if (object.hasOwnProperty(k) && (object[k] === value)) return true;
+    if (object[k] !== undefined && (object[k] === value)) return true;
   }
 
   return false;
