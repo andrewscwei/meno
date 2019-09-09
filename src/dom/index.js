@@ -1,0 +1,9 @@
+export { default as getAttribute } from './getAttribute';
+export { default as getChild } from './getChild';
+export { default as getDirectCustomChildren } from './getDirectCustomChildren';
+export { default as getStyle } from './getStyle';
+export { default as hasChild } from './hasChild';
+export { default as isCustomElement } from './isCustomElement';
+export { default as register } from './register';
+export { default as setAttribute } from './setAttribute';
+export { default as setStyle } from './setStyle';

@@ -1,9 +1,7 @@
 import { Element, h, register } from 'meno';
-// import createVTree from 'vdom/createVTree';
 
 class TodoItem extends Element(`todo-item`) {
   get template() {
-    // return createVTree(require('./todo-item.pug')(this.data));
     return h(`template`, [
       h(`main`, [
         h(`span`, { "type": `label`, "name": `label`, 'on:click': `onToggle` }, [`${this.data.text}` || `No description`]),
