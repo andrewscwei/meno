@@ -1,4 +1,4 @@
-# Meno [![Circle CI](https://circleci.com/gh/andrewscwei/meno/tree/master.svg?style=svg)](https://circleci.com/gh/andrewscwei/meno/tree/master) [![npm version](https://badge.fury.io/js/meno.svg)](https://badge.fury.io/js/meno)
+# Meno [![npm](https://img.shields.io/npm/v/meno.svg)](https://www.npmjs.com/package/meno) [![CircleCI](https://img.shields.io/circleci/build/github/andrewscwei/meno.svg)](https://circleci.com/gh/andrewscwei/meno)
 
 Meno is a lean (`~8kb`), [Web Components](http://webcomponents.org/)-based (namely custom elements and shadow DOM) UI library. It is an experimental project and is not meant for production use. It utilizes/supports the following modern tech methodologies:
 
