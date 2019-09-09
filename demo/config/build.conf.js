@@ -58,6 +58,7 @@ module.exports = {
     extensions: ['.js', '.sass', '.pug'],
     modules: [
       path.join(SOURCE_DIR),
+      path.join(LIB_ROOT, 'src'),
       path.join(BASE_DIR, 'node_modules'),
     ],
   },

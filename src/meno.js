@@ -5,7 +5,7 @@ import * as dom from './dom';
 import Directive from './enums/Directive';
 import DirtyType from './enums/DirtyType';
 import NodeState from './enums/NodeState';
-import * as vdom from './vdom';
+import vnode from './vdom/vnode';
 
 if (process.env.NODE_ENV === 'development') {
   var assert = require('assert');
@@ -15,9 +15,9 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 export const register = dom.register;
-export const h = vdom.vnode;
+export const h = vnode;
 
-export { Element, Directive, DirtyType, NodeState, vdom, dom };
+export { Element, Directive, DirtyType, NodeState, dom };
 
 /**
  * @module meno

@@ -1,7 +1,8 @@
-import { DirtyType, Element, register, vdom } from 'meno';
+import { DirtyType, Element, register } from 'meno';
+import createVTree from 'vdom/createVTree';
 
 class TodoInput extends Element('todo-input') {
-  get template() { return vdom.createVTree(require('./todo-input.pug')(this.data)); }
+  get template() { return createVTree(require('./todo-input.pug')(this.data)); }
 
   get styles() {
     return require('./todo-input.sass').toString();

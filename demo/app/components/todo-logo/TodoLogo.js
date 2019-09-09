@@ -1,7 +1,8 @@
-import { Element, register, vdom } from 'meno';
+import { Element, register } from 'meno';
+import createVTree from 'vdom/createVTree';
 
 class TodoLogo extends Element('todo-logo') {
-  get template() { return vdom.createVTree(require('./todo-logo.pug')(this.data)); }
+  get template() { return createVTree(require('./todo-logo.pug')(this.data)); }
 
   get styles() { return require('./todo-logo.sass'); }
 }

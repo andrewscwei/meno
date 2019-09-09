@@ -1,7 +1,8 @@
-import { DirtyType, Element, register, vdom } from 'meno';
+import { DirtyType, Element, register } from 'meno';
+import createVTree from 'vdom/createVTree';
 
 class TodoApp extends Element('todo-app') {
-  get template() { return vdom.createVTree(require('./todo-app.pug')(this.data)); }
+  get template() { return createVTree(require('./todo-app.pug')(this.data)); }
 
   get styles() { return require('./todo-app.sass').toString(); }
 
