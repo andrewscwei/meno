@@ -50,13 +50,14 @@ class EventQueue extends EventDispatcher {
       assert((typeof eventDispatcher.dispatchEvent === 'function') && (typeof eventDispatcher.addEventListener === 'function'), 'Not a valid event dispatcher instance');
       assert(!this.isWaiting, 'Cannot enqueue when EventQueue instance is already waiting for events');
     }
+
     if (this.eventPool[eventType] === undefined) this.eventPool[eventType] = [];
 
     let pool = this.eventPool[eventType];
     let n = pool.length;
 
     for (let i = 0; i < n; i++) {
-      if (event.dispatcher === eventDispatcher) return;
+      if (pool[i].dispatcher === eventDispatcher) return;
     }
 
     pool.push({ dispatcher: eventDispatcher });
