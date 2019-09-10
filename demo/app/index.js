@@ -1,6 +1,6 @@
 import 'style-loader!./index.sass';
 
-import '@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js';
+import '@webcomponents/webcomponentsjs/custom-elements-es5-adapter';
 
 // Order matters. Since TodoList contains TodoItem, TodoItem needs to be
 // registered first so that when TodoList renders its shadow DOM, TodoItem is

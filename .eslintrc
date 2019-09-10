@@ -12,10 +12,6 @@
       "legacyDecorators": true
     }
   },
-  "globals": {
-    "__APP_CONFIG__": true,
-    "__I18N_CONFIG__": true
-  },
   "env": {
     "browser": true,
     "es6": true,
