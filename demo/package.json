@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "clean": "rimraf public",
+    "clean": "rimraf ../.gh-pages",
     "start": "webpack-dev-server --progress --hot --inline --config config/build.conf.js --content-base public --port 8080",
     "dev": "webpack-dev-server --progress --hot --inline --config config/dev.conf.js --content-base public --port 8080",
     "build": "npm run clean && webpack --colors --profile --config config/build.conf.js --display-error-details"

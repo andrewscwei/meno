@@ -1,6 +1,6 @@
 {
   "name": "meno",
-  "version": "0.32.0",
+  "version": "0.33.0",
   "description": "An experimental JavaScript UI library",
   "main": "dist/meno.min.js",
   "unpkg": "dist/meno.min.js",
@@ -15,7 +15,7 @@
     "build:analyze": "USE_ANALYZER=true npm run build:prod",
     "demo": "npm run clean && npm run build:prod && npm start --prefix demo",
     "demo:dev": "npm run dev --prefix demo",
-    "demo:build": "npm run build && npm run build --prefix demo",
+    "pages": "npm run build && npm run build --prefix demo",
     "lint": "eslint . --ignore-path .gitignore",
     "lint:fix": "npm run lint -- --fix"
   },

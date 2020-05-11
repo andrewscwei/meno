@@ -5,7 +5,7 @@ const webpack = require('webpack');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 
 const BASE_DIR = path.resolve(__dirname, '../');
-const BUILD_DIR = path.join(BASE_DIR, 'public');
+const BUILD_DIR = path.join(BASE_DIR, '../', '.gh-pages');
 const LIB_ROOT = path.resolve(__dirname, '../../');
 const SOURCE_DIR = path.join(BASE_DIR, 'app');
 
