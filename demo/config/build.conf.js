@@ -59,7 +59,7 @@ module.exports = {
     modules: [
       path.join(SOURCE_DIR),
       path.join(LIB_ROOT, 'src'),
-      path.join(BASE_DIR, 'node_modules'),
+      path.join(LIB_ROOT, 'node_modules'),
     ],
   },
   plugins: [
