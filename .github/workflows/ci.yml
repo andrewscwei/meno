@@ -5,10 +5,10 @@ on:
     tags-ignore: ['v[0-9]+.[0-9]+.[0-9]+']
 
 jobs:
-  build:
-    name: Build
+  test:
+    name: Test
     runs-on: ubuntu-latest
-    container: node:10.16.3
+    container: node:13.12.0
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -39,29 +39,5 @@ jobs:
         with:
           name: lib
           path: lib/
-  test:
-    name: Test
-    needs: [build]
-    runs-on: ubuntu-latest
-    container: node:10.16.3
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Cache Node modules
-        uses: actions/cache@v1
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-node-modules-
-      - name: Install NPM dependencies
-        run: npm install
-      - name: Restore dist dir
-        uses: actions/download-artifact@v1
-        with:
-          name: dist
-      - name: Restore lib dir
-        uses: actions/download-artifact@v1
-        with:
-          name: lib
       - name: Test
         run: npm test
