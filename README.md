@@ -1,4 +1,4 @@
-# Meno [![npm](https://img.shields.io/npm/v/meno.svg)](https://www.npmjs.com/package/meno) [![CI](https://github.com/andrewscwei/meno/workflows/CI/badge.svg)](https://github.com/andrewscwei/meno/actions?query=workflow%3ACI) [![CD](https://github.com/andrewscwei/meno/workflows/CD/badge.svg)](https://github.com/andrewscwei/meno/actions?query=workflow%3ACD)
+# Meno ![](https://img.shields.io/maintenance/no/2019) [![npm](https://img.shields.io/npm/v/meno.svg)](https://www.npmjs.com/package/meno) [![CI](https://github.com/andrewscwei/meno/workflows/CI/badge.svg)](https://github.com/andrewscwei/meno/actions?query=workflow%3ACI) [![CD](https://github.com/andrewscwei/meno/workflows/CD/badge.svg)](https://github.com/andrewscwei/meno/actions?query=workflow%3ACD)
 
 Meno is a lean (`~8kb`), [Web Components](http://webcomponents.org/)-based (namely custom elements and shadow DOM) UI library. It is an experimental project and is not meant for production use. It utilizes/supports the following modern tech methodologies:
 
